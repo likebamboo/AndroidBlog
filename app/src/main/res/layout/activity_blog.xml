@@ -1,0 +1,54 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.likebamboo.osa.android.ui.view.CommonWebView
+        android:id="@+id/blog_webview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+
+    <com.likebamboo.osa.android.ui.view.fab.FabToolbar
+        android:id="@+id/fab_tool_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:layout_gravity="bottom"
+        android:gravity="center">
+
+        <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+            android:id="@+id/blog_issue_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:padding="@dimen/padding_medium_large"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_large"/>
+
+        <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+            android:id="@+id/blog_favorite_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:padding="@dimen/padding_medium_large"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_large"/>
+
+        <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+            android:id="@+id/blog_info_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:padding="@dimen/padding_medium_large"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_large"/>
+
+    </com.likebamboo.osa.android.ui.view.fab.FabToolbar>
+
+    <include
+        android:id="@+id/blog_loading_layout"
+        layout="@layout/space_loading_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone"/>
+</FrameLayout>

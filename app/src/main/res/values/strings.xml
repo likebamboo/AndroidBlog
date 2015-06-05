@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Android博客</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="loading">数据加载中...</string>
+    <string name="has_not_more_data">没有啦...</string>
+    <string name="can_not_find_data">没有找到想要的数据</string>
+    <string name="retry">请重试</string>
+
+    <string name="please_input_key_words">请输入关键字</string>
+
+    <string name="search_history">历史记录</string>
+    <string name="network_error">网络连接错误，请检查网络状态</string>
+
+    <string name="feedback">反馈</string>
+    <string name="detail">详情</string>
+    <string name="issue">issue</string>
+    <string name="favorite">收藏</string>
+
+    <string name="translator">译者</string>
+    <string name="author">作者</string>
+    <string name="category">分类</string>
+    <string name="o_author">原文作者</string>
+    <string name="post_time">发表时间</string>
+    <string name="o_post_time">原文发表时间</string>
+    <string name="source_link">来源链接</string>
+    <string name="o_link">原文链接</string>
+
+    <string name="get_blog_info_error">获取博客信息失败</string>
+
+    <string name="about">关于</string>
+    <string name="version">版本：%1$s</string>
+    <string name="about_app">[Android博客]是一个简约、直观、漂亮并且开源的博客浏览应用，遵循Android设计风格。
+        UI借鉴国外应用<![CDATA[ <a href="https://www.etsy.com/">Etsy</a> 。]]>
+    </string>
+    <string name="look_detail">更多...</string>
+</resources>

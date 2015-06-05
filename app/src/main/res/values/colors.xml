@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--action bar背景 -->
+    <color name="bg_action_bar">#eeeeee</color>
+    <!--actionbar text颜色-->
+    <color name="actionbar_text">#34322d</color>
+    <!--抽屉导航背景-->
+    <color name="bg_drawer">#e25600</color>
+    <!--glass背景-->
+    <color name="bg_glass">#88ffffff</color>
+    <!--blur背景-->
+    <color name="bg_blur">#faffffff</color>
+
+    <!--半透明背景(黑)-->
+    <color name="bg_translucent">#55000000</color>
+
+    <!--分割线-->
+    <color name="divider">#1a000000</color>
+
+    <color name="card_dark_background">#ff202020</color>
+
+    <color name="item_focused">#ffe0e0e0</color>
+    <color name="item_pressed">#ffe9e9e9</color>
+
+</resources>

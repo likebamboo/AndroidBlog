@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:layout_alignParentTop="true"
+        android:background="@color/divider"/>
+
+    <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+        android:id="@+id/webviewRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:minWidth="60dip"
+        android:text="@string/fa_repeat"
+        android:textSize="@dimen/text_larger"/>
+
+    <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+        android:id="@+id/webviewGoBack"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_toLeftOf="@id/webviewRefresh"
+        android:gravity="center"
+        android:minWidth="60dip"
+        android:text="@string/fa_arrow_left"
+        android:textSize="@dimen/text_larger"/>
+
+
+    <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+        android:id="@+id/webviewGoForward"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_toRightOf="@id/webviewRefresh"
+        android:gravity="center"
+        android:minWidth="60dip"
+        android:text="@string/fa_arrow_right"
+        android:textSize="@dimen/text_larger"/>
+
+
+</RelativeLayout>

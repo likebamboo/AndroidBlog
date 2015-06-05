@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="@dimen/padding_large">
+
+        <FrameLayout
+            android:id="@+id/author_avatar_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <com.likebamboo.osa.android.ui.view.CircleImageView
+                android:id="@+id/author_avatar_iv"
+                android:layout_width="80dip"
+                android:layout_height="80dip"
+                android:layout_gravity="center"
+                android:src="@drawable/default_avatar"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/author_name_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/author_avatar_layout"
+            android:layout_margin="@dimen/margin_large"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_larger"/>
+
+        <LinearLayout
+            android:id="@+id/author_blog_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/author_name_tv"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+                style="@style/AuhtorInfoTextView.Title"
+                android:text="@string/fa_link"/>
+
+            <TextView
+                android:id="@+id/author_blog_tv"
+                style="@style/AuhtorInfoTextView.Info"
+                android:text="@string/app_name"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/author_github_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/author_blog_layout"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+                style="@style/AuhtorInfoTextView.Title"
+                android:text="@string/fa_github"/>
+
+            <TextView
+                android:id="@+id/author_github_tv"
+                style="@style/AuhtorInfoTextView.Info"
+                android:gravity="center_vertical"
+                android:text="@string/app_name"
+                android:textSize="@dimen/text_medium"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/author_github_layout"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+                style="@style/AuhtorInfoTextView.Title"
+                android:text="@string/fa_info"/>
+
+            <TextView
+                android:id="@+id/author_info_tv"
+                style="@style/AuhtorInfoTextView.Info"
+                android:text="@string/app_name"
+                android:textSize="@dimen/text_medium"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</FrameLayout>

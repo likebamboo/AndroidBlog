@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.likebamboo.osa.android.ui.view.LoadingLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/loading_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center">
+
+        <ProgressBar
+            android:id="@+id/loading_pb"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_centerInParent="true"
+            android:indeterminate="false"/>
+
+        <TextView
+            android:id="@+id/loading_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/loading_pb"
+            android:gravity="center"
+            android:padding="@dimen/padding_large"
+            android:text="@string/loading"
+            android:textSize="@dimen/text_large"/>
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/loading_fail_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/loading_fail_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textSize="@dimen/text_large"/>
+    </FrameLayout>
+
+</com.likebamboo.osa.android.ui.view.LoadingLayout>

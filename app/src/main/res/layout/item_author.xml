@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/author_item_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:minHeight="70dip"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        android:background="@drawable/bg_list_item_selector"
+        android:gravity="center">
+
+        <com.likebamboo.osa.android.ui.view.CircleImageView
+            android:id="@+id/author_avatar_iv"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/margin_medium_large"
+            android:layout_marginRight="@dimen/margin_medium_large"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_toRightOf="@id/author_avatar_iv"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/author_name_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="@dimen/padding_tiny"
+                android:paddingTop="@dimen/padding_tiny"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textSize="@dimen/text_large"/>
+
+            <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+                android:id="@+id/author_blog_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="@dimen/padding_tiny"
+                android:paddingTop="@dimen/padding_tiny"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textSize="@dimen/text_medium"/>
+        </LinearLayout>
+
+        <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+            android:id="@+id/author_info_tv"
+            android:layout_width="40dip"
+            android:layout_height="40dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_large"
+            android:gravity="center"
+            android:text="@string/fa_info_circle"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_larger"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/padding_tinyest"
+        android:background="@color/divider"/>
+</LinearLayout>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="@dimen/padding_large">
+
+        <FrameLayout
+            android:id="@+id/logo_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <com.likebamboo.osa.android.ui.view.CircleImageView
+                android:id="@+id/author_avatar_iv"
+                android:layout_width="80dip"
+                android:layout_height="80dip"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_launcher"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/app_name_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/logo_layout"
+            android:layout_margin="@dimen/margin_large"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_xlarge"/>
+
+        <TextView
+            android:id="@+id/app_version_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/app_name_tv"
+            android:padding="@dimen/padding_medium"
+            android:text="@string/app_name"
+            android:textSize="@dimen/text_large"/>
+
+        <TextView
+            android:id="@+id/app_desc_tv"
+            android:layout_width="fill_parent"
+            android:lineSpacingMultiplier="1.4"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/app_version_tv"
+            android:padding="@dimen/padding_medium"
+            android:text="@string/about_app"
+            android:textSize="@dimen/text_large"/>
+
+        <TextView
+            android:id="@+id/app_detail_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/app_desc_tv"
+            android:padding="@dimen/padding_medium"
+            android:text="@string/look_detail"
+            android:textColor="@color/bg_drawer"
+            android:textSize="@dimen/text_large"/>
+
+    </RelativeLayout>
+</FrameLayout>

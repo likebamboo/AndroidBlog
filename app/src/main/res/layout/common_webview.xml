@@ -1,0 +1,29 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <com.likebamboo.osa.android.ui.view.ObservedWebView
+            android:id="@+id/common_webview"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"/>
+
+        <com.likebamboo.osa.android.ui.view.WebViewToolBar
+            android:id="@+id/webview_tool_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"/>
+    </LinearLayout>
+
+    <include
+        android:id="@+id/webview_loading_layout"
+        layout="@layout/space_loading_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+</FrameLayout>

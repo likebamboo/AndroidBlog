@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/bg_card"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_small">
+
+            <TextView
+                android:id="@+id/blog_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:maxLines="2"
+                android:text="@string/app_name"
+                android:textSize="@dimen/text_medium"/>
+
+            <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+                android:id="@+id/blog_author_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
+                android:text="@string/fa_user"
+                android:textSize="@dimen/text_small"
+                android:visibility="gone"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="@color/divider"/>
+
+        <com.etsy.android.grid.util.DynamicHeightTextView
+            android:id="@+id/blog_abstracts_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:duplicateParentState="true"
+            android:lineSpacingMultiplier="1.2"
+            android:padding="@dimen/padding_medium"
+            android:text="@string/app_name"
+            android:textSize="@dimen/text_small"/>
+
+        <!--底部信息栏-->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/padding_small"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small">
+
+            <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+                android:id="@+id/blog_tag_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1.0"
+                android:singleLine="true"
+                android:text="@string/app_name"
+                android:textSize="@dimen/text_small"/>
+
+            <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+                android:id="@+id/blog_time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:singleLine="true"
+                android:text="@string/fa_calendar"
+                android:textSize="@dimen/text_small"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/bg_list_item_selector"/>
+</FrameLayout>
