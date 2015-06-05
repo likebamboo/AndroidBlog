@@ -3,7 +3,7 @@
 这是一个简单的android博客阅读应用，遵循 Android 设计风格，UI借鉴我个人非常喜欢的一款应用[Etsy](https://www.etsy.com/mobile/?ref=ftr).
 
 ##构建与支持
-项目使用 Android Studio (v1.2) + Gradle (v2.2.1) 构建
+项目使用 Android Studio (v1.2) + Gradle (v2.2.1) 构建  
 该项目支持 Android 2.3+ ( api level 9)
 
 ## 效果图
@@ -11,16 +11,16 @@
 <img src="https://raw.github.com/likebamboo/AndroidBlog/master/art/blog.png" width=360 height=640 alt="image3"><img src="https://raw.github.com/likebamboo/AndroidBlog/master/art/info.png" width=360 height=640 alt="image4">
 
 ##使用到的开源项目
-[AndroidStaggeredGrid](https://github.com/etsy/AndroidStaggeredGrid) Esty 开源的瀑布流布局库
-[Sugar](https://github.com/satyan/sugar) 一个简单的ORM框架
-[Volley](https://android.googlesource.com/platform/frameworks/volley) Google官方发布的网络请求库
-[ButterKnife](http://jakewharton.github.io/butterknife/)  一个专注于Android系统的View注入框架
-[NineOldAndroid](http://nineoldandroids.com/) 动画支持库
-[Jackson](https://github.com/FasterXML/jackson)  json解析库
+[AndroidStaggeredGrid](https://github.com/etsy/AndroidStaggeredGrid) Esty 开源的瀑布流布局库  
+[Sugar](https://github.com/satyan/sugar) 一个简单的ORM框架  
+[Volley](https://android.googlesource.com/platform/frameworks/volley) Google官方发布的网络请求库  
+[ButterKnife](http://jakewharton.github.io/butterknife/)  一个专注于Android系统的View注入框架  
+[NineOldAndroid](http://nineoldandroids.com/) 动画支持库  
+[Jackson](https://github.com/FasterXML/jackson)  json解析库  
 ...
 
 ## 意见与建议
-欢迎通过Pull Requests 方式向本项目贡献代码
+欢迎通过Pull Requests 方式向本项目贡献代码  
 如果发现程序的任何BUG，或对本项目有任何意见，可以直接创建 [Issue](https://github.com/likebamboo/AndroidBlog/issues) 告知我。
 
 ## 关于
