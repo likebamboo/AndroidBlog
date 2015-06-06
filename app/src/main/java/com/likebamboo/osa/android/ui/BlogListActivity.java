@@ -104,7 +104,7 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
 
     @Override
     protected void doOnSuccess(BlogList data) {
-        if (data == null || data.getList() == null || data.getList().isEmpty()) {
+        if (data == null || data.getList() == null) {
             showMessage(data);
             return;
         }
@@ -113,6 +113,11 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
             mHasMore = false;
         } else {
             mHasMore = true;
+        }
+        // 如果数据为空，显示没有更多数据了
+        if (data.getList().isEmpty()) {
+            showMessage(data);
+            return;
         }
         mAdapter.addDatas(data.getList());
     }

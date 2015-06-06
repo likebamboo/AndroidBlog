@@ -76,7 +76,7 @@ public class CategoryActivity extends EndlessActivity<CategoryList> {
 
     @Override
     protected void doOnSuccess(CategoryList data) {
-        if (data == null || data.getList() == null || data.getList().isEmpty()) {
+        if (data == null || data.getList() == null) {
             showMessage(data);
             return;
         }
@@ -85,6 +85,11 @@ public class CategoryActivity extends EndlessActivity<CategoryList> {
             mHasMore = false;
         } else {
             mHasMore = true;
+        }
+        // 如果数据为空，显示没有更多数据了
+        if (data.getList().isEmpty()) {
+            showMessage(data);
+            return;
         }
         mAdapter.addDatas(data.getList());
     }
