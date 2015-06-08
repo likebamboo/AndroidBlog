@@ -12,12 +12,16 @@
     <string name="please_input_key_words">请输入关键字</string>
 
     <string name="search_history">历史记录</string>
+    <string name="delete_search_history_succes">%1$s 记录已删除</string>
     <string name="network_error">网络连接错误，请检查网络状态</string>
 
     <string name="feedback">反馈</string>
     <string name="detail">详情</string>
     <string name="issue">issue</string>
     <string name="favorite">收藏</string>
+    <string name="favorite_success">收藏成功</string>
+    <string name="unfavorite">取消收藏</string>
+    <string name="unfavorite_success">取消收藏成功</string>
 
     <string name="translator">译者</string>
     <string name="author">作者</string>
