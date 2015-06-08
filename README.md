@@ -9,6 +9,7 @@
 ## 效果图
 <img src="https://raw.github.com/likebamboo/AndroidBlog/master/art/home.png" width=360 height=640 alt="image1"> <img src="https://raw.github.com/likebamboo/AndroidBlog/master/art/author.png" width=360 height=640 alt="image2">
 <img src="https://raw.github.com/likebamboo/AndroidBlog/master/art/blog.png" width=360 height=640 alt="image3"><img src="https://raw.github.com/likebamboo/AndroidBlog/master/art/info.png" width=360 height=640 alt="image4">
+<img src="https://raw.github.com/likebamboo/AndroidBlog/master/art/menu.png" width=720 height=405 alt="image5">
 
 ##使用到的开源项目
 [AndroidStaggeredGrid](https://github.com/etsy/AndroidStaggeredGrid) Esty 开源的瀑布流布局库  
@@ -22,6 +23,15 @@
 ## 意见与建议
 欢迎通过Pull Requests 方式向本项目贡献代码  
 如果发现程序的任何BUG，或对本项目有任何意见，可以直接创建 [Issue](https://github.com/likebamboo/AndroidBlog/issues) 告知我。
+
+## TODO
+- [ ] 博客收藏(本地).
+- [ ] 博客排序.
+- [ ] 博客错误反馈.
+- [ ] 博客图片大图浏览与保存.
+- [ ] 搜索优化.
+- [ ] 博客推荐优化.
+
 
 ## 关于
 本项目的前端和后端均由我一人开发，后端代码暂不开源，主要是因为本人不太会写后端，后端代码太烂了(其实前端也不怎么样)。  
