@@ -221,6 +221,15 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
         }
     }
 
+    /**
+     * 重置
+     */
+    protected void reset() {
+        isLoading = false;
+        mHasMore = true;
+        mPageIndex = 0;
+    }
+
     protected abstract void loadDatas(RequestParams params);
 
     /**

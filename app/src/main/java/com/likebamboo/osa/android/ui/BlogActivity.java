@@ -244,14 +244,17 @@ public class BlogActivity extends BaseActivity {
      */
     private void doFavorite() {
         if (mBlogInfo != null) {
-            // showBlogInfo();
+            // 设置收藏时间
+            mBlogInfo.setFavTime(System.currentTimeMillis());
             mBlogInfo.save();
-            System.out.println(BlogList.Blog.listAll(BlogList.Blog.class) + "-----");
             // 显示提示信息
             ToastUtil.show(getApplicationContext(), R.string.favorite_success);
 
             // 改变收藏按钮的文字
             mFavTv.setText(R.string.fa_heart, getString(R.string.unfavorite));
+
+            // 发送广播，提示收藏数据了
+            sendBroadcastForFavorite(true, mBlogInfo);
             return;
         }
 
@@ -277,11 +280,29 @@ public class BlogActivity extends BaseActivity {
             return;
         }
         mBlogInfo.delete(mBlogInfo.getUrl());
+        // 清空id
+        mBlogInfo.setId(null);
         // 显示提示信息
         ToastUtil.show(getApplicationContext(), R.string.unfavorite_success);
-
         // 改变收藏按钮的文字
         mFavTv.setText(R.string.fa_heart_o, getString(R.string.favorite));
+        sendBroadcastForFavorite(false, mBlogInfo);
+    }
+
+    /**
+     * 发送收藏广播
+     *
+     * @param fav  收藏or取消收藏
+     * @param blog 博客信息
+     */
+    private void sendBroadcastForFavorite(boolean fav, final BlogList.Blog blog) {
+        if (blog == null) {
+            return;
+        }
+        Intent i = new Intent(FavoriteActivity.ACTION_FAVORITE_ADD_OR_REMOVE);
+        i.putExtra(BlogInfoFragment.EXTRA_BLOG, blog);
+        i.putExtra(FavoriteActivity.EXTRA_FAVORITE_ADD_OR_REMOVE, fav);
+        sendBroadcast(i);
     }
 
     /**

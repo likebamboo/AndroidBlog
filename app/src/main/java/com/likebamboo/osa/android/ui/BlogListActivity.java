@@ -108,7 +108,6 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
             showMessage(data);
             return;
         }
-        ++mPageIndex;
         if (data.getList().size() < mPageSize) {
             mHasMore = false;
         } else {
@@ -119,6 +118,7 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
             showMessage(data);
             return;
         }
+        ++mPageIndex;
         mAdapter.addDatas(data.getList());
     }
 

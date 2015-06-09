@@ -44,6 +44,22 @@ public class BlogAdapter extends BaseAdapter<Blog> {
     }
 
     @Override
+    public void removeData(Blog data) {
+        if (data == null) {
+            return;
+        }
+        // 找到相同的数据
+        Blog temp = null;
+        for (BlogList.Blog b : mDatas) {
+            if (("" + b.getUrl()).equals(data.getUrl())) {
+                temp = b;
+                break;
+            }
+        }
+        super.removeData(temp);
+    }
+
+    @Override
     public View getView(int position, View view, ViewGroup parent) {
         ViewHolder holder;
         if (view != null) {
