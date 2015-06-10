@@ -25,7 +25,7 @@
 如果发现程序的任何BUG，或对本项目有任何意见，可以直接创建 [Issue](https://github.com/likebamboo/AndroidBlog/issues) 告知我。
 
 ## TODO
-- [ ] 博客收藏(本地).
+- [ ] 博客收藏(本地)(分支：feature/favorite，开发完成后会推到master).
 - [ ] 博客排序.
 - [ ] 博客错误反馈.
 - [ ] 博客图片大图浏览与保存.
