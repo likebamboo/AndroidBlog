@@ -22,7 +22,7 @@ import butterknife.InjectView;
 /**
  * Created by wentaoli on 2015/5/12.
  */
-public class BlogAdapter extends BaseAdapter<Blog> {
+public class BlogAdapter extends ChoiceAdapter<Blog> {
 
     private IOnItemClickListener mItemClickListener = null;
 
@@ -85,6 +85,24 @@ public class BlogAdapter extends BaseAdapter<Blog> {
                 }
             }
         });
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                int pos = view.getId();
+                if (mItemClickListener != null) {
+                    mItemClickListener.onItemLongClick(pos, getItem(pos));
+                }
+                return true;
+            }
+        });
+
+        // 是否选中某一项
+        if (isItemSelected(position)) {
+            holder.cover.setSelected(true);
+        } else {
+            holder.cover.setSelected(false);
+        }
+
         /**
          * PS:为什么在Adapter中设置View的OnClick事件，而不是直接使用
          * @see android.widget.AdapterView#setOnItemClickListener(AdapterView.OnItemClickListener)
@@ -92,7 +110,6 @@ public class BlogAdapter extends BaseAdapter<Blog> {
          * 因为用 setOnItemClickListener 的方式 设置 ListView 的item 的background没有效果，不知道什么鬼，
          * 各位大神如果有解决方案，望告知~
          */
-
         holder.titleTv.setText(item.getTitle());
         holder.abstractsTv.setText(Html.fromHtml(item.getAbstracts().replace("\n", "<br/>")));
         holder.tagTv.setText(R.string.fa_filter, item.getCategorys());
@@ -111,6 +128,8 @@ public class BlogAdapter extends BaseAdapter<Blog> {
         public TextAwesome timeTv;
         @InjectView(R.id.blog_tag_tv)
         public TextAwesome tagTv;
+        @InjectView(R.id.item_cover)
+        public View cover;
 
         public ViewHolder(View view) {
             ButterKnife.inject(this, view);

@@ -8,8 +8,16 @@ public interface IOnItemClickListener<T> {
     /**
      * listView 点击事件回调
      *
-     * @param postion
+     * @param position
      * @param item
      */
-    void onItemClick(int postion, T item);
+    void onItemClick(int position, T item);
+
+    /**
+     * listView 长按事件回调
+     *
+     * @param position
+     * @param item
+     */
+    void onItemLongClick(int position, T item);
 }

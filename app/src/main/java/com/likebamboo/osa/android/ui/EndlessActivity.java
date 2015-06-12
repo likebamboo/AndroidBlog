@@ -225,6 +225,8 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
      * 重置
      */
     protected void reset() {
+        // 清空现有数据
+        mAdapter.clear();
         isLoading = false;
         mHasMore = true;
         mPageIndex = 0;
