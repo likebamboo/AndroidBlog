@@ -99,10 +99,7 @@ public class TagList extends BaseRsp {
             if (TextUtils.isEmpty(name)) {
                 return;
             }
-            Tag tag = findTagByName(name);
-            if (tag != null) {
-                tag.delete();
-            }
+            deleteAll(Tag.class, " name like ? ", name);
         }
 
         /**

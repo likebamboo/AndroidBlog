@@ -6,7 +6,7 @@ import android.os.Bundle;
 import com.etsy.android.grid.StaggeredGridView;
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.entity.CategoryList;
-import com.likebamboo.osa.android.interfaces.IOnItemClickListener;
+import com.likebamboo.osa.android.impl.BaseOnItemClickListener;
 import com.likebamboo.osa.android.request.JsonRequest;
 import com.likebamboo.osa.android.request.RequestManager;
 import com.likebamboo.osa.android.request.RequestParams;
@@ -40,7 +40,7 @@ public class CategoryActivity extends EndlessActivity<CategoryList> {
         // 设置适配器
         mAdapter = new CategoryAdapter(this);
         mListView.setAdapter(mAdapter);
-        ((CategoryAdapter) mAdapter).setOnItemClickListener(new IOnItemClickListener<CategoryList.Category>() {
+        ((CategoryAdapter) mAdapter).setOnItemClickListener(new BaseOnItemClickListener<CategoryList.Category>() {
             @Override
             public void onItemClick(int postion, CategoryList.Category item) {
                 if (item == null) {

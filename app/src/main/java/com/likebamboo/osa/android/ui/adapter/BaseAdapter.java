@@ -99,6 +99,44 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
     }
 
     /**
+     * 删除数据
+     *
+     * @param datas
+     */
+    public void removeDatas(final ArrayList<T> datas) {
+        if (mDatas == null) {
+            return;
+        }
+        mDatas.removeAll(datas);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 删除数据
+     *
+     * @param index
+     */
+    public void removeData(int index) {
+        if (mDatas == null || index >= mDatas.size()) {
+            return;
+        }
+        mDatas.remove(index);
+    }
+
+    /**
+     * 删除数据
+     *
+     * @param data
+     */
+    public void removeData(T data) {
+        if (mDatas == null || data == null) {
+            return;
+        }
+        mDatas.remove(data);
+    }
+
+
+    /**
      * 清空数据
      */
     public void clear() {

@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.entity.AuthorList;
-import com.likebamboo.osa.android.interfaces.IOnItemClickListener;
+import com.likebamboo.osa.android.impl.BaseOnItemClickListener;
 import com.likebamboo.osa.android.request.JsonRequest;
 import com.likebamboo.osa.android.request.RequestManager;
 import com.likebamboo.osa.android.request.RequestParams;
@@ -91,7 +91,7 @@ public class AuthorActivity extends EndlessActivity<AuthorList> {
      */
     private void addListener() {
         // item Onclick
-        mAuthorAdapter.setOnItemClickListener(new IOnItemClickListener<AuthorList.Author>() {
+        mAuthorAdapter.setOnItemClickListener(new BaseOnItemClickListener<AuthorList.Author>() {
             @Override
             public void onItemClick(int postion, AuthorList.Author item) {
                 if (item == null) {

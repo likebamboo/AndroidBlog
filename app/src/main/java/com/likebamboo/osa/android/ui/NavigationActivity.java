@@ -81,6 +81,18 @@ public class NavigationActivity extends BaseActivity implements NavigationDrawer
         mContainerView.addView(view);
     }
 
+    /**
+     * 设置Drawer 的开关模式
+     *
+     * @param mode
+     */
+    public void setDrawerLockMode(int mode) {
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawerLayout != null) {
+            drawerLayout.setDrawerLockMode(mode);
+        }
+    }
+
     @Override
     public boolean onNavigationDrawerItemSelected(int position, String text) {
         //update the main content by start Activity
@@ -94,10 +106,13 @@ public class NavigationActivity extends BaseActivity implements NavigationDrawer
             case 1:// 分类
                 i.setClass(this, CategoryActivity.class);
                 break;
-            case 2: //作者
+            case 2:// 作者
                 i.setClass(this, AuthorActivity.class);
                 break;
-            case 3:// 设置
+            case 3:// 收藏
+                i.setClass(this, FavoriteActivity.class);
+                break;
+            case 4:// 设置
                 SettingsFragment fragment = SettingsFragment.newInstance();
                 fragment.show(getSupportFragmentManager(), "dialog");
                 close = false;

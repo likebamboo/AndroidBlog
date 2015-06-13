@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -23,6 +22,7 @@ import com.likebamboo.osa.android.ui.view.LoadingLayout;
 import com.likebamboo.osa.android.ui.view.fa.TextAwesome;
 import com.likebamboo.osa.android.ui.view.fab.FabToolbar;
 import com.likebamboo.osa.android.utils.NetworkUtil;
+import com.likebamboo.osa.android.utils.ToastUtil;
 import com.likebamboo.osa.android.utils.UrlDetect;
 
 import java.net.URLDecoder;
@@ -79,6 +79,13 @@ public class BlogActivity extends BaseActivity {
         setContentView(R.layout.activity_blog);
         ButterKnife.inject(this);
 
+        mBlogUrl = getIntent().getStringExtra(EXTRA_BLOG_URL);
+        if (TextUtils.isEmpty(mBlogUrl)) {
+            // 容错处理
+            finish();
+            return;
+        }
+
         // 初始化actionBar
         initActionBar();
 
@@ -88,14 +95,27 @@ public class BlogActivity extends BaseActivity {
         // 添加监听器
         addListener();
 
-        mBlogUrl = getIntent().getStringExtra(EXTRA_BLOG_URL);
-        if (TextUtils.isEmpty(mBlogUrl)) {
-            // 容错处理
-            finish();
-            return;
-        }
         // 开始加载页面
         startLoading(mBlogUrl);
+
+        // 检查当前博客是否已经被收藏
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 收藏
+                mBlogInfo = BlogList.Blog.findBlogByUrl(mBlogUrl);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mBlogInfo == null) {
+                            mFavTv.setText(R.string.fa_heart_o, getString(R.string.favorite));
+                        } else {
+                            mFavTv.setText(R.string.fa_heart, getString(R.string.unfavorite));
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     /**
@@ -110,7 +130,6 @@ public class BlogActivity extends BaseActivity {
 
         // 问题
         mIssueTv.setText(R.string.fa_exclamation_circle, getString(R.string.issue));
-        // 收藏
         mFavTv.setText(R.string.fa_heart_o, getString(R.string.favorite));
         // 博客信息
         mInfoTv.setText(R.string.fa_info, getString(R.string.detail));
@@ -173,6 +192,7 @@ public class BlogActivity extends BaseActivity {
             }
         });
 
+        // 显示信息
         mInfoTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -182,33 +202,124 @@ public class BlogActivity extends BaseActivity {
                     return;
                 }
                 // 加载博客信息
-                loadBlogInfo();
+                loadBlogInfo(new Response.Listener<BlogList.Blog>() {
+                    @Override
+                    public void onResponse(BlogList.Blog blog) {
+                        mLoadingLayout.showLoading(false);
+                        if (blog != null) {
+                            mBlogInfo = blog;
+                            showBlogInfo();
+                        }
+                    }
+                });
             }
         });
+
+        // 收藏
+        mFavTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 如果是未收藏的数据
+                if (("" + mFavTv.getText()).contains(getString(R.string.fa_heart_o))) {
+                    // 收藏
+                    doFavorite();
+                    return;
+                }
+                // 取消收藏
+                doUnFavorite();
+            }
+        });
+        // 反馈
+        mIssueTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO 反馈
+            }
+        });
+
     }
 
     /**
-     * 加载博客信息
+     * 收藏数据
      */
-    private void loadBlogInfo() {
-        mLoadingLayout.showLoading(true);
-        JsonRequest<BlogList.Blog> request = new JsonRequest<BlogList.Blog>(
-                String.format(RequestUrl.BLOG_INFO_URL, mBlogUrl),
-                BlogList.Blog.class, new Response.Listener<BlogList.Blog>() {
+    private void doFavorite() {
+        if (mBlogInfo != null) {
+            // 设置收藏时间
+            mBlogInfo.setFavTime(System.currentTimeMillis());
+            mBlogInfo.save();
+            // 显示提示信息
+            ToastUtil.show(getApplicationContext(), R.string.favorite_success);
+
+            // 改变收藏按钮的文字
+            mFavTv.setText(R.string.fa_heart, getString(R.string.unfavorite));
+
+            // 发送广播，提示收藏数据了
+            sendBroadcastForFavorite(true, mBlogInfo);
+            return;
+        }
+
+        // 加载数据
+        loadBlogInfo(new Response.Listener<BlogList.Blog>() {
             @Override
             public void onResponse(BlogList.Blog blog) {
                 mLoadingLayout.showLoading(false);
                 if (blog != null) {
                     mBlogInfo = blog;
-                    showBlogInfo();
+                    doFavorite();
                 }
             }
-        }, new Response.ErrorListener() {
+        });
+    }
+
+
+    /**
+     * 取消收藏数据
+     */
+    private void doUnFavorite() {
+        if (mBlogInfo == null) {
+            return;
+        }
+        mBlogInfo.delete(mBlogInfo.getUrl());
+        // 清空id
+        mBlogInfo.setId(null);
+        // 显示提示信息
+        ToastUtil.show(getApplicationContext(), R.string.unfavorite_success);
+        // 改变收藏按钮的文字
+        mFavTv.setText(R.string.fa_heart_o, getString(R.string.favorite));
+        sendBroadcastForFavorite(false, mBlogInfo);
+    }
+
+    /**
+     * 发送收藏广播
+     *
+     * @param fav  收藏or取消收藏
+     * @param blog 博客信息
+     */
+    private void sendBroadcastForFavorite(boolean fav, final BlogList.Blog blog) {
+        if (blog == null) {
+            return;
+        }
+        Intent i = new Intent(FavoriteActivity.ACTION_FAVORITE_ADD_OR_REMOVE);
+        i.putExtra(BlogInfoFragment.EXTRA_BLOG, blog);
+        i.putExtra(FavoriteActivity.EXTRA_FAVORITE_ADD_OR_REMOVE, fav);
+        sendBroadcast(i);
+    }
+
+    /**
+     * 加载博客信息
+     *
+     * @param successListener 获取成功结果回调
+     */
+    private void loadBlogInfo(Response.Listener<BlogList.Blog> successListener) {
+        mLoadingLayout.showLoading(true);
+        JsonRequest<BlogList.Blog> request = new JsonRequest<BlogList.Blog>(
+                String.format(RequestUrl.BLOG_INFO_URL, mBlogUrl),
+                BlogList.Blog.class, successListener, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 mLoadingLayout.showLoading(false);
                 // 提示错误信息
-                Toast.makeText(getApplicationContext(), getString(R.string.get_blog_info_error), Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getApplicationContext(), R.string.get_blog_info_error);
             }
         });
         request.setJustResult(true);

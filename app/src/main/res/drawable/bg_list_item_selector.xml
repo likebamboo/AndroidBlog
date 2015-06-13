@@ -13,7 +13,7 @@
             <solid android:color="@color/divider"/>
         </shape>
     </item>
-    <item android:drawable="@color/item_focused" android:state_checked="true">
+    <item android:state_selected="true">
         <shape android:shape="rectangle">
             <solid android:color="@color/divider"/>
         </shape>

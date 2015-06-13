@@ -7,13 +7,13 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.entity.TagList;
 import com.likebamboo.osa.android.ui.nav.ActivityNavigator;
 import com.likebamboo.osa.android.ui.view.TagGroup;
 import com.likebamboo.osa.android.ui.view.blur.BlurBehind;
+import com.likebamboo.osa.android.utils.ToastUtil;
 import com.orm.StringUtil;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class SearchActivity extends BaseActivity {
                 mHistoryTags.deleteTag(tag);
                 TagList.Tag.delete(tag);
                 // 显示toast
-                Toast.makeText(getApplicationContext(), tag + " 标签已删除", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getApplicationContext(), R.string.delete_search_history_succes, tag);
             }
         });
 

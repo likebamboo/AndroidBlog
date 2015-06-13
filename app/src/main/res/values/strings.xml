@@ -12,12 +12,17 @@
     <string name="please_input_key_words">请输入关键字</string>
 
     <string name="search_history">历史记录</string>
+    <string name="delete_search_history_succes">%1$s 记录已删除</string>
     <string name="network_error">网络连接错误，请检查网络状态</string>
 
     <string name="feedback">反馈</string>
     <string name="detail">详情</string>
     <string name="issue">issue</string>
     <string name="favorite">收藏</string>
+    <string name="favorite_success">收藏成功</string>
+    <string name="unfavorite">取消收藏</string>
+    <string name="unfavorite_success">取消收藏成功</string>
+    <string name="donot_have_any_favorite">未收藏任何博客</string>
 
     <string name="translator">译者</string>
     <string name="author">作者</string>
@@ -36,4 +41,9 @@
         UI借鉴国外应用<![CDATA[ <a href="https://www.etsy.com/">Etsy</a> 。]]>
     </string>
     <string name="look_detail">更多...</string>
+
+    <string name="select_all">全选</string>
+    <string name="select_nothing">全不选</string>
+    <string name="delete">删除</string>
+
 </resources>

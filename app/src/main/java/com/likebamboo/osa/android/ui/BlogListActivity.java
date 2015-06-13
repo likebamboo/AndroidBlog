@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import com.etsy.android.grid.StaggeredGridView;
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.entity.BlogList;
-import com.likebamboo.osa.android.interfaces.IOnItemClickListener;
+import com.likebamboo.osa.android.impl.BaseOnItemClickListener;
 import com.likebamboo.osa.android.request.JsonRequest;
 import com.likebamboo.osa.android.request.RequestManager;
 import com.likebamboo.osa.android.request.RequestParams;
@@ -61,16 +61,11 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
         // 设置适配器
         mAdapter = new BlogAdapter(this);
         mBlogListView.setAdapter(mAdapter);
-        ((BlogAdapter) mAdapter).setOnItemClickListener(new IOnItemClickListener<BlogList.Blog>() {
+        ((BlogAdapter) mAdapter).setOnItemClickListener(new BaseOnItemClickListener<BlogList.Blog>() {
             @Override
             public void onItemClick(int postion, BlogList.Blog item) {
-                if (item == null) {
-                    return;
-                }
                 // 进入博客详情界面
-                Intent i = new Intent(BlogListActivity.this, BlogActivity.class);
-                i.putExtra(BlogActivity.EXTRA_BLOG_URL, item.getUrl());
-                ActivityNavigator.startActivity(BlogListActivity.this, i);
+                goToBlogDetail(item);
             }
         });
         // 设置加载更多
@@ -78,6 +73,20 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
 
         // 加载数据
         loadDatas();
+    }
+
+    /**
+     * 进入博客详情界面
+     * @param item
+     */
+    protected void goToBlogDetail(BlogList.Blog item) {
+        if (item == null) {
+            return;
+        }
+        // 进入博客详情界面
+        Intent i = new Intent(BlogListActivity.this, BlogActivity.class);
+        i.putExtra(BlogActivity.EXTRA_BLOG_URL, item.getUrl());
+        ActivityNavigator.startActivity(BlogListActivity.this, i);
     }
 
     /**
@@ -108,7 +117,6 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
             showMessage(data);
             return;
         }
-        ++mPageIndex;
         if (data.getList().size() < mPageSize) {
             mHasMore = false;
         } else {
@@ -119,6 +127,7 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
             showMessage(data);
             return;
         }
+        ++mPageIndex;
         mAdapter.addDatas(data.getList());
     }
 

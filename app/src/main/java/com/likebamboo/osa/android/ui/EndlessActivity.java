@@ -25,6 +25,21 @@ import butterknife.InjectView;
 public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActivity implements AbsListView.OnScrollListener {
 
     /**
+     * pageSize ， 默认值 20
+     */
+    public static final int PAGE_SIZE = 20;
+
+    /**
+     * 参数， pageSize ， 默认值 20
+     */
+    public static final String PARAM_PAGE_SIZE = "pageSize";
+
+    /**
+     * 参数，pageNo
+     */
+    public static final String PARAM_PAGE_NO = "pageNo";
+
+    /**
      * 适配器
      */
     protected BaseAdapter mAdapter = null;
@@ -48,7 +63,7 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
     /**
      * 页容量
      */
-    protected int mPageSize = 20;
+    protected int mPageSize = PAGE_SIZE;
 
     /**
      * 是否还有更多
@@ -173,7 +188,7 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
         }
         // 加载数据
         RequestParams params = new RequestParams();
-        params.add("pageNo", (mPageIndex + 1) + "").add("pageSize", "" + mPageSize);
+        params.add(PARAM_PAGE_NO, (mPageIndex + 1) + "").add(PARAM_PAGE_SIZE, "" + mPageSize);
         loadDatas(params);
     }
 
@@ -204,6 +219,17 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
         } else {
             mFooterView.showEmpty(getString(R.string.has_not_more_data));
         }
+    }
+
+    /**
+     * 重置
+     */
+    protected void reset() {
+        // 清空现有数据
+        mAdapter.clear();
+        isLoading = false;
+        mHasMore = true;
+        mPageIndex = 0;
     }
 
     protected abstract void loadDatas(RequestParams params);

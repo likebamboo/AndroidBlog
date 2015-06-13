@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.likebamboo.osa.android.ui.FavoriteActivity">
+
+    <item
+        android:id="@+id/nav_contextual_action_check_all"
+        android:icon="@drawable/abc_ic_menu_selectall_mtrl_alpha"
+        android:showAsAction="always|withText"
+        android:title="@string/select_all"
+        app:showAsAction="always|withText"
+        tools:ignore="AlwaysShowAction,AppCompatResource"/>
+
+    <item
+        android:id="@+id/nav_contextual_action_remove"
+        android:icon="@drawable/abc_ic_clear_mtrl_alpha"
+        android:showAsAction="always|withText"
+        android:title="@string/delete"
+        app:showAsAction="always|withText"
+        tools:ignore="AlwaysShowAction,AppCompatResource"/>
+</menu>
