@@ -3,6 +3,7 @@ package com.likebamboo.osa.android.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.widget.AbsListView;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.likebamboo.osa.android.R;
@@ -14,6 +15,8 @@ import com.likebamboo.osa.android.request.RequestParams;
 import com.likebamboo.osa.android.request.RequestUrl;
 import com.likebamboo.osa.android.ui.adapter.BlogAdapter;
 import com.likebamboo.osa.android.ui.nav.ActivityNavigator;
+import com.likebamboo.osa.android.ui.view.FilterFooter;
+import com.likebamboo.osa.android.ui.view.fab.DirectionScrollListener;
 
 import butterknife.InjectView;
 
@@ -30,6 +33,13 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
     @InjectView(R.id.list_view)
     StaggeredGridView mBlogListView;
 
+    @InjectView(R.id.list_filter_footer_layout)
+    FilterFooter mFilterFooter = null;
+
+    /**
+     * 滚动事件监听器
+     */
+    private DirectionScrollListener mScrollListener = null;
     /**
      * 排序
      */
@@ -70,6 +80,21 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
         });
         // 设置加载更多
         mBlogListView.setOnScrollListener(this);
+
+        // 初始化滚动监听
+        mScrollListener = new DirectionScrollListener(mFilterFooter);
+        // 设置筛选按钮点击回调
+        mFilterFooter.setFilterClickListener(new FilterFooter.IOnFilterClickListener() {
+            @Override
+            public void onSortClick() {
+                // TODO 显示dialog
+            }
+
+            @Override
+            public void onCategoryClick() {
+                // TODO 显示dialog
+            }
+        });
 
         // 加载数据
         loadDatas();
@@ -136,6 +161,14 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
         super.onNewIntent(intent);
         if (intent.hasExtra(EXTRA_TITLE)) {
             setTitle(intent.getStringExtra(EXTRA_TITLE));
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        if (mScrollListener != null) {
+            mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
         }
     }
 

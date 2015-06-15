@@ -28,7 +28,7 @@ import com.nineoldandroids.view.ViewHelper;
  * <a href = "https://github.com/makovkastar/FloatingActionButton">READ ME</a>
  * fab
  */
-public class FloatingActionButton extends View {
+public class FloatingActionButton extends View implements FloatingView{
 
     private final Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
     private final Paint mButtonPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -161,7 +161,7 @@ public class FloatingActionButton extends View {
         return super.onTouchEvent(event);
     }
 
-    public void hide(boolean hide) {
+    private void hide(boolean hide) {
         // If the hidden state is being updated
         if (mHidden != hide) {
             // Store the new hidden state
@@ -180,4 +180,13 @@ public class FloatingActionButton extends View {
         }
     }
 
+    @Override
+    public void hide() {
+        hide(true);
+    }
+
+    @Override
+    public void show() {
+        hide(false);
+    }
 }

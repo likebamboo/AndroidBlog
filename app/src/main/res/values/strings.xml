@@ -46,4 +46,6 @@
     <string name="select_nothing">全不选</string>
     <string name="delete">删除</string>
 
+    <string name="sort">排序</string>
+
 </resources>
