@@ -315,6 +315,11 @@ public class FavoriteActivity extends BlogListActivity {
     }
 
     @Override
+    public boolean hasFilterFooter() {
+        return false;
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         try {

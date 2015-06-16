@@ -143,6 +143,7 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
         if (mDatas != null) {
             mDatas.clear();
         }
+        notifyDataSetChanged();
     }
 
     @Override

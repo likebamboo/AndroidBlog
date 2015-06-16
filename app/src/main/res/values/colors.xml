@@ -14,6 +14,9 @@
     <!--半透明背景(黑)-->
     <color name="bg_translucent">#55000000</color>
 
+    <!--半透明背景(白)-->
+    <color name="bg_translucent_white">#e0ffffff</color>
+
     <!--分割线-->
     <color name="divider">#1a000000</color>
 

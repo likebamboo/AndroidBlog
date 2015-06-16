@@ -103,4 +103,15 @@
         <item name="horizontalPadding">@dimen/padding_large</item>
         <item name="verticalPadding">@dimen/padding_small</item>
     </style>
+
+    <!--简单列表dialog样式-->
+    <style name="simple_dialog_style" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">true</item> <!-- 模糊 -->
+        <item name="android:backgroundDimAmount">0.3</item> <!-- 模糊度 -->
+    </style>
 </resources>

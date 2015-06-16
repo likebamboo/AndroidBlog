@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/simple_dialog_item_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_list_item_selector"
+    android:gravity="center_vertical"
+    android:minHeight="48dip"
+    android:orientation="horizontal">
+
+    <com.likebamboo.osa.android.ui.view.fa.TextAwesome
+        android:id="@+id/simple_dialog_item_icon_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:duplicateParentState="true"
+        android:text="@string/fa_check"
+        android:textColor="#0089d2"
+        android:textSize="@dimen/text_xlarge"/>
+
+    <TextView
+        android:id="@+id/simple_dialog_item_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/margin_large"
+        android:duplicateParentState="true"
+        android:gravity="center_vertical"
+        android:text="@string/app_name"
+        android:textColor="#181818"
+        android:textSize="@dimen/text_larger"/>
+
+</LinearLayout>

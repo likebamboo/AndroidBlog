@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.likebamboo.osa.android.ui.view.FilterFooter
+    android:id="@+id/list_filter_footer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_gravity="bottom"
+    android:background="@color/bg_translucent_white">
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_gravity="top"
+        android:background="@color/divider"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="45dip"
+        android:layout_gravity="center_horizontal"
+        android:divider="@drawable/list_divider_padded_vertical"
+        android:orientation="horizontal"
+        android:showDividers="middle">
+
+        <TextView
+            android:id="@+id/filter_category_tv"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:background="@drawable/bg_list_item_selector"
+            android:gravity="center"
+            android:text="@string/category"
+            android:textSize="@dimen/text_large"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/filter_sort_tv"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:background="@drawable/bg_list_item_selector"
+            android:gravity="center"
+            android:text="@string/sort"
+            android:textSize="@dimen/text_large"/>
+
+    </LinearLayout>
+</com.likebamboo.osa.android.ui.view.FilterFooter>

@@ -260,7 +260,11 @@ public class FabToolbar extends RevealFrameLayout {
             boolean goingDown = t > mPrevTop;
             boolean changed = Math.abs(t - mPrevTop) > DIRECTION_CHANGE_THRESHOLD;
             if (changed && mUpdated) {
-                mFAB.hide(goingDown);
+                if (goingDown) {
+                    mFAB.hide();
+                } else {
+                    mFAB.show();
+                }
             }
             mPrevTop = t;
             mUpdated = true;
