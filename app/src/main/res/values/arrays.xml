@@ -15,4 +15,20 @@
         <item>&#xf007; &#160;&#160; 关于作者</item>
         <item>&#xf17b; &#160;&#160; 关于APP </item>
     </string-array>
+
+    <!--排序显示值列表-->
+    <string-array name="sort_name_entry">
+        <item>默认排序</item>
+        <item>发表时间</item>
+        <item>标题</item>
+        <item>浏览量</item>
+    </string-array>
+
+    <!--排序值列表-->
+    <string-array name="sort_value_entry">
+        <item></item>
+        <item>post_time-desc</item>
+        <item>title-asc</item>
+        <item>viewCount-desc</item>
+    </string-array>
 </resources>

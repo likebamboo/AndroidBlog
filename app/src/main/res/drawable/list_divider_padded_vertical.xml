@@ -2,8 +2,8 @@
 <layer-list
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:bottom="@dimen/padding_small"
-        android:top="@dimen/padding_small">
+        android:bottom="@dimen/padding_medium"
+        android:top="@dimen/padding_medium">
         <shape android:shape="rectangle">
             <solid android:color="@color/divider"/>
             <size android:width="1dip"/>

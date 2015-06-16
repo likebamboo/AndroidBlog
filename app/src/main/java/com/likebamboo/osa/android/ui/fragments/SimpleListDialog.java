@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -55,6 +56,11 @@ public class SimpleListDialog<T extends LDialogItem> extends DialogFragment {
      */
     private OnDialogItemClickListener<T> mListener = null;
 
+    /**
+     * 适配器
+     */
+    private ListDialogAdapter<T> mAdapter = null;
+
     public interface OnDialogItemClickListener<T extends LDialogItem> {
         void onItemClick(T obj);
     }
@@ -71,6 +77,15 @@ public class SimpleListDialog<T extends LDialogItem> extends DialogFragment {
      */
     public void setOnItemClickListener(OnDialogItemClickListener<T> mListener) {
         this.mListener = mListener;
+    }
+
+    /**
+     * 刷新数据
+     */
+    public void notifyDataChanged() {
+        if (mAdapter == null) {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -90,8 +105,8 @@ public class SimpleListDialog<T extends LDialogItem> extends DialogFragment {
         ListView listView = (ListView) root.findViewById(R.id.simple_list_dialog_list);
 
         // 设置ListView数据源
-        ListDialogAdapter<T> adapter = new ListDialogAdapter<T>(mContext, mDatas);
-        listView.setAdapter(adapter);
+        mAdapter = new ListDialogAdapter<T>(mContext, mDatas);
+        listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
             @SuppressWarnings("unchecked")
             @Override
@@ -118,7 +133,10 @@ public class SimpleListDialog<T extends LDialogItem> extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Dialog dialog = new Dialog(mContext);
+        final Dialog dialog = new Dialog(mContext, R.style.simple_dialog_style);
+        Window window = dialog.getWindow();
+        //设置显示动画
+        window.setWindowAnimations(R.style.DialogSlideAnimation);
         dialog.setCanceledOnTouchOutside(true);
         return dialog;
     }
@@ -161,7 +179,7 @@ public class SimpleListDialog<T extends LDialogItem> extends DialogFragment {
             if (item.isSelected()) {
                 holder.iconIv.setVisibility(View.VISIBLE);
             } else {
-                holder.iconIv.setVisibility(View.GONE);
+                holder.iconIv.setVisibility(View.INVISIBLE);
             }
             holder.titleTv.setText(item.getName());
 

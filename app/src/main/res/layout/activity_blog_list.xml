@@ -23,6 +23,7 @@
         layout="@layout/list_filter_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"/>
+        android:layout_gravity="bottom"
+        android:visibility="gone"/>
 
 </FrameLayout>

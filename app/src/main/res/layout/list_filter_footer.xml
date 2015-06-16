@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
     android:layout_gravity="bottom"
-    android:background="@android:color/white">
+    android:background="@color/bg_translucent_white">
 
     <View
         android:layout_width="fill_parent"
@@ -30,7 +30,8 @@
             android:background="@drawable/bg_list_item_selector"
             android:gravity="center"
             android:text="@string/category"
-            android:textSize="@dimen/text_large"/>
+            android:textSize="@dimen/text_large"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/filter_sort_tv"

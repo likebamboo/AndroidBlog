@@ -156,7 +156,7 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
     public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
         // our handling
         int lastInScreen = firstVisibleItem + visibleItemCount;
-        if (lastInScreen >= totalItemCount) {
+        if (lastInScreen >= totalItemCount && mAdapter != null && !mAdapter.isEmpty()) {
             // 加载更多数据。
             loadDatas();
         }
@@ -185,6 +185,8 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
         isLoading = true;
         if (mPageIndex > 0) {
             mFooterView.showLoading(true);
+        } else {
+            mLoadingLayout.showLoading(true);
         }
         // 加载数据
         RequestParams params = new RequestParams();
