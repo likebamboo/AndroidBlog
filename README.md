@@ -35,4 +35,4 @@
 
 ## 关于
 本项目的前端和后端均由我一人开发，后端代码暂不开源，主要是因为本人不太会写后端，后端代码太烂了(其实前端也不怎么样)。  
-本项目的Apk安装包赞不会发布到任何应用市场，请直接在[release](https://github.com/likebamboo/AndroidBlog/releases)下载。
+本项目的Apk安装包暂时不会发布到任何应用市场，请直接在[release](https://github.com/likebamboo/AndroidBlog/releases)下载。
