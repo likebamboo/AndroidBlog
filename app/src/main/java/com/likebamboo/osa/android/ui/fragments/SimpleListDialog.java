@@ -30,11 +30,14 @@ import java.util.ArrayList;
  * @since [产品/模块版本]
  */
 public class SimpleListDialog<T extends LDialogItem> extends DialogFragment {
-
     /**
-     * 上下文对象
+     * 标题
      */
-    private Context mContext = null;
+    public static final String EXTRA_LIST_DIALOG_TITLE = "extra_list_dialog_title";
+    /**
+     * 标题
+     */
+    public static final String EXTRA_LIST_DIALOG_DATAS = "extra_list_dialog_datas";
 
     /**
      * 根布局
@@ -65,11 +68,28 @@ public class SimpleListDialog<T extends LDialogItem> extends DialogFragment {
         void onItemClick(T obj);
     }
 
-    public SimpleListDialog(Context context, String title, ArrayList<T> data) {
-        this.mContext = context;
-        this.title = title;
-        this.mDatas = data;
+    public static SimpleListDialog getInstance(String title, ArrayList<? extends LDialogItem> datas) {
+        SimpleListDialog fragment = new SimpleListDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString(EXTRA_LIST_DIALOG_TITLE, title);
+        bundle.putParcelableArrayList(EXTRA_LIST_DIALOG_DATAS, datas);
+        fragment.setArguments(bundle);
+        return fragment;
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            title = getArguments().getString(EXTRA_LIST_DIALOG_TITLE);
+            try {
+                mDatas = getArguments().getParcelableArrayList(EXTRA_LIST_DIALOG_DATAS);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     /**
      * @param mListener
@@ -91,7 +111,7 @@ public class SimpleListDialog<T extends LDialogItem> extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (root == null) {
-            root = View.inflate(mContext, R.layout.simple_list_dialog, null);
+            root = View.inflate(getActivity(), R.layout.simple_list_dialog, null);
         }
 
         // 缓存的rootView需要判断是否已经被加过parent，
@@ -105,7 +125,7 @@ public class SimpleListDialog<T extends LDialogItem> extends DialogFragment {
         ListView listView = (ListView) root.findViewById(R.id.simple_list_dialog_list);
 
         // 设置ListView数据源
-        mAdapter = new ListDialogAdapter<T>(mContext, mDatas);
+        mAdapter = new ListDialogAdapter<T>(getActivity(), mDatas);
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
             @SuppressWarnings("unchecked")
@@ -133,7 +153,7 @@ public class SimpleListDialog<T extends LDialogItem> extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Dialog dialog = new Dialog(mContext, R.style.simple_dialog_style);
+        final Dialog dialog = new Dialog(getActivity(), R.style.simple_dialog_style);
         Window window = dialog.getWindow();
         //设置显示动画
         window.setWindowAnimations(R.style.DialogSlideAnimation);

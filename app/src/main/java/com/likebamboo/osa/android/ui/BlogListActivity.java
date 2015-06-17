@@ -2,6 +2,8 @@ package com.likebamboo.osa.android.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AbsListView;
@@ -79,6 +81,19 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
             mSort = getIntent().getStringExtra(EXTRA_SORT_KEY);
         }
 
+        // 处理屏幕旋转等情况下数据恢复的情况。
+        if (savedInstanceState != null) {
+            Fragment dialog = getSupportFragmentManager().findFragmentByTag("SortDialog");
+            if (dialog != null && (dialog instanceof SimpleListDialog)) {
+                ((SimpleListDialog) dialog).setOnItemClickListener(getSortItemClickListener());
+            }
+            //
+            String sort = savedInstanceState.getString(EXTRA_SORT_KEY);
+            if (!TextUtils.isEmpty(sort)) {
+                mSort = sort;
+            }
+        }
+
         // 设置空态页面
         mBlogListView.setEmptyView(mLoadingLayout);
         // 添加footer
@@ -146,27 +161,34 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
             item.setSelected(false);
         }
         if (mSortDialog == null) {
-            mSortDialog = new SimpleListDialog<>(this, getString(R.string.sort), mSortDatas);
-            mSortDialog.setOnItemClickListener(new SimpleListDialog.OnDialogItemClickListener<LDialogItem>() {
-                @Override
-                public void onItemClick(LDialogItem obj) {
-                    if (obj == null) {
-                        return;
-                    }
-                    // 回到顶部
-                    mBlogListView.setSelection(0);
-                    // 重置数据
-                    reset();
-                    // 设置排序规则
-                    mSort = obj.getValue();
-                    // 重新加载数据
-                    loadDatas();
-                }
-            });
+            mSortDialog = SimpleListDialog.getInstance(getString(R.string.sort), mSortDatas);
+            mSortDialog.setOnItemClickListener(getSortItemClickListener());
         } else {
             mSortDialog.notifyDataChanged();
         }
         mSortDialog.show(getSupportFragmentManager(), "SortDialog");
+    }
+
+    /**
+     * @return
+     */
+    private SimpleListDialog.OnDialogItemClickListener<LDialogItem> getSortItemClickListener() {
+        return new SimpleListDialog.OnDialogItemClickListener<LDialogItem>() {
+            @Override
+            public void onItemClick(LDialogItem obj) {
+                if (obj == null) {
+                    return;
+                }
+                // 回到顶部
+                mBlogListView.setSelection(0);
+                // 重置数据
+                reset();
+                // 设置排序规则
+                mSort = obj.getValue();
+                // 重新加载数据
+                loadDatas();
+            }
+        };
     }
 
     /**
@@ -240,6 +262,18 @@ public abstract class BlogListActivity extends EndlessActivity<BlogList> {
         if (mScrollListener != null) {
             mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(EXTRA_SORT_KEY, mSort);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putString(EXTRA_SORT_KEY, mSort);
     }
 
     /**

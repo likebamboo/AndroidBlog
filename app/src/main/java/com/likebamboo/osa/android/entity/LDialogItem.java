@@ -1,5 +1,8 @@
 package com.likebamboo.osa.android.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * {@link com.likebamboo.osa.android.ui.fragments.SimpleListDialog} Item项
  *
@@ -8,7 +11,7 @@ package com.likebamboo.osa.android.entity;
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public class LDialogItem {
+public class LDialogItem implements Parcelable {
 
     private boolean selected = false;
 
@@ -52,4 +55,32 @@ public class LDialogItem {
     public String toString() {
         return "LDialogItem [selected=" + selected + ", name=" + name + "]";
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(selected ? (byte) 1 : (byte) 0);
+        dest.writeString(this.name);
+        dest.writeString(this.value);
+    }
+
+    private LDialogItem(Parcel in) {
+        this.selected = in.readByte() != 0;
+        this.name = in.readString();
+        this.value = in.readString();
+    }
+
+    public static final Parcelable.Creator<LDialogItem> CREATOR = new Parcelable.Creator<LDialogItem>() {
+        public LDialogItem createFromParcel(Parcel source) {
+            return new LDialogItem(source);
+        }
+
+        public LDialogItem[] newArray(int size) {
+            return new LDialogItem[size];
+        }
+    };
 }
