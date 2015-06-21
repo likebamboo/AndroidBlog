@@ -190,6 +190,7 @@ public abstract class BaseRecycleAdapter<T> extends RecyclerView.Adapter<Recycle
         if (mDatas != null) {
             mDatas.clear();
         }
+        notifyDataSetChanged();
     }
 
     /**

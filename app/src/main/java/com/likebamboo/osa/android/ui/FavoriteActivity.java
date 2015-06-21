@@ -292,6 +292,9 @@ public class FavoriteActivity extends BlogListActivity {
 
     @Override
     protected void loadDatas(RequestParams params) {
+        if (isRefreshing) {
+            mPageIndex = 0;
+        }
         // 加载本地数据
         BlogList list = new BlogList();
         ArrayList<BlogList.Blog> blogs = BlogList.Blog.listPage(mPageIndex, mPageSize, StringUtil.toSQLName("favTime") + " desc ");
@@ -302,6 +305,13 @@ public class FavoriteActivity extends BlogListActivity {
         }
         isLoading = false;
         mLoadingLayout.showLoading(false);
+        // 如果是刷新数据
+        if (isRefreshing) {
+            // 清空现有数据
+            reset();
+            // 停止刷新
+            stopRefresh();
+        }
         doOnSuccess(list);
     }
 
