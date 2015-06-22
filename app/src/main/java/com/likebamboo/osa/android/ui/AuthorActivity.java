@@ -168,4 +168,11 @@ public class AuthorActivity extends EndlessActivity<AuthorList> {
         mAuthorAdapter.addDatas(data.getList());
     }
 
+    @Override
+    protected void reset() {
+        super.reset();
+        if (mAuthorAdapter != null) {
+            mAuthorAdapter.clear();
+        }
+    }
 }

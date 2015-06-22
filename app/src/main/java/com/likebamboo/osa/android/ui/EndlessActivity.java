@@ -1,6 +1,7 @@
 package com.likebamboo.osa.android.ui;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.widget.AbsListView;
 
@@ -22,7 +23,8 @@ import butterknife.InjectView;
  * 分页加载数据Activity基类
  * Created by likebamboo on 2015/5/14.
  */
-public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActivity implements AbsListView.OnScrollListener {
+public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActivity implements AbsListView.OnScrollListener,
+        SwipeRefreshLayout.OnRefreshListener {
 
     /**
      * pageSize ， 默认值 20
@@ -75,6 +77,16 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
      */
     protected boolean isLoading = false;
 
+    /**
+     * 是否正在下拉刷新数据
+     */
+    protected boolean isRefreshing = false;
+
+    /**
+     * 下拉刷新控件
+     */
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +108,14 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
                 reloadDatas();
             }
         });
+
+        // 下拉刷新
+        try {
+            mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+            mSwipeRefreshLayout.setOnRefreshListener(this);
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     @Override
@@ -142,6 +162,13 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
             public void onResponse(T data) {
                 isLoading = false;
                 mLoadingLayout.showLoading(false);
+                // 如果是刷新数据
+                if (isRefreshing) {
+                    // 清空现有数据
+                    reset();
+                    // 停止刷新
+                    stopRefresh();
+                }
                 doOnSuccess(data);
             }
         };
@@ -194,6 +221,21 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
         loadDatas(params);
     }
 
+    @Override
+    public void onRefresh() {
+        // 如果正在加载数据，不刷新
+        if (isLoading) {
+            // stop refresh
+            stopRefresh();
+            return;
+        }
+        isRefreshing = true;
+        // 加载数据
+        RequestParams params = new RequestParams();
+        params.add(PARAM_PAGE_NO, 1 + "").add(PARAM_PAGE_SIZE, "" + mPageSize);
+        loadDatas(params);
+    }
+
     /**
      * 加载失败，显示错误信息
      *
@@ -228,16 +270,28 @@ public abstract class EndlessActivity<T extends BaseRsp> extends NavigationActiv
      */
     protected void reset() {
         // 清空现有数据
-        mAdapter.clear();
+        if (mAdapter != null) {
+            mAdapter.clear();
+        }
         isLoading = false;
         mHasMore = true;
         mPageIndex = 0;
     }
 
+    /**
+     * stopRefresh
+     */
+    protected void stopRefresh() {
+        isRefreshing = false;
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
     protected abstract void loadDatas(RequestParams params);
 
     /**
-     * 加载数据出错回调
+     * 加载数据成功回调
      */
     protected abstract void doOnSuccess(T data);
 

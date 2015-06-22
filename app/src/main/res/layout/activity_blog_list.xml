@@ -4,13 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.etsy.android.grid.StaggeredGridView
-        android:id="@+id/list_view"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:column_count_landscape="@integer/staggered_columns_landscape"
-        app:column_count_portrait="@integer/staggered_columns_portrait"
-        app:item_margin="@dimen/padding_small"/>
+        android:layout_height="match_parent">
+
+        <com.etsy.android.grid.StaggeredGridView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:column_count_landscape="@integer/staggered_columns_landscape"
+            app:column_count_portrait="@integer/staggered_columns_portrait"
+            app:item_margin="@dimen/padding_small"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <include
         android:id="@android:id/empty"
