@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>在Android 5.0中使用JobScheduler | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在这篇文章中，你会学习到在Android 5.0中如何使用JobScheduler API。JobScheduler API允许开发者在符合某些条件时创建执行在后台的任务。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在Android 5.0中使用JobScheduler">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/04/29/using-the-jobscheduler-api-on-android-lollipop/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="在这篇文章中，你会学习到在Android 5.0中如何使用JobScheduler API。JobScheduler API允许开发者在符合某些条件时创建执行在后台的任务。">
+<meta property="og:updated_time" content="2015-06-26T03:05:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在Android 5.0中使用JobScheduler">
+<meta name="twitter:description" content="在这篇文章中，你会学习到在Android 5.0中如何使用JobScheduler API。JobScheduler API允许开发者在符合某些条件时创建执行在后台的任务。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-using-the-jobscheduler-api-on-android-lollipop" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/using-the-jobscheduler-api-on-android-lollipop/" class="article-date">
+  <time datetime="2015-04-28T16:00:00.000Z" itemprop="datePublished">2015-04-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      在Android 5.0中使用JobScheduler
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在这篇文章中，你会学习到在Android 5.0中如何使用JobScheduler API。JobScheduler API允许开发者在符合某些条件时创建执行在后台的任务。<br><a id="more"></a></p>
+<h2 id="介绍">介绍</h2><p>在Android开发中，会存在这么些场景 : 你需要在稍后的某个时间点或者当满足某个特定的条件时执行一个任务，例如当设备接通电源适配器或者连接到WIFI。幸运的是在API 21 ( Android 5.0，即Lollipop )中，google提供了一个叫做JobScheduler API的新组件来处理这样的场景。</p>
+<p>当一系列预置的条件被满足时，JobScheduler API为你的应用执行一个操作。与AlarmManager不同的是这个执行时间是不确定的。除此之外，JobScheduler API允许同时执行多个任务。这允许你的应用执行某些指定的任务时不需要考虑时机控制引起的电池消耗。</p>
+<p>这篇文章中，你会学到关于JobScheduler API更多的东西以及在你的应用中用于运行一个简单的后台任务的JobService，这篇文章中所展示的代码你都可以在<a href="https://github.com/tutsplus/Android-JobSchedulerAPI" target="_blank" rel="external">github</a>中找到。</p>
+<h2 id="1-_创建Job_Service">1. 创建Job Service</h2><p>首先，你需要创建一个API最低为21的Android项目，因为JobScheduler是最近的版本才加入Android的，在写这篇文章的时候，它还没有兼容库支持。（译者注：截止目前已知一个兼容库 <a href="https://github.com/evant/JobSchedulerCompat" target="_blank" rel="external">JobSchedulerCompat</a>）</p>
+<p>假定你使用的是Android Studio,当你点击了创建项目的完成按钮之后，你会得到一个”hello world”的应用骨架。你要做的第一步就是创建一个新的java类。为了简单起见，让我们创建一个继承自JobService且名字为JobSchedulerService的类，这个类必须实现两个方法，分别是<code>onStartJob(JobParameters params)</code>和 <code>onStopJob(JobParameters params)</code>；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JobSchedulerService</span> <span class="keyword">extends</span> <span class="title">JobService</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStartJob</span><span class="params">(JobParameters params)</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStopJob</span><span class="params">(JobParameters params)</span> </span>&#123;</span><br><span class="line">         </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当任务开始时会执行<code>onStartJob(JobParameters params)</code>方法，因为这是系统用来触发已经被执行的任务。正如你所看到的，这个方法返回一个boolean值。如果返回值是false,系统假设这个方法返回时任务已经执行完毕。如果返回值是true,那么系统假定这个任务正要被执行，执行任务的重担就落在了你的肩上。当任务执行完毕时你需要调用<code>jobFinished(JobParameters params, boolean needsRescheduled)</code>来通知系统。</p>
+<p>当系统接收到一个取消请求时，系统会调用<code>onStopJob(JobParameters params)</code>方法取消正在等待执行的任务。很重要的一点是如果<code>onStartJob(JobParameters params)</code>返回false,那么系统假定在接收到一个取消请求时已经没有正在运行的任务。换句话说，<code>onStopJob(JobParameters params)</code>在这种情况下不会被调用。</p>
+<p>需要注意的是这个job service运行在你的主线程，这意味着你需要使用子线程，handler, 或者一个异步任务来运行耗时的操作以防止阻塞主线程。因为多线程技术已经超出了我们这篇文章的范围，让我们简单实现一个Handler来执行我们在JobSchedulerService定义的任务吧。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Handler mJobHandler = <span class="keyword">new</span> Handler( <span class="keyword">new</span> Handler.Callback() &#123;</span><br><span class="line">     </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">handleMessage</span><span class="params">( Message msg )</span> </span>&#123;</span><br><span class="line">        Toast.makeText( getApplicationContext(), </span><br><span class="line">            <span class="string">"JobService task running"</span>, Toast.LENGTH_SHORT )</span><br><span class="line">            .show();</span><br><span class="line">        jobFinished( (JobParameters) msg.obj, <span class="keyword">false</span> );</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
+<p>在Handler中，你需要实现<code>handleMessage(Message msg)</code>方法来处理你的任务逻辑。在这个例子中，我们尽量保证例子简单，因此我们只在<code>handleMessage(Message msg)</code>中显示了一个Toast，这里就是你要写你的任务逻辑( 耗时操作 )的地方，比如同步数据等。</p>
+<p>当任务执行完毕之后，你需要调用<code>jobFinished(JobParameters params, boolean needsRescheduled)</code>来让系统知道这个任务已经结束，系统可以将下一个任务添加到队列中。如果你没有调用<code>jobFinished(JobParameters params, boolean needsRescheduled)</code>，你的任务只会执行一次，而应用中的其他任务就不会被执行。</p>
+<p><code>jobFinished(JobParameters params, boolean needsRescheduled)</code>的两个参数中的params参数是从JobService的<code>onStartJob(JobParameters params)</code>的params传递过来的，needsRescheduled参数是让系统知道这个任务是否应该在最初的条件下被重复执行。这个boolean值很有用，因为它指明了你如何处理由于其他原因导致任务执行失败的情况，例如一个失败的网络请求调用。</p>
+<p>创建了Handler实例之后，你就可以实现<code>onStartJob(JobParameters params)</code> 和<code>onStopJob(JobParameters params)</code>方法来控制你的任务了。你可能已经注意到在下面的代码片段中<code>onStartJob(JobParameters params)</code>返回了true。这是因为你要通过Handler实例来控制你的操作，这意味着Handler的handleMessage方法的执行时间可能比<code>onStartJob(JobParameters params)</code>更长。返回true,你会让系统知道你会手动地调用<code>jobFinished(JobParameters params, boolean needsRescheduled)</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStartJob</span><span class="params">(JobParameters params)</span> </span>&#123;</span><br><span class="line">    mJobHandler.sendMessage( Message.obtain( mJobHandler, <span class="number">1</span>, params ) );</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStopJob</span><span class="params">(JobParameters params)</span> </span>&#123;</span><br><span class="line">    mJobHandler.removeMessages( <span class="number">1</span> );</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一旦你在Java部分做了上述工作之后，你需要到AndroidManifest.xml中添加一个service节点让你的应用拥有绑定和使用这个JobService的权限。</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;service android:<span class="variable">name=</span><span class="string">".JobSchedulerService"</span></span><br><span class="line">    android:<span class="variable">permission=</span><span class="string">"android.permission.BIND_JOB_SERVICE"</span> /&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="2-_创建一个JobScheduler对象">2. 创建一个JobScheduler对象</h2><p>随着JobSchedulerService构建完毕，我们可以开始研究你的应用如何与JobScheduler API进行交互了。第一件要做的事就是你需要创建一个JobScheduler对象，在实例代码的MainActivity中我们通过<code>getSystemService( Context.JOB_SCHEDULER_SERVICE )</code>初始化了一个叫做mJobScheduler的JobScheduler对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mJobScheduler = (JobScheduler) </span><br><span class="line">    getSystemService( Context.JOB_SCHEDULER_SERVICE );</span><br><span class="line">```    </span><br><span class="line">当你想创建定时任务时，你可以使用`JobInfo.Builder`来构建一个JobInfo对象，然后传递给你的Service。JobInfo.Builder接收两个参数，第一个参数是你要运行的任务的标识符，第二个是这个Service组件的类名。</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">JobInfo.Builder builder = <span class="keyword">new</span> JobInfo.Builder( <span class="number">1</span>,</span><br><span class="line">        <span class="keyword">new</span> ComponentName( getPackageName(), </span><br><span class="line">            JobSchedulerService.class.getName() ) );</span><br></pre></td></tr></table></figure>
+<p>这个builder允许你设置很多不同的选项来控制任务的执行。下面的代码片段就是展示了如何设置以使得你的任务可以每隔三秒运行一次。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">builder.setPeriodic( <span class="number">3000</span> );</span><br></pre></td></tr></table></figure>
+<p>其他设置方法 : </p>
+<ul>
+<li>setMinimumLatency(long minLatencyMillis): 这个函数能让你设置任务的延迟执行时间(单位是毫秒),这个函数与<code>setPeriodic(long time)</code>方法不兼容，如果这两个方法同时调用了就会引起异常；</li>
+<li>setOverrideDeadline(long maxExecutionDelayMillis):<br>这个方法让你可以设置任务最晚的延迟时间。如果到了规定的时间时其他条件还未满足，你的任务也会被启动。与<code>setMinimumLatency(long time)</code>一样，这个方法也会与<code>setPeriodic(long time)</code>不兼容，同时调用这两个方法会引发异常。</li>
+<li>setPersisted(boolean isPersisted):<br>这个方法告诉系统当你的设备重启之后你的任务是否还要继续执行。</li>
+<li>setRequiredNetworkType(int networkType):<br>这个方法让你这个任务只有在满足指定的网络条件时才会被执行。默认条件是JobInfo.NETWORK_TYPE_NONE，这意味着不管是否有网络这个任务都会被执行。另外两个可选类型，一种是JobInfo.NETWORK_TYPE_ANY，它表明需要任意一种网络才使得任务可以执行。另一种是JobInfo.NETWORK_TYPE_UNMETERED，它表示设备不是蜂窝网络( 比如在WIFI连接时 )时任务才会被执行。</li>
+<li>setRequiresCharging(boolean requiresCharging):<br>这个方法告诉你的应用，只有当设备在充电时这个任务才会被执行。</li>
+<li>setRequiresDeviceIdle(boolean requiresDeviceIdle):<br>这个方法告诉你的任务只有当用户没有在使用该设备且有一段时间没有使用时才会启动该任务。</li>
+</ul>
+<p>需要注意的是<code>setRequiredNetworkType(int networkType)</code>, <code>setRequiresCharging(boolean requireCharging)</code> 以及 <code>setRequiresDeviceIdle(boolean requireIdle)</code>这几个方法可能会使得你的任务无法执行，除非调用<code>setOverrideDeadline(long time)</code>设置了最大延迟时间，使得你的任务在未满足条件的情况下也会被执行。一旦你预置的条件被设置，你就可以构建一个JobInfo对象，然后通过如下所示的代码将它发送到你的JobScheduler中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>( mJobScheduler.schedule( builder.build() ) &lt;= <span class="number">0</span> ) &#123;</span><br><span class="line">    <span class="comment">//If something goes wrong</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你可能注意到了，这个schedule方法会返回一个整型。如果schedule方法失败了，它会返回一个小于0的错误码。否则它会返回我们在JobInfo.Builder中定义的标识id。</p>
+<p>如果你的应用想停止某个任务，你可以调用JobScheduler对象的<code>cancel(int jobId)</code>来实现；如果你想取消所有的任务，你可以调用JobScheduler对象的<code>cancelAll()</code>来实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mJobScheduler.cancelAll();</span><br></pre></td></tr></table></figure>
+<p>到了这里，你现在应该已经知道如何在你的应用中使用JobScheduler API来执行批量任务和后台操作了。</p>
+<h2 id="结论">结论</h2><p>这篇文章中，你学会了怎么实现一个使用Handler对象来运行后台任务的JobService子类，你也学会了如何使用JobInfo.Builder来设置JobService。掌握了这些之后，你可以在减少资源消耗的同时提升应用的效率。</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://code.tutsplus.com/tutorials/using-the-jobscheduler-api-on-android-lollipop--cms-23562" target="_blank" rel="external">using-the-jobscheduler-api-on-android-lollipop</a></li>
+<li>译者 : <a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a></li>
+<li>校对者 : <a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a></li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/29/using-the-jobscheduler-api-on-android-lollipop/" data-id="cibd5w1wp0007swfl601oyv4a" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/29/using-the-jobscheduler-api-on-android-lollipop/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/parameterized-testing-with-robolectric/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          使用Robolectric的参数化测试
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/android-mvx/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">简化Android的UI开发</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/29/using-the-jobscheduler-api-on-android-lollipop/" data-title="在Android 5.0中使用JobScheduler" data-url="http://likebamboo.com/AndroidBlog/2015/04/29/using-the-jobscheduler-api-on-android-lollipop/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">13</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/">Google+ 团队的 Android UI 测试</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/">ListView或者RecycleView滚动时隐藏Toolbar (1)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/the-clean-architecture/">The Clean Architecture</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/">让你的Android应用能使用多种主题 ( Part 2 )</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/android-mvp-an-alternate-approach/">一种在android中实现MVP模式的新思路</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

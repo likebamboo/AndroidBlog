@@ -5,7 +5,7 @@
   <subtitle><![CDATA[读万卷书]]></subtitle>
   <link href="http://likebamboo.com/AndroidBlog/atom.xml" rel="self"/>
   <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog//"/>
-  <updated>2015-06-25T12:38:52.000Z</updated>
+  <updated>2015-06-26T03:09:13.000Z</updated>
   <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog//</id>
   
   <author>
@@ -14,6 +14,864 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Google+ 团队的 Android UI 测试]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T03:09:13.000Z</updated>
+    <content type="html"><![CDATA[<p>Android 测试主要分为3个类型：</p>
+<h4 id="单元测试（Unit_Test)">单元测试（Unit Test)</h4><p>区分UI代码和功能代码在Android开发中尤其困难。因为有时Activity既有Controller的功能，又有View的功能。<a href="http://pivotal.github.io/robolectric/" target="_blank" rel="external">Robolectric</a>是一个很优秀的Android测试框架，它提供了一个Android框架的stub，这样测试运行时实际上是在JVM上运行，而不是在Android平台（比如Robotium和Instrumentation都是在Android平台运行测试），从而提高了速度。另外请参考<a href="http://tools.android.com/tech-docs/unit-testing-support" target="_blank" rel="external">Gradle 对 Unit tests的支持</a>。</p>
+<h4 id="封闭UI测试_（Hermetic_UI_Test)">封闭UI测试 （Hermetic UI Test)</h4><p>这个测试方法使得测试不需要外部依赖和网络请求。这样做的主要目的是提高测试速度，减少测试时的外部影响，毕竟网络调用是相对很慢的。<a href="http://www.youtube.com/watch?v=T7ugmCuNxDU" target="_blank" rel="external">Espresso</a>可以用来模拟用户的UI操作。</p>
+<h4 id="Monkey_Test">Monkey Test</h4><p>Monkey Test 就好像一只猴子在测试app一样，没有任何规律的在你的app上胡按。计算机运行monkey test的时候，每秒钟能做出几千个UI动作（可以配置这个频率），比如点击和拖拽。所以这个测试可以算是一个压力测试，用来检测<a href="http://developer.android.com/training/articles/perf-anr.html" target="_blank" rel="external">ANR</a>。</p>
+<h2 id="<!-more->"><a id="more"></a></h2><p>Google+ 团队总结了一些 UI 测试时的经验和策略。</p>
+<h4 id="策略1：_不要使用_End-to-end_测试作为UI测试">策略1： 不要使用 End-to-end 测试作为UI测试</h4><p>先看一些定义：<strong>UI 测试</strong> 是为了确保对于用户的UI动作，app能返回正确的UI输出。<strong>End-to-end测试（E2E test)</strong> 是通过客户端和后台服务器的交互测试整个系统。下面这个图在展示了测试步骤：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507159_1836.png" alt=""></p>
+<p>通常做UI测试，你需要后台服务器，所以可能产生网络调用。所以UI测试和E2E测试很像。但是在E2E测试中会遇到很多困难：</p>
+<ul>
+<li>测试速度缓慢</li>
+<li>网络请求会失败</li>
+<li>难以Debug</li>
+</ul>
+<p>下面看看如何解决这些问题。</p>
+<h4 id="策略2：使用伪服务器做封闭UI测试">策略2：使用伪服务器做封闭UI测试</h4><p>这个策略中，你可以通过假的后台服务器来避免网络请求，以及其他外部依赖。技术上，你就需要在app本地提供返回数据了。有很多办法可以做到，比如手动做一次网络请求，把response保存下来，在测试的时候重复这个response。这样你就做了一个封闭在本地的伪服务器</p>
+<p>当你有了这个伪服务器，你还需要给这个伪服务器写测试。于是这是，你的E2E测试就分为了服务器测试，客户端测试和集成测试。</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507159_8354.png" alt=""></p>
+<p>现在这样的解决方案，你需要自己维护伪服务器，本地数据库和tests了。</p>
+<p>下面这是E2E 测试的示例图：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507160_4776.jpg" alt=""></p>
+<p>这是使用了伪服务器的封闭UI测试</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507167_8779.jpg" alt=""></p>
+<p>其区别在于：Frontend Server的几个数据源变了。由原来的真实后端，变成了封闭服务器，或者是mock服务器。这个在测试调用网络API的时候非常有用。</p>
+<h4 id="策略3：使用Dependency_Injection">策略3：使用Dependency Injection</h4><p>Dependency Injection（依赖注入）可以帮助生成测试数据。我推荐选择使用<a href="http://square.github.io/dagger/" target="_blank" rel="external">dagger</a>作为依赖注入框架。</p>
+<p>依赖注入在UI test和unit test都中都可以用于生成假数据。在instrumentation test框架中，测试用的apk文件和测试时运行的app，是在同一个进程下面，所以测试代码可以调用app代码。你还可以覆盖app的classpath，通过这种方式注入假数据。比如你可以用依赖注入来伪造一个网络连接的实现，调用这个网络连接的时候就可以提供假数据。</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507159_6700.png" alt=""></p>
+<h3 id="策略4：把app分为小的libraries">策略4：把app分为小的libraries</h3><p>这个方法可以更好地模块化你的app。你的app被分为更小的类库之后，你可以为这些类库添加他们自己的UI依赖或gradle库依赖。</p>
+<p>当你有了自己的库，并提供依赖注入的支持，那么你可以为各个库写测试app。最后，可以写<strong>集成测试</strong>来确保类库直接的合作正确。</p>
+<p>比如我们有一个登陆功能的库，那么我可以写一个测试app只为这个登陆功能库：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507160_4803.png" alt=""></p>
+<h4 id="总结：">总结：</h4><ol>
+<li>不要用E2E测试来代替UI测试。更好的做法是用单元测试 + 集成测试 + UI测试。</li>
+<li>使用封闭测试策略</li>
+<li>使用依赖注入</li>
+<li>把app分为不同的小组件小类库，并分别写测试，然后再写集成测试来确保各组件之间的交互正确。</li>
+<li>模块化 UI 测试已经被证明了比E2E测试快，并且十分稳定。这样的测试又能极大的提高开发效率。</li>
+</ol>
+<blockquote>
+<ul>
+<li>原文链接：<a href="http://googletesting.blogspot.sg/2013/08/how-google-team-tests-mobile-apps.html" target="_blank" rel="external">How the Google+ Team Tests Mobile Apps</a></li>
+<li>译者：<a href="http://allelsy.com" target="_blank" rel="external">allenlsy</a></li>
+<li>译者博文地址：<a href="">http://allenlsy.com/android-ui-tests-in-google-plus-team/</a></li>
+<li>校对者:</li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Android 测试主要分为3个类型：</p>
+<h4 id="单元测试（Unit_Test)">单元测试（Unit Test)</h4><p>区分UI代码和功能代码在Android开发中尤其困难。因为有时Activity既有Controller的功能，又有View的功能。<a href="http://pivotal.github.io/robolectric/">Robolectric</a>是一个很优秀的Android测试框架，它提供了一个Android框架的stub，这样测试运行时实际上是在JVM上运行，而不是在Android平台（比如Robotium和Instrumentation都是在Android平台运行测试），从而提高了速度。另外请参考<a href="http://tools.android.com/tech-docs/unit-testing-support">Gradle 对 Unit tests的支持</a>。</p>
+<h4 id="封闭UI测试_（Hermetic_UI_Test)">封闭UI测试 （Hermetic UI Test)</h4><p>这个测试方法使得测试不需要外部依赖和网络请求。这样做的主要目的是提高测试速度，减少测试时的外部影响，毕竟网络调用是相对很慢的。<a href="http://www.youtube.com/watch?v=T7ugmCuNxDU">Espresso</a>可以用来模拟用户的UI操作。</p>
+<h4 id="Monkey_Test">Monkey Test</h4><p>Monkey Test 就好像一只猴子在测试app一样，没有任何规律的在你的app上胡按。计算机运行monkey test的时候，每秒钟能做出几千个UI动作（可以配置这个频率），比如点击和拖拽。所以这个测试可以算是一个压力测试，用来检测<a href="http://developer.android.com/training/articles/perf-anr.html">ANR</a>。</p>
+<h2 id="<!-more->">]]>
+    
+    </summary>
+    
+      <category term="测试" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E6%B5%8B%E8%AF%95/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="自动化测试" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[ListView或者RecycleView滚动时隐藏Toolbar (1)]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T02:56:37.000Z</updated>
+    <content type="html"><![CDATA[<p>今天我打算写一篇博文给大家介绍Google+ App的一个酷炫效果——向上/向下滚动ListView/RecyclerView时，Toolbar和FAB（屏幕右下方的小按钮）会隐藏/出现。这个效果也被Google视为符合 Material Design 规范的效果哦，详情参见： <a href="http://android-developers.blogspot.com/2014/10/material-design-on-android-checklist.html" target="_blank" rel="external">Material Design Checklist</a> 。<br><a id="more"></a></p>
+<blockquote>
+<p>如果可以的话，我们希望当屏幕向下滚动时，App的Toolbar和FAB将离开屏幕，从而在垂直方向上为可显示区域腾出更大的空间来显示我们的内容。而当我们的屏幕向上滚动时，App的Toolbar和FAB会再次出现。</p>
+</blockquote>
+<p>我们做出来的最终效果应该是下面这样的：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447324_1070.gif" alt=""></p>
+<p>在这篇博文的讲解中，我们将会用RecyclerView作为我们的list，但这不代表其他可滚动的容器就不能实现这样的效果了，只是其他的可滚动容器（如：ListView）需要要多花一些功夫才能实现这个效果。那么我们要怎么去实现呢？我想到了两个办法：</p>
+<ul>
+<li>对list容器加一个Padding</li>
+<li>对list容器加一个Header</li>
+</ul>
+<p>就我个人而言，我更想用第二种方法去实现，因为在设计代码的过程中我发现：为RecyclerView添加Header会产生几个问题，这给了我很好的机会去思考如何解决它，与此同时，在这个思考和解决问题的过程中我还能学习到更多的知识，何乐而不为呢？不过我还是会给大家简要地介绍如何使用第一种方法实现的啦！</p>
+<h2 id="那就让我们开始今天的讲解吧！">那就让我们开始今天的讲解吧！</h2><p>首先，我们需要创建一个工程和添加必要的工具库：</p>
+<p>接着我们需要定义 styles.xml ，以确保我们的App没有添加Actionbar（因为我们将会使用Toolbar），同时我们App的设计风格要符合Google的 Material Design 规范。</p>
+<p>最后我们就要创建我们activity中显示的布局：</p>
+<p>事实上，我们只需要一个简单的布局，其中包含了：RecyclerView，Toolbar和ImageButton。但需要注意的是：我们需要把它们放在一个FrameLayout里，否则当我们隐藏Toolbar时list的上方将会出现一个空白区域，这显然不会是我们想要的效果。我们理想的效果应该是：当Toolbar被隐藏，list能在屏幕的可见区域中显示出一整个列表，而这就需要通过使Toolbar覆盖在RecycleView上面来实现。</p>
+<p>接着来看看我们MainActivity代码吧：</p>
+<p>就像你看到的那样，这是一个只重写了OnCreate()方法，非常非常非常简单的Activity。而且OnCreate()方法也只做了下面三件事情：</p>
+<ol>
+<li><p>初始化Toolbar</p>
+</li>
+<li><p>获取mFabButton的引用（mFabButton是FAB的对象哦，也就是屏幕右下方的小按钮）</p>
+</li>
+<li><p>初始化RecyclerView</p>
+</li>
+</ol>
+<p>为了在list中显示出内容，我们现在就要为RecyclerView创建一个Adapter啦。但在此之前，我们应该为我们list中的item添加相应的子布局以及对应的ViewHolder：</p>
+<p>list的每一个item只需要一个text用来显示文字，非常简单！</p>
+<p>那RecyclerAdapter该怎么实现呢：</p>
+<p>就像你看到的这样，这是一个非常普通的RecycleView.Adapter，没有任何特别的地方，是不是感觉被骗了呐  23333～（如果你想要了解更多有关RecyclerView知识，我强烈建议你去看大牛 Mark Allison’s 巨巨写的这些优秀文章 <a href="https://blog.stylingandroid.com/material-part-4/" target="_blank" rel="external">series of posts</a>）</p>
+<p>经过上面的努力，我们已经把车子的小零件组装的七七八八啦，是时候让小车子上路跑一跑，展现真正的技术了！</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447324_5421.png" alt=""></p>
+<p>WTF，谁能告诉我这是什么鬼……？</p>
+<p>我相信只要不是瞎子都会发现，App的Toolbar竟然把我们的item挡住了！！！或许部分机智的小伙伴已经发现了问题所在：出现这样的问题是因为我们在activity_main.xml里使用了FrameLayout，正是FrameLayout导致了这样的问题，而这就是我开头所提到的问题之一了。</p>
+<p>第一个解决办法是为我们的RecyclerView添加一个PaddingTop，并将PaddingTop的值设置为Toolbar的高度。但有一个细节我们不能忽略，那就是RecyclerView会默认裁剪到子View的Padding区域，所以为了我们伟大的事业，我们必须把这个特性关掉。</p>
+<p>经过这些修改之后，我们就能实现我们想要的效果，这就是我所说的第一种方法。但如我所说，我写这篇博文的目的，不仅仅只是教你实现这个效果，然后就完了。我想教给你实现同一个效果各种各样的方法，并且为你介绍其中的思想，让你接触到平常很难接触到的问题并教你如何解决它。有些方法固然会更加复杂（在本文中是为list添加一个Header），但你在实现过程中也能学到更多的知识，毕竟授人以鱼不如授人以渔嘛。</p>
+<h2 id="为RecycleView添加一个Header">为RecycleView添加一个Header</h2><p>要用第二种方法去实现这个效果，首先我们要做的就是稍微修改一下我们的Adapter：</p>
+<p>下面是其实现原理：</p>
+<p>我们需要定义一个常量来区分Recycler展现的item的类型。这里我需要为你介绍的是:RecyclerView是一个非常灵活的组件,RecyclerView 完全能实现你想要让list的item具有各种各样不同的布局的愿望，而此时，我们定义来区分item类型的常量就会被利用到。而这样的特性正是我们想要的——让Header成为RecyclerView的第一个item，显然这会与其余的item不一样。（第3-4行）</p>
+<p>因而我们需要让Recycler知道它需要展示的子布局是什么类型的，在本文中我们用作类型区分的常量则是TYPE_ITEM和TYPE_HEADER。（第49-54行）</p>
+<p>接着，我们需要修改onCreateViewHolder()和onBindViewHolder()方法，如果item的类型是TYPE_ITEM的话，使它们返回和绑定一个普通的item；如果item的类型是TYPE_HEADER的话，则返回Header。（第14-34行）</p>
+<p>此外，由于我们的list并不仅仅只有普通的item，我们还在list中添加了Header，因此我们需要修改getItemCount()方法的返回值，让我们的返回值是普通item的总数量 + 1（第43-45行）</p>
+<p>最后让我们来为Header布局创建一个layout和一个ViewHolder，但出乎意料的是，我们需要为Header创建的layout和ViewHolder都非常简单，唯一需要注意的是：Header的高度必须和Toolbar的高度一致。</p>
+<p>那么这样我们就把布局弄好啦～不信你看图！</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447325_8379.png" alt=""></p>
+<p>所以总的来说，我们为RecyclerView添加了一个和Toolbar有相同高度的Header，而现在我们的Toolbar把header隐藏起来了（因为header现在是一个空的view)，同时，我们所有的普通item都是可见的。那么现在就让我们来实现滚动时改变Toolbar和FAB的出现和隐藏吧！</p>
+<h2 id="滚动时控制Toolbar和FAB的出现和隐藏">滚动时控制Toolbar和FAB的出现和隐藏</h2><p>为了实现这个效果，我们为RecyclerView再创建一个——OnScrollListener类就够了你敢信？</p>
+<p>我现在还要告诉你，在OnScrollListener类里，我们只需要重载onScrolled()方法就能让这个酷炫的效果成为App中秒杀用户的黑魔法！其中，onScrolled()方法的参数——dx,dy分别是水平和垂直方向上的滚动距离。但大家需要注意的是：这里dx，dy并不是代表屏幕上的物理距离，而是两个事件的相对距离。</p>
+<p>具体的实现算法大体如下：</p>
+<p>只有当list向上滚动且Toolbar和FAB被隐藏，抑或是当list向下滚动且Toolbar和FAB出现，我们才会计算总的滚动距离，因为这两种情况下的滚动距离才是我们实现这个效果所需要关心的。</p>
+<p>总的滚动距离需要超过我们展现/隐藏Toolbar和FAB所在的方向的极限值才能将其展现/隐藏（你把极限值调整的越大，通过滚动展示/隐藏Toolbar和FAB需要的距离就越大）（dy&gt;0意味着我们在向下滚动，dy&lt;0意味着我们在向上滑动）</p>
+<p>实际上我们并没有在我们的滚动监听类里面展现/隐藏Toolbar和FAB，我们是通过调用show()/hide()方法来展现/隐藏Toolbar和FAB的，所以调用者可以通过接口实现它。</p>
+<p>现在我们需要为RecyclerView添加它的监听：</p>
+<p>下面是我们通过动画改变我们的视图的方法：</p>
+<p>当我们隐藏Toolbar和FAB的时候，我们必须把Padding也考虑进去，不然的话视图并不能够完全被隐藏。</p>
+<p>是骡子是马，让我们拉出来溜一溜！</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447325_8449.gif" alt=""></p>
+<p>虽然现在看起来已经很nice了，但其实这里有一个小小的bug——如果你在list的顶部，此时临界值非常小，因而你能隐藏Toolbar，但你在list的顶部会看到有一个空白的区域。不过幸好这里有一个很简单的方法可以解决这个bug：我们可以通过检测当前list的第一个item是否为可见的，只有当它不可见，才使用我们设计的展示/隐藏逻辑。</p>
+<p>在这样的修改后，即使第一个item是可见的并且有item被它挡住了，我们也在展示它们，除此以外的情况我们都像之前说的那样实现我们的效果。</p>
+<p>各位观众，接下来，就是见证奇迹的时刻：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447326_5458.gif" alt=""></p>
+<p>太棒了思密达！感觉之前的失败都如雨后甘霖温润我脆弱的心灵呐～</p>
+<p>其实羞羞地说一句……这篇文章是我人生中的第一篇博文呐，如果你觉得很无聊或者我有哪里讲解错误的话千万不要喷我哦。我会在未来变得更棒哒，然后尽我所能为大家贡献更多的文章！</p>
+<p>如果你看到这里还是通过添加Header来实现这个效果很恼火的话，用第一种方法结合HidingScrolllistener 也是可以实现这个效果的～</p>
+<p>如果你有什么疑问的话，可以在评论区问我哦，我都会尽我所能为你解答的！</p>
+<h2 id="源码">源码</h2><p>整个项目的源码在GitHub上面都有，大家可以在这看 <a href="https://github.com/mzgreen/HideOnScrollExample" target="_blank" rel="external">repo</a></p>
+<p>感谢Mirek Stanek帮我校对文章，么么哒！爱你的好基友Michal Z～</p>
+<p>如果你喜欢这篇博文的话，你可以<a href="https://twitter.com/intent/tweet?url=http://mzgreen.github.io/2015/02/15/How-to-hideshow-Toolbar-when-list-is-scroling(part1" target="_blank" rel="external">在Twitter上分享给你的小伙伴</a>/&amp;text=How%20to%20hide/show%20Toolbar%20when%20list%20is%20scroling%20(part%201)&amp;via=mzmzgreen)或者<a href="https://twitter.com/mzmzgreen" target="_blank" rel="external">在Twitter上关注我哦</a>!</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://mzgreen.github.io/2015/02/15/How-to-hideshow-Toolbar-when-list-is-scroling%28part1%29/" target="_blank" rel="external">How to hide/show Toolbar when list is scroling (part 1)</a></li>
+<li>译者 : <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a> </li>
+<li>校对者: <a href="github链接">这里校对者的github用户名</a>  </li>
+<li>状态 :  校对中</li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>今天我打算写一篇博文给大家介绍Google+ App的一个酷炫效果——向上/向下滚动ListView/RecyclerView时，Toolbar和FAB（屏幕右下方的小按钮）会隐藏/出现。这个效果也被Google视为符合 Material Design 规范的效果哦，详情参见： <a href="http://android-developers.blogspot.com/2014/10/material-design-on-android-checklist.html">Material Design Checklist</a> 。<br>]]>
+    
+    </summary>
+    
+      <category term="特效" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%89%B9%E6%95%88/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E8%BF%9E%E8%BD%BD/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[The Clean Architecture]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/the-clean-architecture/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/the-clean-architecture/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T03:04:22.000Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://blog.8thlight.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg" alt=""><br><a id="more"></a><br>在过去的几年中,我们已经看到了关于系统框架的一些想法 : </p>
+<ul>
+<li><a href="http://alistair.cockburn.us/Hexagonal+architecture" target="_blank" rel="external">Hexagonal Architecture(六角架构)</a>(a.k.a. Ports and Adapters) 这种架构是由Alistair Cockburn提出的，并由Steve Freeman和Nat Pryce在他们的书<a href="http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627" target="_blank" rel="external">Growing Object Oriented Software</a>中提出。 </li>
+<li><a href="http://jeffreypalermo.com/blog/the-onion-architecture-part-1/" target="_blank" rel="external">Onion Architecture(洋葱架构)</a> 提出者是Jeffrey Palermo。</li>
+<li><a href="http://blog.8thlight.com/uncle-bob/2011/09/30/Screaming-Architecture.html" target="_blank" rel="external">尖叫架构(Screaming Architecture)</a> 提出者是Uncle Bob（就是这篇文章的作者）。</li>
+<li><a href="http://www.amazon.com/Lean-Architecture-Agile-Software-Development/dp/0470684208/" target="_blank" rel="external">DCI架构</a> 提出者是James Coplien和Trygve Reenskaug。</li>
+<li><a href="http://www.amazon.com/Object-Oriented-Software-Engineering-Approach/dp/0201544350" target="_blank" rel="external">BCE架构</a> 提出者是Ivar Jacobson。在他的书《Object Oriented Software Engineering: A Use-Case Driven Approach》中有大量提及对这种架构的说明。</li>
+</ul>
+<p>虽然这些文章在细节上有所不同,总体来说是非常相似的.它们关注点分离,通过将软件划分成层达到分离效果.每层最少包含一个业务规划或者接口。    </p>
+<p>这些架构有以下特点:</p>
+<ol>
+<li>独立框架<br>这些架构不依赖某些特定库的加载,允许你使用框架作为工具,不会限制你的系统；</li>
+<li>可测试<br>业务规划在没有UI界面,数据库,网页服务器或者其他外部元素的情况下进行测试；</li>
+<li>独立于UI<br>UI很容易改变,而不用改变系统的其他部分,网页界面可以被控制台界面替换,同时还不用改变业务规划；<br>4.独立于数据库<br>你可以切换到Oracle,SQL Server,Mongo,BigTable,CouchDB或者其他类型数据库,业务规则不与数据库绑定；<br>5.独立于任何外部代理<br>事实上你的业务规划根本不需要知道外面的世界</li>
+</ol>
+<p>在这篇文章顶部的图表是将这些架构的理念集成在一起。</p>
+<h2 id="依赖规则">依赖规则</h2><p>同心圆代表软件的不同区域,一般情况下,越接近中心位置软件的级别会变得越来越高,外圆圈是机制,内圆圈是策略。</p>
+<p>覆盖规则使得架构遵循依赖规则,这条规则表明,源代码只能向内依赖,内侧圆环不了解关于外侧圆环的一起,原则上,外圈圆环声明的名称不需要在内侧圆环中提到,其中包括函数,类,变量或者其他软件实体的名字</p>
+<p>出于同样的原因,在外圆圈中使用的数据格式不应该使用在内圆圈,特别是格式是由外圆圈的框架产生的情况,我们不希望外圆圈影响内圆圈的内容</p>
+<h2 id="实体">实体</h2><p>实体封装项目范围内的业务规则,一个实体可以是一个对象的方法,或者是一组数据结构和功能.只要在项目中实体被不同的应用所使用即可。</p>
+<p>如果你没有项目,只是单纯的写一个应用程序,那么这些实体就是应用程序的业务对象.它们封装的最普通,最高级的规则.当外部变化时,它们最有可能改变,例如,你不希望这些对象被一个更改的页面导航或者安全影响,改变特定应用程序的操作不应该影响实体层。</p>
+<h2 id="用例">用例</h2><p>在此层应用的业务规则包含应用特定的业务规则,他封装并实现了所有的系统用例,这些用例编排数据的流入和流出的实体,指示这些实体用在它们项目范围内的业务规则到达用力的目标。</p>
+<p>我们不希望改变层时影响实体,也不希望层被外部的改变所影响,例如数据库,用户界面或者任何的共同框架的改变,此层与这部分是隔离开的。</p>
+<p>我们这样做,不过是希望改变应用程序的操作时影响软件层的用例,用例详细信息改变时,这一层的代码也会受到影响。</p>
+<h2 id="接口适配器">接口适配器</h2><p>这层软件是一个转化数字的适配器,从格式最方便的用例和实体转化为格式最方便的一些外部机构,如数据库或者网页,这一层完全包含GUI的MVC架构,代理者,视图,控制器都属于这一层,该模型可是只是从控制器传回到用例,然后从用例到代理和视图的数据结构。   </p>
+<p>同样的,在这一层数据被转换,从形式最方便的实体和用例转化成形式最方便的使用持久框架,即数据库.内圈里的任何代码不应该知道关于数据库的任何事情.如果这个数据库是SQL数据库,所有的SQL应该被限制在这一层,尤其是在这层对数据库的操作。</p>
+<p>另外,在这一层其他适配器需要将数据从外部形势(如外部服务)转化成内部形式的用例和实体。</p>
+<h2 id="框架和驱动程序">框架和驱动程序</h2><p>最外层一般由框架和工具组成,如数据库,web框架等.一般来说,你不会在这一层写太多代码,而是贴代码传达到内层圆圈内。</p>
+<p>这一层有很多细节,网页是一个细节,数据库是一个细节,我们保持外层的这些细节收到更少的破坏。    </p>
+<h2 id="只有四个圆环?">只有四个圆环?</h2><p>不,圆圈只是传达意思,你可能会发现你使用到的不仅仅是这四个,没有规定你必须使用这四个圆环,然后,依赖规则始终适用,源代码始终向内依赖.越往圆圈内侧抽象水平越高,最外面的圆圈为低一级的具体细节.越往圆圈内侧抽象和封装的层次更高,最内侧圆层次最高,最普通.   </p>
+<h2 id="跨越边界">跨越边界</h2><p>该图的右下方是一个我们如何穿越边界的例子,它展示了控制器和代理者与下一层用例进行通信.注意控制流,开始于控制器,通过用例移动,结束于代理者的执行.还要注意源代码的依赖关系,指向内侧用例。    </p>
+<p>我们通常使用<a href="http://zh.wikipedia.org/wiki/%E4%BE%9D%E8%B5%96%E5%8F%8D%E8%BD%AC%E5%8E%9F%E5%88%99" target="_blank" rel="external">依赖倒置原则</a>解释这个明显的矛盾,像java语言,例如,我们会编排接口和继承的关系，使源代码在跨越边界的右侧点依赖反对控制流.</p>
+<p>例如,考虑用例需要调用的代理.然而不需要直接调用,因为这将违反相关性规则:在外圈中的名称不需要在内圈中提及.因此,我们在内侧圆环中调用接口(这里显示的用例输出端口),在外侧圆环实现它.</p>
+<p>相同的技术应用在跨越边界的系统结构中,无论控制流会在什么方向,我们以动态多态性的优势创建源代码依赖性,反对控制流,使得我们能够符合依赖规则。  </p>
+<h2 id="什么是数据跨越边界">什么是数据跨越边界</h2><p>通常跨越边界的数据是一种单纯的数据结构,可以使用基本的结构或者简单的数据进行传输.或者数据可以单纯的在函数中调用,或者你可以打包成一个hashMap,或构造成一个对象,重要的是分离,操作简单,通过数据结构跨越边界.我们不想通过实体和数据作弊,不希望数据结构有任何一种依赖违反依赖规则.</p>
+<p>例如,很多数据库框架响应查询返回一个方便的数据格式,我们称之为行结构.我们不希望向内跨越行结构,这将违反依赖规则,因为这会迫使内侧圆环了解外侧圆环的一些东西。</p>
+<p>因此,当我们跨越边界传输数据时,它总是使用最方便内圆环的格式。</p>
+<h2 id="结论">结论</h2><p>符合这些简单的规则并不难,并会为你省掉很多前进过程中头疼的问题,通过软件分层,顺应依赖规则,创建一个系统在本质上是可以检测的,意味着拥有其本身的好处.当任何一个系统的外部部件过时时,如数据库或者web框架,你可以使用最少的忧虑替换掉那些过时的元素。</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://blog.8thlight.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank" rel="external">The Clean Architecture</a></li>
+<li><a href="http://blog.8thlight.com/" target="_blank" rel="external">Robert Martin</a> </li>
+<li>译者:<a href="https://github.com/zimoguo" target="_blank" rel="external">zimoguo</a></li>
+<li>校对者:<a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a></li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p><img src="http://blog.8thlight.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg" alt=""><br>]]>
+    
+    </summary>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="Android架构" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/Android%E6%9E%B6%E6%9E%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[让你的Android应用能使用多种主题 ( Part 2 )]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T03:03:12.000Z</updated>
+    <content type="html"><![CDATA[<p>在 <a href="http://www.likebamboo.com/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/" target="_blank" rel="external">上一篇博文</a> 中，我们创建了一个明亮风格的主题，并且为实现使用多种主题作了一些前期的准备，而今天呢，我打算在这篇博文中接着上一篇博文继续为大家讲解，而我今天要讲的内容大概是以下三个部分：使 Android 应用能够使用多种主题，创建一个灰暗风格的主题，以及允许 Android 应用在运行时自由地切换不同的主题。</p>
+<p>在理想的情况下，如果我们把主题的设置看作是一项配置，那么我们应该能够在类似 “theme-qualifier” 的目录下指定我们想要的特定主题，例如：values-dark 就是我们想要的灰暗风格主题；而values-light 则是明亮风格的主题。但很遗憾，在这篇博文所要讲述的实现方法里，这种方法并没有成为实现方式之一。<br><a id="more"></a><br>那么我们要怎么为不同的主题指定相应的资源文件呢？如果我们有了解过 appcompat 是怎么使用资源文件的话，对 Android 系统是如何管理和使用资源文件会有一个粗略的认识。毫无疑问，<a href="https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic" target="_blank" rel="external">Materialistic</a> 中使用的方法就是类似于 Android 系统使用的方法。</p>
+<h2 id="主题设置">主题设置</h2><p><strong>values/styles.xml</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"AppTheme"</span> <span class="attribute">parent</span>=<span class="value">"Theme.AppCompat.Light"</span>&gt;</span><span class="css"></span><br><span class="line">    &lt;!<span class="tag">--</span> <span class="tag">original</span> <span class="tag">theme</span> <span class="tag">attributes</span> <span class="tag">--</span>&gt;</span><br><span class="line">    ...</span><br><span class="line">    </span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"AppTheme.Dark"</span> <span class="attribute">parent</span>=<span class="value">"Theme.AppCompat"</span>&gt;</span><span class="css"></span><br><span class="line">   		 &lt;<span class="tag">item</span> <span class="tag">name</span>="<span class="tag">colorPrimary</span>"&gt;<span class="at_rule">@<span class="keyword">color/colorPrimaryInverse&lt;/item&gt;</span></span><br><span class="line">   		 &lt;item name=<span class="string">"colorPrimaryDark"</span>&gt;@color/colorPrimaryDarkInverse&lt;/item&gt;</span><br><span class="line">   		 &lt;item name=<span class="string">"colorAccent"</span>&gt;@color/colorAccentInverse&lt;/item&gt;</span><br><span class="line">   		 &lt;item name=<span class="string">"android:textColorPrimary"</span>&gt;@color/textColorPrimaryInverse&lt;/item&gt;</span><br><span class="line">   		 &lt;item name=<span class="string">"android:textColorSecondary"</span>&gt;@color/textColorSecondaryInverse&lt;/item&gt;</span><br><span class="line">   		 &lt;item name=<span class="string">"android:textColorPrimaryInverse"</span>&gt;@color/textColorPrimary&lt;/item&gt;</span><br><span class="line">   		 &lt;item name=<span class="string">"android:textColorSecondaryInverse"</span>&gt;@color/textColorSecondary&lt;/item&gt;</span><br><span class="line">    ...</span><br><span class="line">    </span></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br><span class="line">```    </span><br><span class="line"></span><br><span class="line">**values/color.xml**</span><br><span class="line"></span><br><span class="line">```xml</span><br><span class="line">    <span class="comment">&lt;!-- original color palette --&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">&lt;!-- alternative color palette --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimaryInverse"</span>&gt;</span>...<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimaryDarkInverse"</span>&gt;</span>...<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorAccentInverse"</span>&gt;</span>...<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在上面的操作中我们创建了一个名叫 AppTheme.Dark 的灰暗风格主题，此外，为了保持 style 和 color 的一致性，我们的 AppTheme.Dark 主题衍生于 appcompat 的 Theme.AppCompat 主题（一个 Android 自带的灰暗风格主题）。然而，由于我们的两个主题（明亮风格和灰暗风格）衍生于不同的基础主题，因此这两个主题之间并不能够进行属性的共享（在JAVA中，类只能进行单继承）。</p>
+<p>这两个主题理应有一些恰当的属性值，能同时用于设置基本的 Android 和 appcompat的主题属性，例如：在灰暗风格中，android:textColorPrimary 应该被设置为明亮的，而在明亮风格中，android:textColorPrimary则应该是灰暗的。按照常用的命名习惯，我们在这里将用相反的后缀来区分可替代的主题颜色。</p>
+<h2 id="温馨小提示">温馨小提示</h2><blockquote>
+<p>在某些情况下，一种颜色能同时在明亮风格和灰暗风格的主题中被使用，这当然是喜闻乐见的情况，但是在大部分主题中这并不能够实现。所以我希望你在设计主题的过程中，通过在 AndroidManifest.xml 中短暂地切换你应用里正在使用的可替代主题，以此确定你的主题是否需要添加其他的 colors/style 文件来满足你的主题设计需求。</p>
+</blockquote>
+<h2 id="特定的主题资源文件">特定的主题资源文件</h2><p>到了现在，我相信我们都能很轻松地为我们的 App 设计出美如画的灰暗风格主题，但这里还存在一些小麻烦，例如：用于美化 action bar 菜单选项的 drawables 资源文件。灰暗风格的 action bar 需要用明亮的颜色修饰它的菜单选项，反之亦然。为了让 Android 能够在不同的App主题下区分不同的 drawables 资源文件，我们创建了能够指定正确资源文件的 <a href="http://developer.android.com/training/custom-views/create-view.html#customattr" target="_blank" rel="external">自定义属性</a> 引用，并且在不同的主题下提供了不同的 drawable 引用，将其值赋给特定的自定义属性。（温婉如妻，appcompat 库贴心地为我们准备了类似 colorPrimary 的自定义属性值）</p>
+<p><strong>values/attrs.xml</strong> </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">attr</span> <span class="attribute">name</span>=<span class="value">"themedMenuStoryDrawable"</span> <span class="attribute">format</span>=<span class="value">"reference"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">attr</span> <span class="attribute">name</span>=<span class="value">"themedMenuCommentDrawable"</span> <span class="attribute">format</span>=<span class="value">"reference"</span> /&gt;</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><strong>values/styles.xml</strong> </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"AppTheme"</span> <span class="attribute">parent</span>=<span class="value">"Theme.AppCompat.Light"</span>&gt;</span><span class="css"></span><br><span class="line">&lt;!<span class="tag">--</span> <span class="tag">original</span> <span class="tag">theme</span> <span class="tag">attributes</span> <span class="tag">--</span>&gt;</span><br><span class="line">...</span><br><span class="line"> &lt;<span class="tag">item</span> <span class="tag">name</span>="<span class="tag">themedMenuStoryDrawable</span>"&gt;<span class="at_rule">@<span class="keyword">drawable/ic_subject_white_24dp&lt;/item&gt;</span></span><br><span class="line">  &lt;item name=<span class="string">"themedMenuCommentDrawable"</span>&gt;@drawable/ic_mode_comment_white_24dp&lt;/item&gt;</span><br><span class="line"></span></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"AppTheme.Dark"</span> <span class="attribute">parent</span>=<span class="value">"Theme.AppCompat"</span>&gt;</span><span class="css"></span><br><span class="line">&lt;!<span class="tag">--</span> <span class="tag">alternative</span> <span class="tag">theme</span> <span class="tag">attributes</span> <span class="tag">--</span>&gt;</span><br><span class="line">...</span><br><span class="line">	 &lt;<span class="tag">item</span> <span class="tag">name</span>="<span class="tag">themedMenuStoryDrawable</span>"&gt;<span class="at_rule">@<span class="keyword">drawable/ic_subject_black_24dp&lt;/item&gt;</span></span><br><span class="line">	 &lt;item name=<span class="string">"themedMenuCommentDrawable"</span>&gt;@drawable/ic_mode_comment_black_24dp&lt;/item&gt;</span><br><span class="line"></span></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>menu/my_menu.xml</strong> </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">menu</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">item</span> <span class="attribute">android:id</span>=<span class="value">"@id/menu_comment"</span></span><br><span class="line"><span class="attribute">android:icon</span>=<span class="value">"?attr/themedMenuCommentDrawable"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">item</span> <span class="attribute">android:id</span>=<span class="value">"@id/menu_story"</span></span><br><span class="line"><span class="attribute">android:icon</span>=<span class="value">"?attr/themedMenuStoryDrawable"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">item</span> <span class="attribute">android:id</span>=<span class="value">"@id/menu_share"</span></span><br><span class="line"><span class="attribute">app:actionProviderClass</span>=<span class="value">"android.support.v7.widget.ShareActionProvider"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">menu</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>根据你实际的主题设计需要，类似的实现也能被用于为大多数自定义属性指定相应的资源值。但这个方法存在一个问题：根据实际的需要从 drawable 资源文件中解析相应的属性值，并应用于主题的方法在API 21之前的版本似乎都不可行。举例来说明这个问题吧：如果你有一个 layer-list 中包含了各种你所需要的 color 的 drawable 资源文件，在API 21之前的版本中，这些 color 的值都应该是固定的，而不是能够在App运行过程中不断变化的。这个问题在 Google I/O 2014 大会上有被提出，并要求给出相应的解决办法。（详情参见 <a href="https://github.com/google/iosched/commit/dd7ed72a7eb2d223203db079bd99d31c6ef3061e" target="_blank" rel="external">Click Me!</a>）。</p>
+<p>此外，为了避免在不同的主题中重复使用相同的资源文件，我们可以利用 drawable 的 tint 属性解决这个需求。虽然这个属性可以在API 21之后的版本中使用。但 <a href="http://blog.danlew.net/2014/08/18/fast-android-asset-theming-with-colorfilter/" target="_blank" rel="external">Dan Lew</a> 在他的博客中为我们介绍了怎么在所有的 API 版本中使用 tint 属性。但就个人偏好来说，如果可以的话，我会更倾向于选择不受 View 逻辑影响的 Java 实现，所以我选择为每一个主题提供不同的 drawable 资源文件。</p>
+<h2 id="动态主题切换">动态主题切换</h2><p>现在我们已经有两个可以使用的主题了，接下来我们需要做的就是让用户能够在使用 App 时能够自如地根据他们的个人偏好切换不同的主题。要实现这个功能，我们可以通过使用 SharedPreferences 来实现，通过改变 pref_dark_theme 的值去存储当前被选择的主题并决定我们的 App 将要被切换成什么主题。但从实际情况来考虑，主题切换后，App 所有 Activity 的 View 在被创建之前都应该被改变，所以我们只需要在 onCreate()方法中实现我们的逻辑。</p>
+<p><strong>BaseActivity.java</strong> </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseActivity</span> <span class="keyword">extends</span> <span class="title">ActionBarActivity</span> </span>&#123;</span><br><span class="line">	 <span class="annotation">@Override</span></span><br><span class="line">	 <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">		 <span class="keyword">if</span> (PreferenceManager.getDefaultSharedPreferences(<span class="keyword">this</span>)</span><br><span class="line">			 .getBoolean(<span class="string">"pref_dark_theme"</span>), <span class="keyword">false</span>)) &#123;</span><br><span class="line">		   setTheme(R.style.AppTheme_Dark);</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里，因为我们的 App 已经使用了默认的明亮风格主题，所以我们只需要检查默认的引用是否被重载，是否被用于重载灰暗风格的主题。为了默认的引用能够被所有 Activity共享，其中的逻辑已经在 “base” Activity中被写好了。</p>
+<p>值得注意的是，这个方法只能被用于改变没有处在 <a href="http://developer.android.com/guide/components/tasks-and-back-stack.html" target="_blank" rel="external">back stack</a> 中的 Acitivity 的主题。而那些已经在 back stack 中的 Activity，仍然会显示为之前的主题，因为当我们结束当前 Activity，返回到上一个 Activity，只会触发 onResume() 方法，而不是我们期望的 onCreate()方法。因此，考虑到实际的产品功能设计需求，我们当然要解决这些“过时”的 Activity 了，我在这里为大家提供了两种解决办法，都挺简单的：一方面，我们可以清空我们的 back stack；另一方面，一旦 preference 被改变，我们就在 back stack 中按照顺序让所有 Acitivty 出栈后重新加载，将所有 Activity 的主题改变后再重新入栈。在这里为了简便，我们选择的实现方法是：当主题被改变，我们就简单地清空 back stack，然后重启当前的 Activity。</p>
+<h2 id="SettingsFragment-java">SettingsFragment.java</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SettingsFragment</span> <span class="keyword">extends</span> <span class="title">PreferenceFragment</span> </span>&#123;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityCreated</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>.onActivityCreated(savedInstanceState);</span><br><span class="line"></span><br><span class="line">		mListener = <span class="keyword">new</span> SharedPreferences.OnSharedPreferenceChangeListener() &#123;</span><br><span class="line">		<span class="annotation">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSharedPreferenceChanged</span><span class="params">(SharedPreferences sharedPreferences, String key)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (!key.equals(<span class="string">"pref_dark_theme"</span>)) &#123;</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		getActivity().finish();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">final</span> Intent intent = getActivity().getIntent();</span><br><span class="line">		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);</span><br><span class="line">		getActivity().startActivity(intent);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>虽然结束得有些突然，但我们今天的讲解就到此结束啦。现在我们的 App 拥有了两个这么优雅的主题，就算是挑剔的文艺小清新也不会嫌弃我们的 App 很 low 了吧！如果你想要了解整个 Materialistic 的具体实现，或者是这个功能的源码，可以来我的 <a href="https://github.com/hidroh/materialistic" target="_blank" rel="external">GitHub</a> 上获取哦～</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://www.hidroh.com/2015/02/25/support-multiple-themes-android-app-part-2/" target="_blank" rel="external">Supporting multiple themes in your Android app (Part 2)</a></li>
+<li>译者 : <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a> </li>
+<li>校对者: <a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a> </li>
+<li>状态 :  完成</li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>在 <a href="http://www.likebamboo.com/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/">上一篇博文</a> 中，我们创建了一个明亮风格的主题，并且为实现使用多种主题作了一些前期的准备，而今天呢，我打算在这篇博文中接着上一篇博文继续为大家讲解，而我今天要讲的内容大概是以下三个部分：使 Android 应用能够使用多种主题，创建一个灰暗风格的主题，以及允许 Android 应用在运行时自由地切换不同的主题。</p>
+<p>在理想的情况下，如果我们把主题的设置看作是一项配置，那么我们应该能够在类似 “theme-qualifier” 的目录下指定我们想要的特定主题，例如：values-dark 就是我们想要的灰暗风格主题；而values-light 则是明亮风格的主题。但很遗憾，在这篇博文所要讲述的实现方法里，这种方法并没有成为实现方式之一。<br>]]>
+    
+    </summary>
+    
+      <category term="主题" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E4%B8%BB%E9%A2%98/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E8%BF%9E%E8%BD%BD/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[一种在android中实现MVP模式的新思路]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/android-mvp-an-alternate-approach/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/android-mvp-an-alternate-approach/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T02:50:48.000Z</updated>
+    <content type="html"><![CDATA[<p>今天我想分享我自己在Android上实现MVP模式的方法。如果你对MVP模式还不熟悉或者你不清楚为什么要在Android应用中使用MVP模式，我建议你先阅读以下<a href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter" target="_blank" rel="external">这篇维基百科的文章</a>和<a href="http://antonioleiva.com/mvp-android/" target="_blank" rel="external">这篇博客</a>。</p>
+<h2 id="使用Activity和Fragment作为视图层(View)真的合适么?">使用Activity和Fragment作为视图层(View)真的合适么?</h2><p>目前很多使用了MVP模式的android 项目,基本上都是将activity和fragment作为视图层来进行处理的.而presenters通常是通过继承自被视图层实例化或者注入的对象来得到的. 诚然,我同意说,这种方式可以节省掉很多让人厌烦的”import android.<em>.</em>“语句, 并且将presenters从activity的生命周期中分割出来以后, 项目后续的维护会变得简便很多.这种思路是正确的， 但是,从另一个角度来说, activity 有一个很复杂的生命周期(fragment的生命周期可能会更复杂), 而这些生命周期很有可能对你项目的业务逻辑有非常重大的影响. Activity 可以获取上下文环境和多种android系统服务. Activity中发送Intent，启动Service和执行FragmentTransisitons等。而这些特性在我看来绝不应该是视图层应该涉及的领域(视图的功能就是现实数据和从用户那里获取输入数据，在理想的情况下，视图应该避免业务逻辑). </p>
+<p>基于上述的原因，我对目前的主流做法并不赞同，所以我在尝试使用Activity和Fragment作为Presenters。<br><a id="more"></a></p>
+<h2 id="使用Activity和Fragment作为presenters的步骤">使用Activity和Fragment作为presenters的步骤</h2><h3 id="1-_去除所有的view">1. 去除所有的view</h3><p>将Activity和Fragment作为presenter最大的困难就是如何将关于UI的逻辑抽取出来.我的解决方案是: 让需要作为presenter的activity 或者 fragment来继承一个抽象的类(或者叫”基类”), 这样关于View 各种组件的初始化以及逻辑,都可以在继承了抽象类的方法中进行操作，而当继承了该抽象类的class需要对某些组件进行操作的时候，只需要调用继承自抽象类的方法，就可以了。      </p>
+<p>那么抽象类怎么获取到的view组件呢？在抽象类里面会有一个实例化的接口，这个接口里面的init()方法就会对view进行实例化，这个接口如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Vu</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(LayoutInflater inflater, ViewGroup container)</span></span>;</span><br><span class="line">	<span class="function">View <span class="title">getView</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>正如你所见，Vu定义了一个通用的初始化例程，我可以通过它来实现一个容器视图，它也有一个方法来获得一个View的实例，每一个presenter将会和它自己的Vu关联，这个presenter将会继承这个接口（直接或者间接的去继承一个来自Vu的接口）</p>
+<h3 id="2-_创建一个presenter基类_(Activity)">2. 创建一个presenter基类 (Activity)</h3><p>有了Vu接口，我们可以通过构建一系列的class来操纵很多不同的view组件，这些class 使用Vu接口来初始化View组件，并通过继承的方式给子类以操纵view组件的方法，以此来达到将ui 逻辑剥离出activity的目的。在下面的代码中，你可以看到，我覆写了activity的onCreate 、 onCreateView、onDestroy 、 onDestroyView，通过对这些方法的覆写，就可以对Vu的实例化和销毁进行精确的控制（vu.init()就是实例化一个view组件）。onBindVu() 和onDestoryVu()是控制view生命周期的两个方法。通过对actiivty中相关方法的覆写达到控制组件的生命周期的目的（具体看下面的代码，你就明白了）， 这样做的好处就是无论是activity 还是 fragment， 其用与控制view组件创建和销毁的语句是一样的（尽量避免定义多余的函数）。这样的话，二者之间的切换也会减少一定的阻力（也许你今天的需求是用fragment实现的，但是第二天发现使用fragment会有一个惊天bug，译者本人就遇到过）。     </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BasePresenterActivity</span>&lt;<span class="title">V</span> <span class="keyword">extends</span> <span class="title">Vu</span>&gt; <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> V vu;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            vu = getVuClass().newInstance();</span><br><span class="line">            vu.init(getLayoutInflater(), <span class="keyword">null</span>);</span><br><span class="line">            setContentView(vu.getView());</span><br><span class="line">            onBindVu();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InstantiationException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        onDestroyVu();</span><br><span class="line">        vu = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> Class&lt;V&gt; <span class="title">getVuClass</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onBindVu</span><span class="params">()</span></span>&#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroyVu</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-_创建一个基本的presenter(Fragment)">3. 创建一个基本的presenter(Fragment)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BasePresenterFragment</span>&lt;<span class="title">V</span> <span class="keyword">extends</span> <span class="title">Vu</span>&gt; <span class="keyword">extends</span> <span class="title">Fragment</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> V vu;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> View <span class="title">onCreateView</span><span class="params">(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        View view = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            vu = getVuClass().newInstance();</span><br><span class="line">            vu.init(inflater, container);</span><br><span class="line">            onBindVu();</span><br><span class="line">            view = vu.getView();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (java.lang.InstantiationException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">onDestroyView</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        onDestroyVu();</span><br><span class="line">        vu = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">super</span>.onDestroyView();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroyVu</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onBindVu</span><span class="params">()</span></span>&#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> Class&lt;V&gt; <span class="title">getVuClass</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-_一个简单的例子">4. 一个简单的例子</h3><p>如前文所述，我们已经确定了一个框架，现在就来写一个简单的例子来进一步的说明. 为了避免篇幅过长，我就写一个“hello world”的例子。首先要有一个实现Vu接口的类：    </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloVu</span> <span class="keyword">implements</span> <span class="title">Vu</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">View view;</span><br><span class="line">TextView helloView;</span><br><span class="line"></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(LayoutInflater inflater, ViewGroup container)</span> </span>&#123;</span><br><span class="line">    view = inflater.inflate(R.layout.hello, container, <span class="keyword">false</span>);</span><br><span class="line">    helloView = (TextView) view.findViewById(R.id.hello);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> View <span class="title">getView</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> view;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHelloMessage</span><span class="params">(String msg)</span></span>&#123;</span><br><span class="line">    helloView.setText(msg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下一步，创建一个presenter来操作这个TextView<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">HelloActivity</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">BasePresenterActivity</span> &#123;</span></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="keyword">protected</span> void onBindVu() &#123;</span><br><span class="line">    vu.setHelloMessage(<span class="string">"Hello World!"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="keyword">protected</span> <span class="type">Class</span>&lt;<span class="type">MainVu</span>&gt; getVuClass() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">HelloVu</span>.<span class="keyword">class</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>OK,这样就大功告成了！！是不是很简便！</p>
+<h3 id="等等…耦合警告!">等等…耦合警告!</h3><p>你可能注意到我的HelloVu类直接实现了Vu接口，我的Presenter的getVuClass方法直接引用了实现类。传统的MVP模式中，Presenter是要通过接口与他们的View解耦合的。因此，你也可以这么做。避免直接实现Vu接口，我们可以创建一个扩展了Vu的IHelloView接口，然后使用这个接口作为Presenter的泛型类型。这样Presenter看起来应该是如下这样的 : </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloActivity</span> <span class="keyword">extends</span> <span class="title">BasePresenterActivity</span>&lt;<span class="title">IHelloVu</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onBindVu</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        vu.setHelloMessage(<span class="string">"Hello World!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Class&lt;MainVu&gt; <span class="title">getVuClass</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> HelloVuImpl.class;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在我使用强大的模拟工具过程中，我个人并没有看到在一个接口下面实现Vu所带来的好处。但是对于我来说一个好的方面是，有没有Vu接口它都能够工作，唯一的需求就是最终你会实现Vu。</p>
+<h2 id="5-_如何进行测试">5. 如何进行测试</h2><p>通过以上几步，我们可以发现，去除了UI逻辑之后，Activity变得非常简洁。并且，相关的测试<br>也变的非常异常的简单。请看如下的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloActivityTest</span> </span>&#123;</span><br><span class="line">    HelloActivity activity;</span><br><span class="line">    HelloVu vu;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Before</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        activity = <span class="keyword">new</span> HelloActivity();</span><br><span class="line">        vu = Mockito.mock(HelloVu.class);</span><br><span class="line">        activity.vu = vu;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testOnBindVu</span><span class="params">()</span></span>&#123;</span><br><span class="line">        activity.onBindVu();</span><br><span class="line">        verify(vu).setHelloMessage(<span class="string">"Hello World!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码是一段标准的jnuit单元测试的代码，不需要在android设备中部署运行，只需要在编译环境中即可测试。大幅度的提高了测试效率。但是，在测试某些方法的时候，你必须要使用android设备，例如当你想测试activity生命周期中的resume()方法。在缺乏设备环境的时候，super.resume()会报错。为了解决这个问题，可以借鉴一些工具，例如Robolectric、还有android gradle 1.1 插件中内置的testOptions { unitTests.returnDefaultValues = true }。此外，你仍然可以将这些生命周期也抽离出来。例如如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">onResume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onResume();</span><br><span class="line">    afterResume();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">afterResume</span><span class="params">()</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>现在，你可以在没有android设备的情况下，快速的测试了！   </p>
+<h2 id="意外收获：使用adapter作为presenter">意外收获：使用adapter作为presenter</h2><p>将Activity作为presente已经足够狡猾了吧？使用adapter作为presenter，你想过没有？<br>好吧，请看如下的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BasePresenterAdapter</span> <span class="keyword">extends</span> <span class="title">BaseAdapter</span> </span>&#123;</span><br><span class="line"><span class="keyword">protected</span> V vu;</span><br><span class="line"></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> View <span class="title">getView</span><span class="params">(<span class="keyword">int</span> position, View convertView, ViewGroup parent)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(convertView == <span class="keyword">null</span>) &#123;</span><br><span class="line">        LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            vu = (V) getVuClass().newInstance();</span><br><span class="line">            vu.init(inflater, parent);</span><br><span class="line">            convertView = vu.getView();</span><br><span class="line">            convertView.setTag(vu);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InstantiationException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        vu = (V) convertView.getTag();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(convertView!=<span class="keyword">null</span>) &#123;</span><br><span class="line">        onBindListItemVu(position);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> convertView;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">onBindListItemVu</span><span class="params">(<span class="keyword">int</span> position)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> Class&lt;V&gt; <span class="title">getVuClass</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如上代码，使用adapter作为presenter其实和activity或者fragement几乎是一样的，只有一点明显的区别就是，我把onBingVu替换成了onBindListItemVu（接受int参数）,其实我是借鉴了<a href="http://developer.android.com/training/improving-layouts/smooth-scrolling.html" target="_blank" rel="external">ViewHolder模式</a>。</p>
+<h2 id="总结和一个demo">总结和一个demo</h2><p>我在这篇文章里介绍了我自己的一个实现MVP的方法。我非常期待其他android开发者对我的这套方法的反馈。我切实的想知道我的方法是否可行？我已经把这套思路用在一个框架的开发上，并且即将公布，与此同时，我在github上面有一个demo项目，感兴趣的人可以去看一下<a href="https://github.com/wongcain/MVP-Simple-Demo" target="_blank" rel="external">https://github.com/wongcain/MVP-Simple-Demo</a></p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://blog.cainwong.com/android-mvp-an-alternate-approach/" target="_blank" rel="external">android-mvp-an-alternate-approach</a></li>
+<li>译者 : <a href="https://github.com/FTExplore" target="_blank" rel="external">FTExplore</a></li>
+<li>校对 : <a href="https://github.com/sundroid" target="_blank" rel="external">sundroid</a></li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>今天我想分享我自己在Android上实现MVP模式的方法。如果你对MVP模式还不熟悉或者你不清楚为什么要在Android应用中使用MVP模式，我建议你先阅读以下<a href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter">这篇维基百科的文章</a>和<a href="http://antonioleiva.com/mvp-android/">这篇博客</a>。</p>
+<h2 id="使用Activity和Fragment作为视图层(View)真的合适么?">使用Activity和Fragment作为视图层(View)真的合适么?</h2><p>目前很多使用了MVP模式的android 项目,基本上都是将activity和fragment作为视图层来进行处理的.而presenters通常是通过继承自被视图层实例化或者注入的对象来得到的. 诚然,我同意说,这种方式可以节省掉很多让人厌烦的”import android.<em>.</em>“语句, 并且将presenters从activity的生命周期中分割出来以后, 项目后续的维护会变得简便很多.这种思路是正确的， 但是,从另一个角度来说, activity 有一个很复杂的生命周期(fragment的生命周期可能会更复杂), 而这些生命周期很有可能对你项目的业务逻辑有非常重大的影响. Activity 可以获取上下文环境和多种android系统服务. Activity中发送Intent，启动Service和执行FragmentTransisitons等。而这些特性在我看来绝不应该是视图层应该涉及的领域(视图的功能就是现实数据和从用户那里获取输入数据，在理想的情况下，视图应该避免业务逻辑). </p>
+<p>基于上述的原因，我对目前的主流做法并不赞同，所以我在尝试使用Activity和Fragment作为Presenters。<br>]]>
+    
+    </summary>
+    
+      <category term="MVP" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/MVP/"/>
+    
+      <category term="Android架构" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/Android%E6%9E%B6%E6%9E%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[使用Robolectric的参数化测试]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/parameterized-testing-with-robolectric/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/parameterized-testing-with-robolectric/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T02:58:46.000Z</updated>
+    <content type="html"><![CDATA[<p>在目前的项目中我们使用Robolectric为Android应用程序编写单元测试,它一直都干的不错。最近我需要编写一个测试用例,通过每次使用不同的测试数据，将同一个操作执行若干次，并由此断言：正确的动作能否发生是由数据决定的。</p>
+<p>JUnit对于这个情况提供了一个易于使用的选项，它叫做参数化测试-先定义测试数据，,然后使用参数化测试运行器来执行测试。这将创建一个该测试类的实例把测试数据中的每个元素传递到构造函数的参数中。<br><a id="more"></a><br>事实证明，Robolectric有一个完全相同的<code>ParameterizedRobolectricTestRunner</code>(稍微调整以适应Robolectric)，而且它对于我的测试：验证应用程序从外部服务提供者接收到不同的错误代码的行为，做的非常好</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@RunWith</span>(ParameterizedRobolectricTestRunner.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ContactServiceTest</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@ParameterizedRobolectricTestRunner</span>.Parameters(name = <span class="string">"ErrorCode = &#123;0&#125;"</span>)</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Collection&lt;Object[]&gt; data() &#123;</span><br><span class="line">        <span class="keyword">return</span> Arrays.asList(<span class="keyword">new</span> Object[][]&#123;</span><br><span class="line">                &#123;<span class="number">105</span>, <span class="number">105</span>_ERROR_MSG&#125;,</span><br><span class="line">                &#123;<span class="number">113</span>, <span class="number">113</span>_ERROR_MSG&#125;,</span><br><span class="line">                &#123;<span class="number">114</span>, <span class="number">114</span>_ERROR_MSG&#125;,</span><br><span class="line">                &#123;<span class="number">134</span>, <span class="number">134</span>_ERROR_MSG&#125;,</span><br><span class="line">                &#123;<span class="number">137</span>, <span class="number">137</span>_ERROR_MSG&#125;,</span><br><span class="line">                &#123;<span class="number">999</span>, DEFAULT_ERROR_MSG&#125; <span class="comment">// Bogus错误代码</span></span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> errorCode;</span><br><span class="line">    <span class="keyword">private</span> String expectedErrorMsg;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ContactServiceTest</span><span class="params">(<span class="keyword">int</span> errorCode, String errorMsg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.errorCode = errorCode;</span><br><span class="line">        <span class="keyword">this</span>.expectedErrorMsg = errorMsg;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">when_known_error_code_is_received_from_service_correct_error_msg_is_displayed_to_user</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// HTTP响应从服务包含定义的错误代码</span></span><br><span class="line">        Robolectric.addPendingHttpResponse(HttpStatus.SC_OK, buildFakeServiceResponse(errorCode)); </span><br><span class="line">        <span class="comment">// 联系服务</span></span><br><span class="line">        mService.contactService();</span><br><span class="line">        <span class="comment">// 使用awaitility等到错误消息显示给用户</span></span><br><span class="line">		<span class="comment">// 然后断言该错误代码与期望一致</span></span><br><span class="line">        await().until(getDisplayedErrorMsg(), is(expectedErrorMsg));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>该测试用例将被执行6次，一旦遍历测试数据的每个元素，就会将打印的错误消息与特定错误代码定义的错误消息相比较。当创建测试报告时，每一个测试运行都将视为其自身的测试用例。</p>
+<p>添加了<code>name</code>参数到Parameters注解上将会整理测试结果。作为测试运行结果显示,测试用例的名称将会像下面这种情况下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">when_known_error_code_is_received_from_service_correct_error_msg_is_displayed_to_user[ErrorCode = <span class="number">105</span>]</span><br><span class="line">when_known_error_code_is_received_from_service_correct_error_msg_is_displayed_to_user[ErrorCode = <span class="number">113</span>]</span><br><span class="line">when_known_error_code_is_received_from_service_correct_error_msg_is_displayed_to_user[ErrorCode = <span class="number">114</span>]</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>如需深入理解请查阅<a href="https://github.com/junit-team/junit/wiki/Theories" target="_blank" rel="external">JUnit Theories</a>以及<a href="https://github.com/pholser/junit-quickcheck" target="_blank" rel="external">junit-quickcheck</a>，一个好的生成测试数据的方法是在JUnit中自动生成（Robolectric也差不多），而不是由你自己定义。</p>
+<blockquote>
+<ul>
+<li>原文标题 : Parameterized testing with Robolectric</li>
+<li>原文链接 : <a href="http://www.jayway.com/2015/03/19/parameterized-testing-with-robolectric/" target="_blank" rel="external">Parameterized testing with Robolectric</a></li>
+<li>译者 : <a href="https://github.com/Lollypo" target="_blank" rel="external">Lollypo</a> </li>
+<li>校对者: <a href="https://github.com/chaossss" target="_blank" rel="external">Chaos</a>   </li>
+<li>状态 :  校对完成</li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>在目前的项目中我们使用Robolectric为Android应用程序编写单元测试,它一直都干的不错。最近我需要编写一个测试用例,通过每次使用不同的测试数据，将同一个操作执行若干次，并由此断言：正确的动作能否发生是由数据决定的。</p>
+<p>JUnit对于这个情况提供了一个易于使用的选项，它叫做参数化测试-先定义测试数据，,然后使用参数化测试运行器来执行测试。这将创建一个该测试类的实例把测试数据中的每个元素传递到构造函数的参数中。<br>]]>
+    
+    </summary>
+    
+      <category term="测试" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E6%B5%8B%E8%AF%95/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="单元测试" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[在Android 5.0中使用JobScheduler]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/using-the-jobscheduler-api-on-android-lollipop/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/using-the-jobscheduler-api-on-android-lollipop/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T03:05:31.000Z</updated>
+    <content type="html"><![CDATA[<p>在这篇文章中，你会学习到在Android 5.0中如何使用JobScheduler API。JobScheduler API允许开发者在符合某些条件时创建执行在后台的任务。<br><a id="more"></a></p>
+<h2 id="介绍">介绍</h2><p>在Android开发中，会存在这么些场景 : 你需要在稍后的某个时间点或者当满足某个特定的条件时执行一个任务，例如当设备接通电源适配器或者连接到WIFI。幸运的是在API 21 ( Android 5.0，即Lollipop )中，google提供了一个叫做JobScheduler API的新组件来处理这样的场景。</p>
+<p>当一系列预置的条件被满足时，JobScheduler API为你的应用执行一个操作。与AlarmManager不同的是这个执行时间是不确定的。除此之外，JobScheduler API允许同时执行多个任务。这允许你的应用执行某些指定的任务时不需要考虑时机控制引起的电池消耗。</p>
+<p>这篇文章中，你会学到关于JobScheduler API更多的东西以及在你的应用中用于运行一个简单的后台任务的JobService，这篇文章中所展示的代码你都可以在<a href="https://github.com/tutsplus/Android-JobSchedulerAPI" target="_blank" rel="external">github</a>中找到。</p>
+<h2 id="1-_创建Job_Service">1. 创建Job Service</h2><p>首先，你需要创建一个API最低为21的Android项目，因为JobScheduler是最近的版本才加入Android的，在写这篇文章的时候，它还没有兼容库支持。（译者注：截止目前已知一个兼容库 <a href="https://github.com/evant/JobSchedulerCompat" target="_blank" rel="external">JobSchedulerCompat</a>）</p>
+<p>假定你使用的是Android Studio,当你点击了创建项目的完成按钮之后，你会得到一个”hello world”的应用骨架。你要做的第一步就是创建一个新的java类。为了简单起见，让我们创建一个继承自JobService且名字为JobSchedulerService的类，这个类必须实现两个方法，分别是<code>onStartJob(JobParameters params)</code>和 <code>onStopJob(JobParameters params)</code>；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JobSchedulerService</span> <span class="keyword">extends</span> <span class="title">JobService</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStartJob</span><span class="params">(JobParameters params)</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStopJob</span><span class="params">(JobParameters params)</span> </span>&#123;</span><br><span class="line">         </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当任务开始时会执行<code>onStartJob(JobParameters params)</code>方法，因为这是系统用来触发已经被执行的任务。正如你所看到的，这个方法返回一个boolean值。如果返回值是false,系统假设这个方法返回时任务已经执行完毕。如果返回值是true,那么系统假定这个任务正要被执行，执行任务的重担就落在了你的肩上。当任务执行完毕时你需要调用<code>jobFinished(JobParameters params, boolean needsRescheduled)</code>来通知系统。</p>
+<p>当系统接收到一个取消请求时，系统会调用<code>onStopJob(JobParameters params)</code>方法取消正在等待执行的任务。很重要的一点是如果<code>onStartJob(JobParameters params)</code>返回false,那么系统假定在接收到一个取消请求时已经没有正在运行的任务。换句话说，<code>onStopJob(JobParameters params)</code>在这种情况下不会被调用。</p>
+<p>需要注意的是这个job service运行在你的主线程，这意味着你需要使用子线程，handler, 或者一个异步任务来运行耗时的操作以防止阻塞主线程。因为多线程技术已经超出了我们这篇文章的范围，让我们简单实现一个Handler来执行我们在JobSchedulerService定义的任务吧。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Handler mJobHandler = <span class="keyword">new</span> Handler( <span class="keyword">new</span> Handler.Callback() &#123;</span><br><span class="line">     </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">handleMessage</span><span class="params">( Message msg )</span> </span>&#123;</span><br><span class="line">        Toast.makeText( getApplicationContext(), </span><br><span class="line">            <span class="string">"JobService task running"</span>, Toast.LENGTH_SHORT )</span><br><span class="line">            .show();</span><br><span class="line">        jobFinished( (JobParameters) msg.obj, <span class="keyword">false</span> );</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
+<p>在Handler中，你需要实现<code>handleMessage(Message msg)</code>方法来处理你的任务逻辑。在这个例子中，我们尽量保证例子简单，因此我们只在<code>handleMessage(Message msg)</code>中显示了一个Toast，这里就是你要写你的任务逻辑( 耗时操作 )的地方，比如同步数据等。</p>
+<p>当任务执行完毕之后，你需要调用<code>jobFinished(JobParameters params, boolean needsRescheduled)</code>来让系统知道这个任务已经结束，系统可以将下一个任务添加到队列中。如果你没有调用<code>jobFinished(JobParameters params, boolean needsRescheduled)</code>，你的任务只会执行一次，而应用中的其他任务就不会被执行。</p>
+<p><code>jobFinished(JobParameters params, boolean needsRescheduled)</code>的两个参数中的params参数是从JobService的<code>onStartJob(JobParameters params)</code>的params传递过来的，needsRescheduled参数是让系统知道这个任务是否应该在最初的条件下被重复执行。这个boolean值很有用，因为它指明了你如何处理由于其他原因导致任务执行失败的情况，例如一个失败的网络请求调用。</p>
+<p>创建了Handler实例之后，你就可以实现<code>onStartJob(JobParameters params)</code> 和<code>onStopJob(JobParameters params)</code>方法来控制你的任务了。你可能已经注意到在下面的代码片段中<code>onStartJob(JobParameters params)</code>返回了true。这是因为你要通过Handler实例来控制你的操作，这意味着Handler的handleMessage方法的执行时间可能比<code>onStartJob(JobParameters params)</code>更长。返回true,你会让系统知道你会手动地调用<code>jobFinished(JobParameters params, boolean needsRescheduled)</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStartJob</span><span class="params">(JobParameters params)</span> </span>&#123;</span><br><span class="line">    mJobHandler.sendMessage( Message.obtain( mJobHandler, <span class="number">1</span>, params ) );</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onStopJob</span><span class="params">(JobParameters params)</span> </span>&#123;</span><br><span class="line">    mJobHandler.removeMessages( <span class="number">1</span> );</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一旦你在Java部分做了上述工作之后，你需要到AndroidManifest.xml中添加一个service节点让你的应用拥有绑定和使用这个JobService的权限。</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;service android:<span class="variable">name=</span><span class="string">".JobSchedulerService"</span></span><br><span class="line">    android:<span class="variable">permission=</span><span class="string">"android.permission.BIND_JOB_SERVICE"</span> /&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="2-_创建一个JobScheduler对象">2. 创建一个JobScheduler对象</h2><p>随着JobSchedulerService构建完毕，我们可以开始研究你的应用如何与JobScheduler API进行交互了。第一件要做的事就是你需要创建一个JobScheduler对象，在实例代码的MainActivity中我们通过<code>getSystemService( Context.JOB_SCHEDULER_SERVICE )</code>初始化了一个叫做mJobScheduler的JobScheduler对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mJobScheduler = (JobScheduler) </span><br><span class="line">    getSystemService( Context.JOB_SCHEDULER_SERVICE );</span><br><span class="line">```    </span><br><span class="line">当你想创建定时任务时，你可以使用`JobInfo.Builder`来构建一个JobInfo对象，然后传递给你的Service。JobInfo.Builder接收两个参数，第一个参数是你要运行的任务的标识符，第二个是这个Service组件的类名。</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">JobInfo.Builder builder = <span class="keyword">new</span> JobInfo.Builder( <span class="number">1</span>,</span><br><span class="line">        <span class="keyword">new</span> ComponentName( getPackageName(), </span><br><span class="line">            JobSchedulerService.class.getName() ) );</span><br></pre></td></tr></table></figure>
+<p>这个builder允许你设置很多不同的选项来控制任务的执行。下面的代码片段就是展示了如何设置以使得你的任务可以每隔三秒运行一次。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">builder.setPeriodic( <span class="number">3000</span> );</span><br></pre></td></tr></table></figure>
+<p>其他设置方法 : </p>
+<ul>
+<li>setMinimumLatency(long minLatencyMillis): 这个函数能让你设置任务的延迟执行时间(单位是毫秒),这个函数与<code>setPeriodic(long time)</code>方法不兼容，如果这两个方法同时调用了就会引起异常；</li>
+<li>setOverrideDeadline(long maxExecutionDelayMillis):<br>这个方法让你可以设置任务最晚的延迟时间。如果到了规定的时间时其他条件还未满足，你的任务也会被启动。与<code>setMinimumLatency(long time)</code>一样，这个方法也会与<code>setPeriodic(long time)</code>不兼容，同时调用这两个方法会引发异常。</li>
+<li>setPersisted(boolean isPersisted):<br>这个方法告诉系统当你的设备重启之后你的任务是否还要继续执行。</li>
+<li>setRequiredNetworkType(int networkType):<br>这个方法让你这个任务只有在满足指定的网络条件时才会被执行。默认条件是JobInfo.NETWORK_TYPE_NONE，这意味着不管是否有网络这个任务都会被执行。另外两个可选类型，一种是JobInfo.NETWORK_TYPE_ANY，它表明需要任意一种网络才使得任务可以执行。另一种是JobInfo.NETWORK_TYPE_UNMETERED，它表示设备不是蜂窝网络( 比如在WIFI连接时 )时任务才会被执行。</li>
+<li>setRequiresCharging(boolean requiresCharging):<br>这个方法告诉你的应用，只有当设备在充电时这个任务才会被执行。</li>
+<li>setRequiresDeviceIdle(boolean requiresDeviceIdle):<br>这个方法告诉你的任务只有当用户没有在使用该设备且有一段时间没有使用时才会启动该任务。</li>
+</ul>
+<p>需要注意的是<code>setRequiredNetworkType(int networkType)</code>, <code>setRequiresCharging(boolean requireCharging)</code> 以及 <code>setRequiresDeviceIdle(boolean requireIdle)</code>这几个方法可能会使得你的任务无法执行，除非调用<code>setOverrideDeadline(long time)</code>设置了最大延迟时间，使得你的任务在未满足条件的情况下也会被执行。一旦你预置的条件被设置，你就可以构建一个JobInfo对象，然后通过如下所示的代码将它发送到你的JobScheduler中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>( mJobScheduler.schedule( builder.build() ) &lt;= <span class="number">0</span> ) &#123;</span><br><span class="line">    <span class="comment">//If something goes wrong</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你可能注意到了，这个schedule方法会返回一个整型。如果schedule方法失败了，它会返回一个小于0的错误码。否则它会返回我们在JobInfo.Builder中定义的标识id。</p>
+<p>如果你的应用想停止某个任务，你可以调用JobScheduler对象的<code>cancel(int jobId)</code>来实现；如果你想取消所有的任务，你可以调用JobScheduler对象的<code>cancelAll()</code>来实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mJobScheduler.cancelAll();</span><br></pre></td></tr></table></figure>
+<p>到了这里，你现在应该已经知道如何在你的应用中使用JobScheduler API来执行批量任务和后台操作了。</p>
+<h2 id="结论">结论</h2><p>这篇文章中，你学会了怎么实现一个使用Handler对象来运行后台任务的JobService子类，你也学会了如何使用JobInfo.Builder来设置JobService。掌握了这些之后，你可以在减少资源消耗的同时提升应用的效率。</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://code.tutsplus.com/tutorials/using-the-jobscheduler-api-on-android-lollipop--cms-23562" target="_blank" rel="external">using-the-jobscheduler-api-on-android-lollipop</a></li>
+<li>译者 : <a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a></li>
+<li>校对者 : <a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a></li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>在这篇文章中，你会学习到在Android 5.0中如何使用JobScheduler API。JobScheduler API允许开发者在符合某些条件时创建执行在后台的任务。<br>]]>
+    
+    </summary>
+    
+      <category term="任务调度" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[简化Android的UI开发]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/android-mvx/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/android-mvx/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T02:52:26.000Z</updated>
+    <content type="html"><![CDATA[<p>如果你觉得这篇文章太长，而且还没有往下阅读的话，我可以给你简要的介绍文章要讲的内容：我使用纯 Java 通过数据绑定的方式提供了一种</p>
+<p>Android UI 开发的代码往往是支离破碎的，写出来的代码通常都是大量的模板化代码，而且没有结构可言。下面是一些问题（纯属个人见解）：</p>
+<ul>
+<li><p>Android UI 开发很少符合 MVC 模式（或者是 M-V-其他任何东西）</p>
+</li>
+<li><p>XML文件通常包含了很多重复的代码，在代码复用方面比较糟糕</p>
+</li>
+<li><p>XMLS 非常脆弱，这使得你在写 XML 文件时，即使输入了 TextVeiw ，在编译过程中编译器也不会警告你，但在 App 运行时又会抛出 InflateException 异常</p>
+</li>
+<li><p>缺少对 styles 的支持，缺少对变量的支持，不支持宏和计算结果（例如 10dp + 2px)</p>
+</li>
+<li><p>没有数据绑定，这使得你必须自己把所有的 findViewById 和 setOn…Listener 写好</p>
+</li>
+<li><p>你可以通过 Java 实现你的布局，但是写出来的代码有如天书</p>
+</li>
+</ul>
+<a id="more"></a>
+<h2 id="使用_mithril-js_建立用户接口">使用 mithril.js 建立用户接口</h2><p>在 Web 开发中，开发者们很快就意识到在没有 MVx 的情况下开发复杂的应用会很吃力，这使得他们意识到 jQuery 中存在的问题，并开发了 Backbone，Knockout，Angular，Ember…等等，来提高他们的开发效率</p>
+<p>但在 Android 中，我们还在通过那一点点函数毫无章法可言地设置 View 的属性，就像在 jQuery 里一样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'.myview'</span>).text(<span class="string">'Hello'</span>);</span><br><span class="line">$(<span class="string">'.myview'</span>).on(<span class="string">'click'</span>, function() &#123;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">myView.setText(<span class="string">"Hello"</span>);</span><br><span class="line">myView.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123; ...&#125;);</span><br></pre></td></tr></table></figure>
+<p>我们在一个目录下定义了我们的 Layout ，又在另一个目录中使用它们，然后在 UI 开发的代码里改变<br>，这样并不好。</p>
+<p>React.js 对 Web 开发有一点点影响：他们以树状关系的自定义对象创建了一个虚拟的 DOM 概念，并以此展示实际的 HTML 布局。虚拟树创建和切换的时间都很短，所以当实际的 DOM 需要被渲染，两棵虚拟树（前一棵和新的那棵）将进行对比，只有不匹配的部分才会被渲染。</p>
+<p>Mithril.js 是一个精悍、短小的框架，使用它能使 React.js 的实现更整洁。在 Mithril 中，除了纯 JavaScript，你几乎能摆脱一切，同时，它还能让你在写布局的时候感受到图灵完备的语言所具备的力量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> m(<span class="string">'div'</span>,</span><br><span class="line">         m(<span class="string">'p'</span>, someText),</span><br><span class="line">         m(<span class="string">'ul'</span>,</span><br><span class="line">           items.map((item) =&gt; m(<span class="string">'li'</span>, item))),</span><br><span class="line">         m(<span class="string">'button'</span>, &#123;onclick: myClickHandler&#125;));</span><br></pre></td></tr></table></figure>
+<p>因此，你能用循环生成许多 View，你能用判断语句改变布局中的某个部分，最后你能绑定数据和设置事件监听器。</p>
+<p>那这个方法能在 Android 中被使用吗？</p>
+<h2 id="虚拟布局">虚拟布局</h2><p>虚拟布局（使用类似 Web 中虚拟 DOM 的概念）是树状的自定义Java对象集合，被用于展示实际的 Android 布局。虽然 App 的数据改变多少次，树就会被构建多少次，但布局改变的内容应该仅仅是前后不一致的部分（当前的布局和改变前布局）。</p>
+<p>我们的框架只导入一个静态类，所以所有类中的静态方法都不需要类名前缀就能被使用（例如我们只需要使用 v()，而不是 Render.v()），这是语言特性带来的好处。下面是我们如何创建布局的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">v(LinearLayout.class,</span><br><span class="line">    orientation(LinearLayout.VERTICAL),</span><br><span class="line">    v(TextView.class,</span><br><span class="line">        text(someText)),</span><br><span class="line">    v(Button.class,</span><br><span class="line">        text(<span class="string">"Click me"</span>),</span><br><span class="line">        onClick(someClickHandler)));</span><br></pre></td></tr></table></figure>
+<p>第一个 v() 方法返回了一个虚拟布局，每一次调用后它会返回当前应用状态的实际展示（不是实际的 View！）</p>
+<p>当一些文字变量被改变 - 虚拟树会获得一个被用于下次渲染的发生了改变的结点值，然后调用 setText()改变相应的 TextView 实例。但是其余的布局不会发生任何变化。</p>
+<p>一棵虚拟布局树在理想情况下应该只是一个类，我们就把它叫作结点吧。但是结点主要有两种类型：View 结点（TextView.class等等）和属性设置结点，例如text（someText)</p>
+<p>那这就意味着结点应该任意包含一个 View 类和一个方法去改变 View 的属性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">AttributeSetter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(View v)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    List&lt;Node&gt; attrs = <span class="keyword">new</span> ArrayList&lt;Node&gt;();</span><br><span class="line">    Class&lt;? extends View&gt; viewClass; <span class="comment">// for view nodes</span></span><br><span class="line">    AttributeSetter setter;          <span class="comment">// for attribute setter nodes</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Node</span><span class="params">(Class&lt;? extends View&gt; c)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.viewClass = c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Node</span><span class="params">(AttributeSetter setter)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.setter = setter;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在我们需要定义类在产生虚拟布局的时候实际能干的事情了，那就让我们来调用可渲染类吧。一个可渲染类可以是一个 Activity，或者一个自定义的 ViewGroup，或者 Fragment 也凑合。每一个可渲染类都应该有一个用于返回虚拟布局的方法，此外，如果这个方法指定了它将要作用于实际布局中的哪个 View 会更好。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Renderable</span> </span>&#123;</span><br><span class="line">    <span class="function">Node <span class="title">view</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">ViewGroup <span class="title">getRootView</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于 v() 方法的第一个参数是 View 子类的泛型，所以你不用担心类型安全问题。剩下的参数都是结点类型，所以我们只需要把它们添加到 list 中，无视掉空结点的话效果会更好一些。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Node <span class="title">v</span><span class="params">(<span class="keyword">final</span> Class&lt;? extends View&gt; cls, <span class="keyword">final</span> Node ...nodes)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Node(cls) ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Here’s an example of the text() attribute setter (the real code is a bit different, but it could have been implemented like this):</p>
+<p>下面是一个 text() 属性的设置方法（实际代码会有点不一样，但是也能像下面这样实现）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Node <span class="title">text</span><span class="params">(<span class="keyword">final</span> String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Node(<span class="keyword">new</span> AttributeSetter() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">            ((TextView) v).setText(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其他类似的工具方法也能用于改变线性布局的方向，View 的大小、页边距、间距，总之所有 View 的参数都能被改变。</p>
+<h2 id="那么，我们要怎么去渲染呢？">那么，我们要怎么去渲染呢？</h2><p>现在我们需要一个“渲染者”。这是一个能够根据类名创建 View ，使用 AttributeSetters修改对应的参数并且递归地添加子 View的方法。（同样的，下面的代码也是被简化的，实际的代码会有些不一样，主要差别在于当结点没有被改变的时候，我们应该如何避免视图的渲染）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> View <span class="title">inflateNode</span><span class="params">(Context c, Node node, ViewGroup parent)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (node.viewClass == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Root is not a view!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Exception handling skipped here to make the code look shorter</span></span><br><span class="line">    View v = (View) node.viewClass.getConstructor(Context.class).newInstance(c);</span><br><span class="line">    parent.addView(v);</span><br><span class="line">    <span class="keyword">for</span> (Node subnode: node.attrs) &#123;</span><br><span class="line">        <span class="keyword">if</span> (subnode.setter != <span class="keyword">null</span>) &#123;</span><br><span class="line">            subnode.setter.set(v);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            View subview = inflateNode(c, subnode, (ViewGroup) v);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在我们真的可以摆脱 XMLS，并以一种简洁的方式通过 Java 进行布局了。</p>
+<p>布局结点不应该直接地被使用，而应该是通过 render(Renderer r) 和 render()被使用。前者用于重渲染某一个 View，后者用于重渲染所有被展示的 View。Renderer 通过一个弱哈希表存储，使得在 View 被移除或者 Activity 被销毁的同时 - 他们的渲染者也不会再被使用。</p>
+<h2 id="什么时候去渲染呢？">什么时候去渲染呢？</h2><p>这个框架的核心在于 自动进行重渲染，使得 UI 总能展示当前的虚拟布局状态。这就意味着 render() 应该在某个特定的节点被调用。</p>
+<p>我参考 Mithril 的方法，把每一个 On…Listener 和 调用 render 的方法捆绑在每一次 UI 的交互中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Node <span class="title">onClick</span><span class="params">(<span class="keyword">final</span> View.OnClickListener listener)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Node(<span class="keyword">new</span> AttributeSetter() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">            v.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">                    listener.onClick(v);</span><br><span class="line">                    <span class="comment">// After the click was processed - some data may have been changed</span></span><br><span class="line">                    <span class="comment">// so we try to re-render the UI</span></span><br><span class="line">                    render();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我觉得这样做是有道理的，因为大多数 Android 应用的数据都是在发生用户交互的时候被改变的。如果你的数据是因为其他因素被改变的 - 那就只能手动通过 render()渲染了。</p>
+<h2 id="总的来说">总的来说</h2><p>这个方法虽然简单，却非常有用：</p>
+<ul>
+<li><p>你能用类似 XML 的方式定义你的布局结构（通过嵌套调用 v() 方法）</p>
+</li>
+<li><p>你能用一种清晰易懂的方式绑定数据和监听器</p>
+</li>
+<li><p>布局都是类型安全的，并且你的编译器会自动完成相应的工作</p>
+</li>
+<li><p>没有运行时产生的开销，没有使用反射机制，没有自动生成代码</p>
+</li>
+<li><p>你能在任何地方使用 Java（变量，语句，宏）生成布局</p>
+</li>
+<li><p>你能用自定义 View 和自定义的属性设置方法</p>
+</li>
+<li><p>因为你的所有 UI 数据都被保存在属性中，因此你能轻易的保存它们</p>
+</li>
+<li><p>使用纯 Java 实现这些逻辑需要的代码还不到 250 行！</p>
+</li>
+</ul>
+<p>以上证明了这个方法是可行的。现在我在想，如果有人想要用这个方法开发一个功能齐全的库呢？</p>
+<p>设计一个好的“区分”算法会是其中的关键。基本地，它应该能判断一个结点是否被添加/移除/修改，而文件就在于属性节点。简单的数据类型我们只要调用 equals() 去比较两个值就可以了，但是监听器呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">v(SomeView.java,</span><br><span class="line">    onClick(v =&gt; ...));</span><br></pre></td></tr></table></figure>
+<p>这样做的话每一次虚拟树被创建，都会创建一个对应的监听器对象。那怎么去比较它们？还是永远都不更新监听器，只更新发生了改变的监听器类？或者使用某种事件分发机制分发事件，而不是使用监听器？</p>
+<p>另一件需要被注意的是：我不想自己把所有属性设置方法写好。这里有一个更好的方法，也就是 Kotlin 他们在 koan 库中做的那样。</p>
+<p>我现在在研究怎么从 android.jar 的类中自动生成设置器，以使得这个项目更有用。</p>
+<p>不管怎样，现在的代码我都放在 <a href="https://github.com/zserge/anvil" target="_blank" rel="external">Github</a> 上了，有 MIT 的许可。欢迎大家来评论和 PR！ </p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://zserge.com/blog/android-mvx.html" target="_blank" rel="external">android ui development made easy</a></li>
+<li>作者 : <a href="http://zserge.com/blog.html" target="_blank" rel="external">Zaitsev Serge</a></li>
+<li>译者 : <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a> </li>
+<li>校对者: <a href="https://github.com/ZhaoKaiQiang" target="_blank" rel="external">ZhaoKaiQiang</a>  </li>
+<li>状态 :  校对完成</li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>如果你觉得这篇文章太长，而且还没有往下阅读的话，我可以给你简要的介绍文章要讲的内容：我使用纯 Java 通过数据绑定的方式提供了一种</p>
+<p>Android UI 开发的代码往往是支离破碎的，写出来的代码通常都是大量的模板化代码，而且没有结构可言。下面是一些问题（纯属个人见解）：</p>
+<ul>
+<li><p>Android UI 开发很少符合 MVC 模式（或者是 M-V-其他任何东西）</p>
+</li>
+<li><p>XML文件通常包含了很多重复的代码，在代码复用方面比较糟糕</p>
+</li>
+<li><p>XMLS 非常脆弱，这使得你在写 XML 文件时，即使输入了 TextVeiw ，在编译过程中编译器也不会警告你，但在 App 运行时又会抛出 InflateException 异常</p>
+</li>
+<li><p>缺少对 styles 的支持，缺少对变量的支持，不支持宏和计算结果（例如 10dp + 2px)</p>
+</li>
+<li><p>没有数据绑定，这使得你必须自己把所有的 findViewById 和 setOn…Listener 写好</p>
+</li>
+<li><p>你可以通过 Java 实现你的布局，但是写出来的代码有如天书</p>
+</li>
+</ul>]]>
+    
+    </summary>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[一种更清晰的Android架构]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/architecting-android-the-clean-way/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/architecting-android-the-clean-way/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T02:55:03.000Z</updated>
+    <content type="html"><![CDATA[<p>过去几个月以来，通过在Tuenti网站上与@pedro_g_s和@flipper83（安卓开发两位大牛）进行友好讨论之后，我决定写这篇关于架构安卓应用的文章。     </p>
+<p>我写这篇文章的目的是想把我在过去几个月体悟到的小方法以及在调查和应用中学到的有用的东西分享给大家。<br><a id="more"></a></p>
+<h2 id="入门指南">入门指南</h2><p>大家都知道要写一款精品软件是有难度且很复杂的：不仅要满足特定要求，而且软件还必须具有稳健性，可维护、可测试性强，并且能够灵活适应各种发展与变化。这时候，“清晰架构”就应运而生了，这一架构在开发任何软件应用的时候用起来非常顺手。</p>
+<p>这个思路很简单：简洁架构 意味着产品系统中遵循一系列的习惯原则：</p>
+<ul>
+<li>框架独立性</li>
+<li>可测试</li>
+<li>UI独立性</li>
+<li>数据库独立性</li>
+<li>任何外部代理模块的独立性  </li>
+</ul>
+<p><img src="https://camo.githubusercontent.com/dd69e725f30c30031dea279adc5a9d09ea3432f2/687474703a2f2f6665726e616e646f63656a61732e636f6d2f77702d636f6e74656e742f75706c6f6164732f323031342f30392f636c65616e5f617263686974656374757265312e706e67" alt="arch"></p>
+<p>我们并不要求一定要用四环结构（如图所示），这只是一个示例图解，但是要考虑的是依赖项规则：源码依赖项只能向内指向，内环里的所有项不能了解外环所发生的东西。  </p>
+<p>以下是更好地理解和熟悉本方法的一些相关词汇：     </p>
+<ul>
+<li>Entities：是指一款应用的业务对象</li>
+<li>Use cases：是指结合数据流和实体中的用例，也称为Interactor</li>
+<li>Interface Adapters： 这一组适配器，是负责以最合理的格式转换用例（use cases）和实体（entities）之间的数据，表现层（Presenters ）和控制层（Controllers ），就属于这一块的。</li>
+<li>Frameworks and Drivers: 这里是所有具体的实现了：比如：UI，工具类，基础框架，等等。</li>
+</ul>
+<p>想要更具体，更生动丰富的解释，可以参考<a href="http://blog.8thlight.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank" rel="external">这篇文章</a>或者<a href="https://vimeo.com/43612849" target="_blank" rel="external">这个视频</a>。</p>
+<h2 id="场景">场景</h2><p>我会设置一个简单的场景来开始：创建一个简单的小app，app中显示从云端获取的一个朋友或用户列表。当点击其中任何一个时，会打开一个新的窗口，显示该用户的详细信息。这里我放了一段视频，大家看看<a href="http://fernandocejas.com/2014/09/03/architecting-android-the-clean-way/" target="_blank" rel="external">这个视频 (需翻墙)</a>大概就可以对我所描述的东西了解个大概了。 </p>
+<h2 id="Android应用架构">Android应用架构</h2><p>这一对象遵循关注分离原则，也就是通过业务规则让内环操作对外环事物一无所知，这样一来，在测试时它们就不会依赖任何的外部元素了。<br>要达到这个目的，我的建议就是把一个项目分成三个层次，每个层次拥有自己的目的并且各自独立于堆放运作。<br>值得一提的是，每一层次使用其自有的数据模型以达到独立性的目的（大家可以看到，在代码中需要一个数据映射器来完成数据转换。如果你不想把你的模型和整个应用交叉使用，这是你要付出的代价）。    </p>
+<p>以下是图解，大家感受下：   </p>
+<p><img src="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_android.png" alt="schema"></p>
+<blockquote>
+<p>注：我并没有使用任何的外部库（除了用于json数据句法分析的gson和用于测试的junit, mockito, robolectric和espresso以外）。原因是它可以使这个示例更清晰。总之，在存储磁盘数据时，记得加上ORM、依赖注入框架或者你熟悉的任何工具或库，这些都会带来很大帮助。（记住：重复制造轮子可不是明智的选择）</p>
+</blockquote>
+<h2 id="表现层_(Presentation_Layer)">表现层 (Presentation Layer)</h2><p>表现层在此，表现的是与视图和动画相关的逻辑。这里仅用了一个Model View Presenter（下文简称MVP），但是大家也可以用MVC或MVVM等模式。这里我不再赘述细节，但是需要强调的是，这里的fragment和activity都是View,其内部除了UI逻辑以外没有其他逻辑，这也是所有渲染的东西发生的地方。<br>本层次的Presenter由多个interactor（用例）组成，Presenter在 android UI 线程以外的新线程里工作，并通过回调将要渲染到View上的数据传递回来。<br><img src="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_mvp.png" alt="mvp"> </p>
+<p>如果你需要一个使用MVP和MVVM的<a href="https://github.com/pedrovgs/EffectiveAndroidUI/" target="_blank" rel="external">Effective Android UI</a>典型案例，可以参考我朋友Pedro Gómez的文章。</p>
+<h2 id="领域层_(Domain_Layer)">领域层 (Domain Layer)</h2><p>这里的业务规则是指所有在本层发生的逻辑。对于Android项目来说，大家还可以看到所有的interactor（用例）实施。这一层是纯粹的java模块，没有任何的Android依赖性。当涉及到业务对象时，所有的外部组件都使用接口。    </p>
+<p><img src="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_domain.png" alt="domain"> </p>
+<h2 id="数据层_(Data_Layer)">数据层 (Data Layer)</h2><p>应用所需的所有数据都来自这一层中的UserRepository实现（接口在领域层）。这一实现采用了<a href="http://martinfowler.com/eaaCatalog/repository.html" target="_blank" rel="external">Repository Pattern</a>，主要策略是通过一个工厂根据一定的条件选取不同的数据来源。<br>比如，通过ID获取一个用户时，如果这个用户在缓存中已经存在，则硬盘缓存数据源会被选中，否则会通过向云端发起请求获取数据，然后存储到硬盘缓存。<br>这一切背后的原理是由于原始数据对于客户端是透明的，客户端并不关心数据是来源于内存、硬盘还是云端，它需要关心的是数据可以正确地获取到。</p>
+<p><img src="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_data.png" alt="data">   </p>
+<p>&gt;<br>注：在代码方面，出于学习目的，我通过文件系统和Android preference实现了一个简单、原始的硬盘缓存。请记住，如果已经存在了能够完成这些工作的库，就不要重复制造轮子。</p>
+<h2 id="错误处理">错误处理</h2><p>这是一个长期待解决的讨论话题，如果大家能够分享各自的解决方案，那真真是极好的。<br>我的策略是使用回调，这样的话，如果数据仓库发生了变化，回调有两个方法：onResponse()和onError(). onError方法将异常信息封装到一个ErrorBundle对象中: 这种方法的难点在于这其中会存在一环扣一环的回调链，错误会沿着这条回调链到达展示层。因此会牺牲一点代码的可读性。另外，如果出现错误，我本来可以通过事件总线系统抛出事件，但是这种实现方式类似于使用C语言的goto语法。在我看来，当你订阅多个事件时，如果不能很好的控制，你可能会被弄得晕头转向。</p>
+<h2 id="测试">测试</h2><p>关于测试方面，我根据不同的层来选择不同的方法:    </p>
+<ul>
+<li>展示层 ( Presentation Layer) : 使用android instrumentation和 espresso进行集成和功能测试</li>
+<li>领域层 ( Domain Layer) : 使用JUnit和Mockito进行单元测试；</li>
+<li>数据层 ( Data Layer) : 使用Robolectric （ 因为依赖于Android SDK中的类 ）进行集成测试和单元测试。</li>
+</ul>
+<h2 id="代码展示">代码展示</h2><p>我猜你现在在想，扯了那么久的淡，代码究竟在哪里呢？ 好吧，这就是你可以找到上述解决方案的<a href="https://github.com/android10/Android-CleanArchitecture" target="_blank" rel="external">github链接</a>。还要提一点，在文件夹结构方面，不同的层是通过以下不同的模块反应的:     </p>
+<ul>
+<li>presentation: 展示层的Android模块</li>
+<li>domain: 一个没有android依赖的java模块</li>
+<li>data: 一个数据获取来源的android模块。</li>
+<li>data-test: 数据层测试，由于使用Robolectric 存在一些限制，所以我得再独立的java模块中使用。</li>
+</ul>
+<h2 id="结论">结论</h2><p>正如 Bob大叔 所说：“Architecture is About Intent, not Frameworks” ，我非常同意这个说法，当然了，有很多不同的方法做不同的事情（不同的实现方法），我很确定，你每天（像我一样）会面临很多挑战，但是遵循这些方法，可以确保你的应用会：   </p>
+<ul>
+<li>易维护 Easy to maintain</li>
+<li>易测试 Easy to tes.</li>
+<li>高内聚 Very cohesive.</li>
+<li>低耦合 Decoupled.     </li>
+</ul>
+<p>最后，我强烈推荐你去实践一下，并且分享你的经验。也许你会找到更好的解决方案：我们都知道，不断提升自己是一件件非常好的事。我希望这篇文章对你有所帮助，欢迎拍砖。</p>
+<h2 id="参考资料">参考资料</h2><ol><br><li>Source code: <a href="https://github.com/android10/Android-CleanArchitecture" target="_blank" rel="external">https://github.com/android10/Android-CleanArchitecture</a></li><br><li><a href="http://blog.8thlight.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank" rel="external">The clean architecture by Uncle Bob</a></li><br><li><a href="http://www.infoq.com/news/2013/07/architecture_intent_frameworks" target="_blank" rel="external">Architecture is about Intent, not Frameworks</a></li><br><li><a href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter" target="_blank" rel="external">Model View Presenter</a></li><br><li><a href="http://martinfowler.com/eaaCatalog/repository.html" target="_blank" rel="external">Repository Pattern by Martin Fowler</a></li><br><li><a href="http://www.slideshare.net/PedroVicenteGmezSnch/" target="_blank" rel="external">Android Design Patterns Presentation</a></li><br></ol>
+
+
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://fernandocejas.com/2014/09/03/architecting-android-the-clean-way/" target="_blank" rel="external">Architecting Android…The clean way?</a></li>
+<li>译者 : <a href="https://www.github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple &amp; Sophie.Ping</a></li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>过去几个月以来，通过在Tuenti网站上与@pedro_g_s和@flipper83（安卓开发两位大牛）进行友好讨论之后，我决定写这篇关于架构安卓应用的文章。     </p>
+<p>我写这篇文章的目的是想把我在过去几个月体悟到的小方法以及在调查和应用中学到的有用的东西分享给大家。<br>]]>
+    
+    </summary>
+    
+      <category term="MVP" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/MVP/"/>
+    
+      <category term="MVVM" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/MVVM/"/>
+    
+      <category term="Android架构" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/Android%E6%9E%B6%E6%9E%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[安卓字体渲染器]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/androids-font-renderer/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/androids-font-renderer/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T02:53:35.000Z</updated>
+    <content type="html"><![CDATA[<p>任何一个有几年的客户端应用开发经验的开发者都会知道文本渲染有多复杂。至少我在2010年开始写libhwui(基于OpenGL的安卓2D绘制API)之前是这么认为的。在开始写libhwui后，我意识到如果试图用GPU来渲染文本会使文本渲染变得更复杂。<br><a id="more"></a></p>
+<h2 id="Text_and_Android">Text and Android</h2><h2 id="文本与安卓">文本与安卓</h2><p>安卓的硬件加速字体渲染最开始是由Renderscript团队的一位同事编写的，后来经过了多位工程师的修改和优化，其中就包括我以及我的朋友Chet Haase。你可以很容易的找到很多关于如何用OpenGL渲染文本的教程。但是，大部分的这些文章都把重点放在游戏开发以及如何绕过一些复杂的问题上。</p>
+<p>下面的内容并非如小说般的通俗易懂,但我认为它能很容易地给开发者一个如何实现完整的基于GPU的文字渲染系统的总览。文章中同时也描述了几个容易实现的文本渲染的优化。</p>
+<p>通常用OpenGL渲染文本的方法是计算一张包含所有需要的字形的纹理集合。这通常是在离线状态下用一个非常复杂的打包算法来最大化的减小纹理集合的资源浪费。创建这样一个纹理集合需要预先知道哪些文本—包括字体、字号以及其他属性等—然后应用就可以在运行时使用这些字形。</p>
+<p>在安卓上用预先渲染的纹理显然不是一个可行的解决方案。UI组件无法预先得知哪些文本需要被渲染；部分应用甚至会在运行时加载自定义字体。这是个主要的约束，但是这仅仅是其中一个：</p>
+<ul>
+<li><p>必须在运行时建立字体缓存</p>
+</li>
+<li><p>必须能处理数量巨大的字体</p>
+</li>
+<li><p>必须能处理数量巨大的字形</p>
+</li>
+<li><p>必须最大化地减小纹理浪费</p>
+</li>
+<li><p>渲染速度必须够快</p>
+</li>
+<li><p>在高端和低端机型上必须效果一致</p>
+</li>
+<li><p>在任何驱动/GPU组合上都必须完美运行</p>
+</li>
+</ul>
+<h2 id="实现字体渲染">实现字体渲染</h2><p>在我们研究底层OpenGL文字渲染是如何实现之前，我们先来看看应用中直接调用的上层接口。这些接口对理解libhwui如何工作是非常重要的。</p>
+<h3 id="文本接口">文本接口</h3><p>应用中用来排版和绘制文本的主要API有4个：</p>
+<ul>
+<li><p>android.widget.TextView，一个处理排版和渲染的控件</p>
+</li>
+<li><p>android.text.*，创建风格化文本和文本布局的类集合</p>
+</li>
+<li><p>android.graphics.Paint，文本测量</p>
+</li>
+<li><p>android.graphics.Canvas，文本渲染</p>
+</li>
+</ul>
+<p>TextView以及android.text都是以Paint和Canvas为基础的顶层实现。在安卓3.0之前Paint和Canvas都是直接由<a href="https://code.google.com/p/skia/" target="_blank" rel="external">Skia</a>(软件渲染库)实现的顶层API，Skia提供一个抽象库叫<a href="http://www.freetype.org/" target="_blank" rel="external">Freetype</a>,一个流行的开源字体光栅化器。</p>
+<blockquote>
+<p>安卓软件文本渲染<br><img src="http://img.my.csdn.net/uploads/201503/31/1427770402_6442.png" alt="text rendering"></p>
+</blockquote>
+<p>安卓4.4以后整个过程变得有点复杂。Paint和Canvas用一个叫TextLayoutCache的内部JNI接口来实现复杂的文本排版布局(CTL)。这个接口依赖于<a href="http://www.freedesktop.org/wiki/Software/HarfBuzz/" target="_blank" rel="external">Harfbuzz</a>,这是一个开源的文字shaping引擎。TextLayoutCache接受字体和UTF-16编码的字符串输入，并输出一个包含了x，y坐标的字形标示列表。</p>
+<p>TextLayoutCache是处理非拉丁文字，包括阿拉伯文、希伯来文、泰文等的关键。这边我不详细解释关于TextLayoutCache和Harfbuzz是如何工作的。但是如果你想在你的应用中更好的支持非拉丁文字，我强烈建议你学习CTL(复杂文本排版布局)的相关知识。这个问题极少在讨论用OpenGL渲染文本的教程中提到。绘制文本会比单纯地从左到右一个接一个地摆放字形更复杂。部分语言，例如阿拉伯语，是从右到左排列的。泰文甚至需要把字形从上到下 或者从下到上排列。</p>
+<blockquote>
+<p>Android hardware accelerated text rendering</p>
+<p>安卓硬件加速文字渲染<br><img src="http://img.my.csdn.net/uploads/201503/31/1427770402_8107.png" alt="harware text rendering"></p>
+</blockquote>
+<p>所有这些意味着当你调用Canvas.drawText()，不管是直接还是间接调用。OpenGL渲染器都不会接收到你发送的参数，而只是接收到一个字形标示以及x/y坐标的数组。</p>
+<h3 id="光栅化和缓存">光栅化和缓存</h3><p>所有字体渲染的调用都要有字体的配合。字体用来缓存多个独立的字形。字形储存在一个缓存纹理上(一个缓存纹理可以包含不同字体的字形)。缓存纹理是用来存放多个缓存的重要对象：一个空的块列表、一个像素缓存、OpenGL纹理和顶点缓存(the mesh)。</p>
+<blockquote>
+<p>缓存结构<br><img src="http://img.my.csdn.net/uploads/201503/31/1427770403_5202.png" alt="cache arch"></p>
+</blockquote>
+<p>用来储存所有这些对象的数据结构很简单：</p>
+<ul>
+<li><p>字体储存在字体渲染器的一个LRU缓存中</p>
+</li>
+<li><p>字形存放在每一个字体的映射集中(the key is the glyph identifier)</p>
+</li>
+<li><p>缓存纹理用一个块链表来追踪剩余空间</p>
+</li>
+<li><p>像素缓存为uint8 或者 uint32_t的数组(alpha以及RGB缓存)</p>
+</li>
+<li><p>mesh是一个包含x/y坐标和u/v坐标的顶点缓存</p>
+</li>
+<li><p>纹理是一个GLunit句柄</p>
+</li>
+</ul>
+<p>字体渲染器初始化的时候会创建两种类型的缓存纹理：alpha和 RGBA。Alpha纹理用来储存普通的字形；字体本身不包含颜色信息，所以我们只需要储存抗锯齿相关的信息。RGBA缓存用来储存emoji表情。</p>
+<p>字体渲染器会为每种类型的纹理创建多个针对不同尺寸的CacheTexture实例。缓存的尺寸在不同设备上不一样，下面是几个默认的尺寸(缓存的数量是硬编码的)：</p>
+<ul>
+<li>1024x512 alpha缓存</li>
+<li>2048x256 alpha缓存</li>
+<li>2048x256 alpha缓存</li>
+<li>2048x512 alpha缓存</li>
+<li>1024x512 RGBA缓存</li>
+<li>2048x256 RGBA缓存</li>
+</ul>
+<p>CacheTexture实例创建后，它下面的缓存并不会自动分配。字体渲染器会根据需要来分配，1024x512alpha缓存作为一个例外每次都会分配。</p>
+<p>字形会在纹理中被打包成多个列。当渲染器遇到一个没有缓存的字形时，它会要求上面列表中对应类型的CacheTexture缓存该字形。</p>
+<p>这时候上面提到的块列表就登场了。这个列表包含了给定缓存纹理的已分配空间加上可用空间。如果一个已存在的列可以容纳下某个字形，那么这个字形就会被添加到这个列的已占用空间的底部。</p>
+<p>如果所有的列都被占用，它便会在左边的剩余空间中创建一个新列。由于部分字体是等宽字体，渲染器会把每一个字形的宽度四舍五入到4的倍数(默认情况下)。打包并不是最优解，但是它提供了一个快速实现方法。</p>
+<p>所有储存在纹理中的字形都由一个空的一像素的边包围。这是为了避免在双线性过滤时需要对字体纹理进行人工干预处理。</p>
+<p>这边需要了解的一个重点是当文本在渲染的时候做了缩放变换，这些变换会被交给Skia/Freetype。这表示这些字形是以变换后的形态储存在缓存纹理中。这在提高渲染质量的同时造成性能损耗。幸运的是，文本很少做动画缩放，即使做了动画缩放也只影响到少部分的字形。我做了大量的测试也没有出现性能造成比较大影响的情况。</p>
+<p>粗体、斜体、文本x轴缩放(这边不是用canvas的变换矩阵来处理)、样式和线宽等属性也会影响字形的光栅化和储存。</p>
+<h3 id="光栅化代替方案">光栅化代替方案</h3><p>有另外一种用GPU处理文本的方法。字形可以直接用顶点向量的方式渲染，但是这样开销非常大。我也稍微研究了一下有向距离场，但是简单的实现方式会导致精确度的问题(curves tend to become “wobbly”).</p>
+<p>建议看一下<a href="https://code.google.com/p/glyphy/" target="_blank" rel="external">Glyphy</a>，这是一个由Harfbuzz的作者写的开源库，扩展了有向距离场技术并解决了精度的问题。我有一段时间没关注这个项目了，上次看的时候着色器开销在安卓上还是禁止的。</p>
+<h3 id="预缓存">预缓存</h3><p>缓存字形是理所当然的，但是预缓存会更好一点。由于libhwui是一个延迟渲染器(和Skia的即时模式相反)，所有即将被绘制到屏幕上的字形在帧开始时都是预知的。在显示列表操作的排序过程中(批处理和合并)，字体渲染器会被要求尽可能多的预先缓存字形。</p>
+<p>这样做的主要优势是完全或者 最大化的避免纹理在两帧之前的上传数量。纹理上传是一个开销极大的操作，会导致CPU或者GPU的延迟。更严重的是，在部分GPU架构上帧间修改纹理会导致内存紧张。</p>
+<p>ImaginationTech公司的PowerVR SGX 系列GPU用了一个很有意思的延迟tiling架构，但是会强制驱动保留一份帧间修改的纹理的备份。字体纹理是非常大的，如果不注意纹理上传问题很容易导致内存溢出。</p>
+<p>Google Play上的一款应用就出现了这个问题。这款应用是一个简单的计算器，包含多个有数学符号和数字的按钮。字体渲染器在第一帧渲染的时候内存溢出了。因为按钮是按顺序绘制的。每一个按钮的绘制都会触发纹理上传。以及对整个字体缓存的拷贝。系统没有足够的内存来维持这么多的缓存拷贝。</p>
+<h3 id="清理缓存">清理缓存</h3><p>缓存字形的纹理非常大，它们在部分情况下会被系统回收来把空间让给其他应用。</p>
+<p>当用户让应用进入后台的时候，系统会发送一条要求释放尽可能多内存的信息给应用。最显而易见的方式就是销毁最大得缓存纹理。在安卓系统上，所有除了第一个创建的缓存纹理（默认是1024x512）都被视为大型纹理。</p>
+<p>当所有缓存都没有任何剩余空间得时候，纹理也会被清理掉。字体渲染器用LRU来追踪字体，但不对它做任何操作。如果需要的话，可以选择清理相对使用较少的纹理，这样更加智能化。现在还没有证据证明这是必须的，但是这是一个潜在的优化策略。</p>
+<h3 id="批处理和合并">批处理和合并</h3><p>安卓4.3引入了<a href="https://www.youtube.com/watch?v=vQZFaec9NpA" target="_blank" rel="external">批处理和合并</a>绘制操作，彻底降低了OpenGL驱动的指令问题数量，是一个很重要的优化策略。</p>
+<p>为了实现合并，字体渲染器在多个绘制请求上对文本几何结构进行缓存。每一个缓存纹理用于一个2048 quad的客户端数组(1 quad = 一个字形),他们共享一个索引缓存（在GPU中储存为一个VBO）。当libhwui内部发起一个绘制请求时，字体渲染器会为每一个字形获取一个mesh并把x/y坐标和u/v坐标写进去。mesh在批处理的最后或者在quad缓存满得时候被发送给GPU(由延迟显示列表系统中所描述)。有可能在渲染一个字符串的时候会有多个mesh，每个缓存纹理一个。</p>
+<p>这个优化策略容易实现，并且对性能提升有很大帮助。由于字体渲染器使用多个缓存纹理，导致字符串中的大部分字形一部分在一个纹理中，一部分在另一个纹理中。如果没有批处理/合并优化策略，每次字体渲染器需要切换不同缓存纹理的时候都会发起一个绘制请求给GPU。</p>
+<p>我用来测试字体渲染器的一个应用上就出现了这个问题。这个应用用不同的样式和尺寸渲染一个”Hello world”字符串。”o”字被储存在和其他字符不同的纹理中。这会导致字体渲染器先绘制”hell”, 然后是”o”,”w”,”o”, 最后是”rld”。一共五次绘制请求以及5次纹理绑定，但实际上只需要两个纹理。使用优化后，渲染器会先绘制”hell w rld”然后再同时绘制两个”o”。</p>
+<h3 id="优化纹理上传">优化纹理上传</h3><p>我之前提到字体渲染器在上传缓存纹理的时候会追踪每个纹理的dirty rectangle来尽可能地上传最少量的数据。但是这种方式有两个限制。</p>
+<p>首先，OpenGL ES 2.0不允许上传长方形的任意一个部分。glTexSubImage2D允许你指定纹理内部的长方形的x/y和宽高but it assumes that the stride of the data in main memory is the width of that rectangle.可以通过创建一个新的合适大小的CPU缓存来绕过这个问题，但是这就需要预先知道长方形的大小。</p>
+<p>一个妥协的办法是上传包含这个长方形的最小带宽的像素(smallest band of pixels)。由于带宽总是和纹理本身一样宽所以我们还是会浪费掉部分带宽，但是这总好过上传整个纹理。</p>
+<p>第二个问题是纹理上传是同步的。这会导致CPU长时间的停顿（多至一毫秒，取决于纹理大小、驱动和CPU）。这在预缓存正常工作的情况下并不是大问题，但是在使用大量文本的应用或者使用大量字形的语言(例如中文)的时候用户会感受到停顿。</p>
+<p>OpenGL ES 3.0提供了这两个问题的解决方案。用一个叫GL_UNPACK_ROW_LENGTH的像素储存新属性可以上传一个长方形的一部分。这个属性指定了幅度或者主内存中的原始数据。但请注意：这个属性会对当前的OpenGL上下文的全局状态造成影响。</p>
+<p>通过使用像素缓存对象或者PBO可以避免CPU停顿。类似于OpenGL中的其他缓存对象，PBO reside in the GPU but can be mapped in main memory.PBO有很多有趣的属性，但是其中最让我们关注的事它允许异步上传纹理。整个操作过程变成：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">glMapBufferRange-&gt;把字形写入缓存-&gt;glUnmapBuffer-&gt;glPixlStorei(<span class="constant">GL_UNPACK_ROW_LENGTH)</span>-&gt;glTexSubImage2D</span><br></pre></td></tr></table></figure>
+<p>对glTexSubImage2D的调用现在会立刻返回而不会阻断渲染器。字体渲染器会同时把整个缓存映射到主内存中。虽然这不太可能导致性能问题，但是最好处理方式还是只映射更新缓存纹理所必须的那一部分。</p>
+<p>这两个OpenGL ES 3.0的优化策略<a href="https://plus.google.com/+RomainGuy/posts/9QSTyVCSoz3" target="_blank" rel="external">已经在安卓4.4中实现</a></p>
+<h3 id="投影">投影</h3><p>文本通常在渲染的时候会带上阴影。这是一个开销较大的操作。由于相邻的字形的阴影模糊会互相影响，字体渲染器无法预先对字形进行模糊化。实现模糊的方法很多，但为了减小每帧间的混合操作和纹理取样，投影会以纹理的形式储存并延续到多个帧。</p>
+<p>由于应用很容易让GPU超负荷，我们决定把模糊化交给CPU处理。最简单和高效的处理方法是使用RenderScript的C++ 接口。只需要几行代码and takes advantage of all the available cores.唯一需要注意的是初始化Renderscript的时候要指定RS_INIT_LOW_LATENCY标示来把操作交给CPU执行。</p>
+<h3 id="未来的优化策略？">未来的优化策略？</h3><p>在我离开安卓团队前有一个优化策略我希望能够实现。文本预缓存，异步以及部分纹理更新都是相当重要的优化方式，但是字形的光栅化依然是一个开销极大的操作。在systrace里很容易看出来。(勾选gfx标签并找到precacheText事件)。</p>
+<p>一个简单的优化方法是在后台使用worker线程来执行字形光栅化。这种技巧在不渲染成OpenGL几何体的复杂路径光栅化上已经得到应用。</p>
+<p>文本渲染的批处理和合并也有潜在的提升空间。用来绘制文本的部分的颜色是以整体的形式发送给碎片着色器的。这降低了发送给GPU的顶点数据但是同时也导致了副作用，会产生不必要得批处理指令：一个批处理只能包含单色的文本。如果以顶点的属性方式储存会减少发送给GPU的批处理指令。</p>
+<h3 id="源码">源码</h3><p>如果你需要深入研究字体渲染器的实现可以访问libhwui的<a href="https://github.com/android/platform_frameworks_base/tree/master/libs/hwui" target="_blank" rel="external">github地址</a>。大部分操作都在<a href="https://github.com/android/platform_frameworks_base/blob/master/libs/hwui/FontRenderer.cpp" target="_blank" rel="external">FontRenderer.cpp</a>中，所以你可以选择从这个类开始看。和它相关的类在<a href="https://github.com/android/platform_frameworks_base/tree/master/libs/hwui/font" target="_blank" rel="external">font/</a>的子文件夹中。<a href="https://github.com/android/platform_frameworks_base/blob/master/libs/hwui/PixelBuffer.cpp" target="_blank" rel="external">PixelBuffer.cpp</a>也非常有帮助。这是一个由CPU缓存(uint8_t数组)或者GPU缓存(PBO)支持的像素缓存的抽象类。</p>
+<p>你会发现源代码中有一些配置属性。这些属性在安卓的<a href="http://source.android.com/devices/tuning.html" target="_blank" rel="external">性能调节</a>文档中有描述。</p>
+<h3 id="题外话">题外话</h3><p>这篇文章仅仅是对安卓字体渲染器的简单介绍。还有很多实现的细节被我略过或者会出现在我其他的文章中。有问题请尽管提出。  </p>
+<blockquote>
+<ul>
+<li>原文：<a href="https://medium.com/@romainguy/androids-font-renderer-c368bbde87d9" target="_blank" rel="external">android font renderer</a></li>
+<li>译者：<a href="http://github.com/7heaven" target="_blank" rel="external">7heaven</a></li>
+<li>校对者：</li>
+<li>状态：翻译完成</li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>任何一个有几年的客户端应用开发经验的开发者都会知道文本渲染有多复杂。至少我在2010年开始写libhwui(基于OpenGL的安卓2D绘制API)之前是这么认为的。在开始写libhwui后，我意识到如果试图用GPU来渲染文本会使文本渲染变得更复杂。<br>]]>
+    
+    </summary>
+    
+      <category term="字体" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%AD%97%E4%BD%93/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[ListView或者RecycleView滚动时隐藏Toolbar (2)]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scrolling-part-2/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scrolling-part-2/</id>
+    <published>2015-04-28T16:00:00.000Z</published>
+    <updated>2015-06-26T02:57:36.000Z</updated>
+    <content type="html"><![CDATA[<p>Hello，各位小伙伴，俺胡汉三又来了！！！今天我打算接着上一篇博文继续给大家讲解展现/隐藏Toolbar的效果。我建议没有读过 <a href="https://github.com/bboyfeiyu/android-tech-frontier/blob/master/androidweekly/ListView%E6%88%96%E8%80%85RecycleView%E6%BB%9A%E5%8A%A8%E6%97%B6%E9%9A%90%E8%97%8FToolbar/readme.md" target="_blank" rel="external">ListView或者RecycleView滚动时隐藏Toolbar</a> 这篇文章的小伙伴先去看看那篇博文再来看这篇博文，不然会跟不上我的讲解节奏的哦。在上一篇博文里，我们学习了如何去实现Google+那个酷炫的展现/隐藏Toolbar的效果，今天，我将会给大家讲解怎么让上一篇博文的效果进化成Google Play Store Toolbar那样，废话不多说，我们现在进入正题吧：</p>
+<p>在我们开始之前，我想先告诉大家的是我已经对这个项目进行了一些重构——我继承项目的 MainActivity 实现了两个新的子类：PartOneActivity 和 PartTwoActivity。源码在包 partone 和 parttwo里，你可以在这两个包里挑选你喜欢的那一个使用<br><a id="more"></a><br>下面是我们的最终效果图，我把它和 Google Play Store Toolbar 放在一起比较，大家可以感受一下：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447727_3335.gif" alt=""><br><img src="http://mzgreen.github.io/images/2/playstore.gif" alt=""></p>
+<h2 id="准备工作">准备工作</h2><p>在这里我不会再给大家展示 build.gradle 文件，因为这和第一部分的 build.gradle 文件是一样的，所以我们将会从这个步骤开始——为我们的Activity创建一个layout：</p>
+<p>同样的，layout里面只有一个 RecyclerView 和一个 Toolbar （稍后再加上 Tabs）。值得注意的是，我这里的实现是使用之前说的第二种方法（为RecyclerView添加Padding）</p>
+<p>同样的道理，由于我们的布局文件、list、RecyclerAdapter 都和之前是一样的，我在这里都不会再给大家讲解了。</p>
+<p>那现在我们来看看 PartTwoAcitivty 的代码吧：</p>
+<p>在 PartTwoActivty 里面仍然是简单地对 RecyclerView 和 Toolbar 进行初始化，但大家一定要记得设置 OnScrollListener 哦（第27行）</p>
+<p>感觉大家看到这里也感觉昏昏欲睡了，因为前面提到的内容大体上都和上一篇相似。但是莫慌！俺接下来就要讲这篇博文中最有趣的部分 —— HidingScrollListener 了，请大家紧紧抱住我，跟上节奏！</p>
+<p>如果你看过第一篇博文可能会觉得此情此景很熟悉（可能还会感觉简单一些）。我们在 HidingScrollListener 里耍了什么 tricks 呢？那就是存了与 Toolbar 的高度相关联的屏幕滚动偏移量 —— mToolbarOffset。为了简化其中的逻辑，只有当 mToolbarOffset 的取值在[0 , Toolbar的高度]之间时，我们才会实现我们的逻辑：当我们向上滚动时，mToolbarOffset的值会增加（但不会超过Toolbar的高度）；当我们向下滚动时，mToolbarOffset 的值会减少（但不会低于0）。大家现在可能会有许多疑问：为什么要引用 mToolbarOffset 呀？为什么要让 mToolbarOffset 的取值范围介于那两者之间呐？别怕！你马上就会理解为什么我们要这样限制mToolbarOffset的取值了。我们必须知道的是，尽管我们极力去避免意外的发生，但现实总会出人意料，在这里也不例外，有时候 mToolbarOffset 的值就是会不可避免地在我们的取值范围之外，但由于我们的逻辑设计的限制，最终的显示效果会是闪烁一下。（例如：在屏幕上快速的挥动、滑动）这样的结果显然不是我们这些有格调的 Android 工程师想要的，因而我们需要对 mToolbarOffset 进行一定程度的裁剪，以规避这样的风险。基于这样的考虑，我们重载了 onMoved()方法 —— onMoved() 方法是一个当我们滚动视图时被调用的抽象方法。可能会吓到你，但是莫慌，继续抱住我！</p>
+<p>接下来，我们就要回到我们 PartTwoActivity 设计之中，并且在我们的滚动监听器中实现 onMoved()方法。</p>
+<p>是的，这就是所有内容啦。我们运行 App 后可以看到我们的最终效果：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447725_3945.gif" alt=""></p>
+<p>是不是感觉自己棒棒哒～就像我们想象的那样，Toolbar 完美的随着list的滚动实现了展现/隐藏的效果。其中的功劳都得归功于我们对 mToolbarOffset 取值范围的限制。如果我们省略掉检查 mToolbarOffset 是否在[0 , Toolbar的高度]范围中取值的过程，带着完成控件的喜悦向上滚动我们的list，Toolbar 确实会如你所期望的那样离开屏幕，但与此同时，Toolbar 还会远远地，远远地，离开视图，再也不回来。然后当你满是期许地向下滚动时，你就会发现刚刚那一声再见，竟是永远。如果你想再次遇见它，你就必须想下滚动，直到 mToolbarOffset = 0。</p>
+<p>再脑补第二种情况吧，现在你正好把 Toolbar 滚动到 mToolbarHeight = mToolbarOffset 的位置，不偏不倚。那么现在Toolbar就刚好“坐”在了list顶部，如果你向上滚动的话，无论你怎么滚，它都不会动，只会静静地坐在那儿笑看人世沧桑。而如果你向下滚动，它又成为许多年前那个明亮、可爱的小女孩了。</p>
+<p>虽然最终的实现效果看起来非常赞，但这并不是我想要的。因为我们能在滚动过程中停止整个效果，使得 Toolbar 有一部分是可见的，另一部分又是不可见的。但悲伤的是，Google Play Games 就是这么干的，而我一直认为这是一个Bug……</p>
+<h2 id="在某一点停下_Toolbar">在某一点停下 Toolbar</h2><p>就我的认知来说，我认为滚动的Views是能够如丝般顺滑地对齐相应的位置的，就像 Chrome 应用里的 Logo/SearchBar 又或者是 Google Play Store应用里那样。我很确定我在 Material Design 的guidelines/checklist 或者是 以前听过的Google I/O 大会上听过类似的规范。</p>
+<p>那我们现在再来看看 HidingScrollListener 的代码吧：</p>
+<p>虽然为了实现上面提到的效果我们会让 HidingScrollListener 的代码变得更复杂一些，但是我再说一次，莫慌，抱紧我！我们现在只需要重载 RecyclerView.onScrollListener 类的 onScrollStateChanged()方法，然后按照下面那样干就行了：</p>
+<p>首先，我们需要检查list是否处于 RecyclerView.SCROLL_STATE_IDLE 状态，以确保list没有在滚动或者挥动（因为如果list如果正在滚动或者挥动的时候，我们就需要像第一篇博文那样去考虑 Toolbar 的Y方向位置哦）</p>
+<p>如果我们抬起了手指，而且list已经停止移动了（）我们就要去检查Toolbar是不是可见的，如果是可见的，我们就需要考虑 mToolbarOffset 的值了。如果此时 mToolbarOffset 的值大于 HIDE_THRESHOLD 我们就必须把 Toolbar 隐藏起来；mToolbarOffset 的值小于 HIDE_THRESHOLD，我们则需要让 Toolbar 显示出来。</p>
+<p>如果 Toolbar 不是可见的，我们就需要做相反的事情 —— 如果 此时mToolbarOffset（此时计算 mToolbarOffset要从顶部位置来考虑了，也就是 mToolbarHeight - mToolbarOffset） 大于 SHOW_THRESHOLD 我们就让 Toolbar显示；相反，如果 mToolbarOfffset 小于 SHOW_THRESHOLD ，我们就要再次将 Toolbar隐藏起来。</p>
+<p>onScrolled()方法和第一篇博文的一样，我们并不需要作什么改变。我们现在最后需要做的就是在 PartTwoActivity 类里实现我们的两个抽象方法：</p>
+<p>那么，你准备好看魔术了吗？</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427448161_2643.gif" alt=""></p>
+<p>hey，派大星你看，是不是很酷！</p>
+<p>现在你可能在脑补添加 Tabs 会有多麻烦了，可是兄弟啊，生活很多时候都是出人意料的呐，不信你继续往下看呀</p>
+<h2 id="添加_Tabs">添加 Tabs</h2><p>为了添加 Tabs，首先要做的当然是为我们的 Activity 布局添加一个 tabs.xml啦</p>
+<p>你可以从源码那发现，我并没有添加真正的 Tabs，只是在布局里面模拟了 Tabs。而以上的一切不会改变任何之前的实现，你能在里面放任何你想要放的View。下面是一些 GitHub 上符合 Material Design规范的 Tabs 实现，当然你也可以自己实现啦。</p>
+<p>添加 Tabs 意味这他们会稍微覆盖我们的list，所以我们需要增加Padding。为了减少代码的操作复杂度，我们不会在 xml 里进行这个操作（注意把 RecyclerView 在 part_tuo_activity里的padding删掉哦），因为 Toolbar 可能会在不同的设备中切换方向时拥有不同的高度（例如在平板中），这样的话我们需要创建一大堆的 xml 去解决这些乱七八糟的烦人问题。所以我决定在代码中解决这个问题：这是非常简单的，我们只需要和 Tabs高度的总和。如果我们把 Padding设置为 Toolbar 的高度现在运行起来的话，就会发现这样的东西：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427448162_3352.png" alt=""></p>
+<p>看起来很正常的样子……我们第一个item刚刚好是可见的，我们也能移动跟随着它。实际上我们在 HidingScrollListener 类里什么也没干，唯一需要的改变都是在 PartTwoActivity 里做的：</p>
+<p>你能发现什么发生了改变吗？我们现在不妨创建一个 mToolbarContainer 的引用，但是大家要注意哦， mToolbarContainer 是 LinearLayout 对象而不是 Toolbar对象，而且在 onMove()，onHide()，和 onShow()方法中，我们都把 Toolbar 改成了 mToolbarContainer。这会使得包含了 Toolbar 和 Tabs 的Container被移动，这恰恰就是我们想要做的。</p>
+<p>如果我们把修改后的代码运行起来会发现，实际的运行效果正好就是我们所期望的，但如果你看的认真一些你会发现，里面其实有一个小Bug。在 Tabs 和 Toolbar 之间有时候会有一条白线，虽然时间非常短，但还是很惹人讨厌呐。我个人觉得这大概是因为当Toolbar 和 Tabs被显示的时候，他们并没有像我们期望的那样同步在一起。不过万幸这不是什么无法解决的Bug～</p>
+<p>解决办法非常简单，就是让 Toolbar 和 Tabs 的背景和父布局保持一致：</p>
+<p>现在即使 mToolbarContainer 在显示过程中没有很好的同步在一起，白线也不会出现了。正当我打算吃根辣条庆祝我们伟大战役的胜利的时候，又出现了一个Bug………………这个Bug和我们在第一篇博文里遇到的Bug是一样的，如果我们在list的顶部，我们可以向上滚动一丢丢，如果此时 HIDE_THRESHOLD 足够小，Toolbar 就会藏起来，导致那里有一块空白区域（其实就是我们设置的Padding）在list的顶部，但是我相信你到了现在应该不会慌了，因为你已经知道所有Bug在我眼里都是非常容易解决的：</p>
+<p>我们只需要再增加一个变量用于存储list的总滚动偏移量，当我们准备去检查我们是否应该展现/隐藏 Toolbar的时候，我们首先应该检查我们的滚动距离是否比 Toolbar 的高度要大（如果不是的话，我们再让 Toolbar 出现）</p>
+<p>这就是今天博文要讲的一切了，让我们来看一看实际效果！</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447727_3335.gif" alt=""></p>
+<p>现在运行的效果简直完美啊大兄弟～即使用其他的 LayoutManagers 也不需要改变任何东西的哦：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427448162_7185.png" alt=""></p>
+<p>评论区有好学的同学问了个有关存储滚动状态的问题，这确实是个小麻烦。如果我们list的item中的文字在垂直方向达到2行，在水平方向达到1行的话，我们的item高度就会变得很奇怪了……举个例子吧，如果我们滚动到垂直方向100的位置，然后旋转我们的设备，同时存储 mTotalScrolledDistance的值，在旋转之后，我们会滚动到list的顶部，然后我们会发现 mTotalscrolleddistance 的值不等于0。这个时候即使全能如我也想不到简单的办法来解决这个问题了，但是在我们的使用场景中，这样的小问题并不会有什么影响。如果你真的想要解决这个问题的话，我个人的做法是：在旋转之后把 mTotalScrolledDistance 的值重设为0 并且显示 Toolbar。</p>
+<p>感觉今天写了好多内容啊，大家看到这里应该感觉很累了吧？不过今天这篇博文就是这个系列的最后一篇文章啦，大家能在第一篇博文中学习到知识我真的很高兴呢。大家鼓励和夸奖的话也让我很感动，我会继续写我的博客，为大家传授更多的知识，不过我也不知道下一篇博文会在什么时候写 2333。</p>
+<p>除此以外我还想说的是，在这两篇博文中我提到的方法可能看起来运行的很好，但其实我并没有进行非常严谨的测试，所以我也不确定它们能不能被用于企业级应用中（你看我们不就遇到了好几个Bug了嘛）。这个系列的博文的初衷只是想告诉你，即使只使用标准API里面的一两个简单方法，也能够实现酷炫的效果。同时，我在写博文的过程中也发现了这些方法还有其他有趣的用法（例如：利用视差背景制作有粘性的 Tabs，就像在 Google+ 个人页面那样）。不管怎样，祝大家在写代码的过程中找到更多的快乐！</p>
+<h2 id="源码">源码</h2><p>整个项目的源码都已经被上传到 <a href="https://github.com/mzgreen/HideOnScrollExample" target="_blank" rel="external">GitHub</a> ，大家可以去下载和使用哦，爱你们的 Michal Z。</p>
+<p>如果你喜欢这篇博文的话，你可以 <a href="https://twitter.com/intent/tweet?url=http://mzgreen.github.io/2015/02/28/How-to-hideshow-Toolbar-when-list-is-scrolling(part2" target="_blank" rel="external">在Twitter上分享给你的小伙伴</a>/&amp;text=How%20to%20hide/show%20Toolbar%20when%20list%20is%20scrolling%20(part%202)&amp;via=mzmzgreen) 或者 <a href="https://twitter.com/mzmzgreen" target="_blank" rel="external">在Twitter上关注我哦</a> 。</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://mzgreen.github.io/2015/02/28/How-to-hideshow-Toolbar-when-list-is-scrolling(part2" target="_blank" rel="external">How to hide/show Toolbar when list is scrolling (part 2)</a>/)</li>
+<li>译者 : <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a> </li>
+<li>校对者: <a href="github链接">这里校对者的github用户名</a>  </li>
+<li>状态 :  校对中</li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Hello，各位小伙伴，俺胡汉三又来了！！！今天我打算接着上一篇博文继续给大家讲解展现/隐藏Toolbar的效果。我建议没有读过 <a href="https://github.com/bboyfeiyu/android-tech-frontier/blob/master/androidweekly/ListView%E6%88%96%E8%80%85RecycleView%E6%BB%9A%E5%8A%A8%E6%97%B6%E9%9A%90%E8%97%8FToolbar/readme.md">ListView或者RecycleView滚动时隐藏Toolbar</a> 这篇文章的小伙伴先去看看那篇博文再来看这篇博文，不然会跟不上我的讲解节奏的哦。在上一篇博文里，我们学习了如何去实现Google+那个酷炫的展现/隐藏Toolbar的效果，今天，我将会给大家讲解怎么让上一篇博文的效果进化成Google Play Store Toolbar那样，废话不多说，我们现在进入正题吧：</p>
+<p>在我们开始之前，我想先告诉大家的是我已经对这个项目进行了一些重构——我继承项目的 MainActivity 实现了两个新的子类：PartOneActivity 和 PartTwoActivity。源码在包 partone 和 parttwo里，你可以在这两个包里挑选你喜欢的那一个使用<br>]]>
+    
+    </summary>
+    
+      <category term="特效" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%89%B9%E6%95%88/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E8%BF%9E%E8%BD%BD/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[欢迎来到Android多进程时代]]></title>

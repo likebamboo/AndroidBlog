@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Google+ 团队的 Android UI 测试 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Android 测试主要分为3个类型：
+单元测试（Unit Test)区分UI代码和功能代码在Android开发中尤其困难。因为有时Activity既有Controller的功能，又有View的功能。Robolectric是一个很优秀的Android测试框架，它提供了一个Android框架的stub，这样测试运行时实际上是在JVM上运行，而不是在Android平台（比如Robotium和Instr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google+ 团队的 Android UI 测试">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="Android 测试主要分为3个类型：
+单元测试（Unit Test)区分UI代码和功能代码在Android开发中尤其困难。因为有时Activity既有Controller的功能，又有View的功能。Robolectric是一个很优秀的Android测试框架，它提供了一个Android框架的stub，这样测试运行时实际上是在JVM上运行，而不是在Android平台（比如Robotium和Instr">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/28/1427507159_1836.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/28/1427507159_8354.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/28/1427507160_4776.jpg">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/28/1427507167_8779.jpg">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/28/1427507159_6700.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/28/1427507160_4803.png">
+<meta property="og:updated_time" content="2015-06-26T03:09:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Google+ 团队的 Android UI 测试">
+<meta name="twitter:description" content="Android 测试主要分为3个类型：
+单元测试（Unit Test)区分UI代码和功能代码在Android开发中尤其困难。因为有时Activity既有Controller的功能，又有View的功能。Robolectric是一个很优秀的Android测试框架，它提供了一个Android框架的stub，这样测试运行时实际上是在JVM上运行，而不是在Android平台（比如Robotium和Instr">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-how-google-team-tests-mobile-apps" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/" class="article-date">
+  <time datetime="2015-04-28T16:00:00.000Z" itemprop="datePublished">2015-04-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Google+ 团队的 Android UI 测试
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Android 测试主要分为3个类型：</p>
+<h4 id="单元测试（Unit_Test)">单元测试（Unit Test)</h4><p>区分UI代码和功能代码在Android开发中尤其困难。因为有时Activity既有Controller的功能，又有View的功能。<a href="http://pivotal.github.io/robolectric/" target="_blank" rel="external">Robolectric</a>是一个很优秀的Android测试框架，它提供了一个Android框架的stub，这样测试运行时实际上是在JVM上运行，而不是在Android平台（比如Robotium和Instrumentation都是在Android平台运行测试），从而提高了速度。另外请参考<a href="http://tools.android.com/tech-docs/unit-testing-support" target="_blank" rel="external">Gradle 对 Unit tests的支持</a>。</p>
+<h4 id="封闭UI测试_（Hermetic_UI_Test)">封闭UI测试 （Hermetic UI Test)</h4><p>这个测试方法使得测试不需要外部依赖和网络请求。这样做的主要目的是提高测试速度，减少测试时的外部影响，毕竟网络调用是相对很慢的。<a href="http://www.youtube.com/watch?v=T7ugmCuNxDU" target="_blank" rel="external">Espresso</a>可以用来模拟用户的UI操作。</p>
+<h4 id="Monkey_Test">Monkey Test</h4><p>Monkey Test 就好像一只猴子在测试app一样，没有任何规律的在你的app上胡按。计算机运行monkey test的时候，每秒钟能做出几千个UI动作（可以配置这个频率），比如点击和拖拽。所以这个测试可以算是一个压力测试，用来检测<a href="http://developer.android.com/training/articles/perf-anr.html" target="_blank" rel="external">ANR</a>。</p>
+<h2 id="<!-more->"><a id="more"></a></h2><p>Google+ 团队总结了一些 UI 测试时的经验和策略。</p>
+<h4 id="策略1：_不要使用_End-to-end_测试作为UI测试">策略1： 不要使用 End-to-end 测试作为UI测试</h4><p>先看一些定义：<strong>UI 测试</strong> 是为了确保对于用户的UI动作，app能返回正确的UI输出。<strong>End-to-end测试（E2E test)</strong> 是通过客户端和后台服务器的交互测试整个系统。下面这个图在展示了测试步骤：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507159_1836.png" alt=""></p>
+<p>通常做UI测试，你需要后台服务器，所以可能产生网络调用。所以UI测试和E2E测试很像。但是在E2E测试中会遇到很多困难：</p>
+<ul>
+<li>测试速度缓慢</li>
+<li>网络请求会失败</li>
+<li>难以Debug</li>
+</ul>
+<p>下面看看如何解决这些问题。</p>
+<h4 id="策略2：使用伪服务器做封闭UI测试">策略2：使用伪服务器做封闭UI测试</h4><p>这个策略中，你可以通过假的后台服务器来避免网络请求，以及其他外部依赖。技术上，你就需要在app本地提供返回数据了。有很多办法可以做到，比如手动做一次网络请求，把response保存下来，在测试的时候重复这个response。这样你就做了一个封闭在本地的伪服务器</p>
+<p>当你有了这个伪服务器，你还需要给这个伪服务器写测试。于是这是，你的E2E测试就分为了服务器测试，客户端测试和集成测试。</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507159_8354.png" alt=""></p>
+<p>现在这样的解决方案，你需要自己维护伪服务器，本地数据库和tests了。</p>
+<p>下面这是E2E 测试的示例图：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507160_4776.jpg" alt=""></p>
+<p>这是使用了伪服务器的封闭UI测试</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507167_8779.jpg" alt=""></p>
+<p>其区别在于：Frontend Server的几个数据源变了。由原来的真实后端，变成了封闭服务器，或者是mock服务器。这个在测试调用网络API的时候非常有用。</p>
+<h4 id="策略3：使用Dependency_Injection">策略3：使用Dependency Injection</h4><p>Dependency Injection（依赖注入）可以帮助生成测试数据。我推荐选择使用<a href="http://square.github.io/dagger/" target="_blank" rel="external">dagger</a>作为依赖注入框架。</p>
+<p>依赖注入在UI test和unit test都中都可以用于生成假数据。在instrumentation test框架中，测试用的apk文件和测试时运行的app，是在同一个进程下面，所以测试代码可以调用app代码。你还可以覆盖app的classpath，通过这种方式注入假数据。比如你可以用依赖注入来伪造一个网络连接的实现，调用这个网络连接的时候就可以提供假数据。</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507159_6700.png" alt=""></p>
+<h3 id="策略4：把app分为小的libraries">策略4：把app分为小的libraries</h3><p>这个方法可以更好地模块化你的app。你的app被分为更小的类库之后，你可以为这些类库添加他们自己的UI依赖或gradle库依赖。</p>
+<p>当你有了自己的库，并提供依赖注入的支持，那么你可以为各个库写测试app。最后，可以写<strong>集成测试</strong>来确保类库直接的合作正确。</p>
+<p>比如我们有一个登陆功能的库，那么我可以写一个测试app只为这个登陆功能库：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/28/1427507160_4803.png" alt=""></p>
+<h4 id="总结：">总结：</h4><ol>
+<li>不要用E2E测试来代替UI测试。更好的做法是用单元测试 + 集成测试 + UI测试。</li>
+<li>使用封闭测试策略</li>
+<li>使用依赖注入</li>
+<li>把app分为不同的小组件小类库，并分别写测试，然后再写集成测试来确保各组件之间的交互正确。</li>
+<li>模块化 UI 测试已经被证明了比E2E测试快，并且十分稳定。这样的测试又能极大的提高开发效率。</li>
+</ol>
+<blockquote>
+<ul>
+<li>原文链接：<a href="http://googletesting.blogspot.sg/2013/08/how-google-team-tests-mobile-apps.html" target="_blank" rel="external">How the Google+ Team Tests Mobile Apps</a></li>
+<li>译者：<a href="http://allelsy.com" target="_blank" rel="external">allenlsy</a></li>
+<li>译者博文地址：<a href="">http://allenlsy.com/android-ui-tests-in-google-plus-team/</a></li>
+<li>校对者:</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/" data-id="cibd5w1x5000xswflcodrfw0c" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">ListView或者RecycleView滚动时隐藏Toolbar (1)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/29/how-google-team-tests-mobile-apps/" data-title="Google+ 团队的 Android UI 测试" data-url="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">13</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/">Google+ 团队的 Android UI 测试</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/">ListView或者RecycleView滚动时隐藏Toolbar (1)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/the-clean-architecture/">The Clean Architecture</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/">让你的Android应用能使用多种主题 ( Part 2 )</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/android-mvp-an-alternate-approach/">一种在android中实现MVP模式的新思路</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ListView或者RecycleView滚动时隐藏Toolbar (1) | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="今天我打算写一篇博文给大家介绍Google+ App的一个酷炫效果——向上/向下滚动ListView/RecyclerView时，Toolbar和FAB（屏幕右下方的小按钮）会隐藏/出现。这个效果也被Google视为符合 Material Design 规范的效果哦，详情参见： Material Design Checklist 。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ListView或者RecycleView滚动时隐藏Toolbar (1)">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="今天我打算写一篇博文给大家介绍Google+ App的一个酷炫效果——向上/向下滚动ListView/RecyclerView时，Toolbar和FAB（屏幕右下方的小按钮）会隐藏/出现。这个效果也被Google视为符合 Material Design 规范的效果哦，详情参见： Material Design Checklist 。">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/27/1427447324_1070.gif">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/27/1427447324_5421.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/27/1427447325_8379.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/27/1427447325_8449.gif">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201503/27/1427447326_5458.gif">
+<meta property="og:updated_time" content="2015-06-26T02:56:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ListView或者RecycleView滚动时隐藏Toolbar (1)">
+<meta name="twitter:description" content="今天我打算写一篇博文给大家介绍Google+ App的一个酷炫效果——向上/向下滚动ListView/RecyclerView时，Toolbar和FAB（屏幕右下方的小按钮）会隐藏/出现。这个效果也被Google视为符合 Material Design 规范的效果哦，详情参见： Material Design Checklist 。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-How-to-hideshow-Toolbar-when-list-is-scroling-part-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/" class="article-date">
+  <time datetime="2015-04-28T16:00:00.000Z" itemprop="datePublished">2015-04-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ListView或者RecycleView滚动时隐藏Toolbar (1)
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天我打算写一篇博文给大家介绍Google+ App的一个酷炫效果——向上/向下滚动ListView/RecyclerView时，Toolbar和FAB（屏幕右下方的小按钮）会隐藏/出现。这个效果也被Google视为符合 Material Design 规范的效果哦，详情参见： <a href="http://android-developers.blogspot.com/2014/10/material-design-on-android-checklist.html" target="_blank" rel="external">Material Design Checklist</a> 。<br><a id="more"></a></p>
+<blockquote>
+<p>如果可以的话，我们希望当屏幕向下滚动时，App的Toolbar和FAB将离开屏幕，从而在垂直方向上为可显示区域腾出更大的空间来显示我们的内容。而当我们的屏幕向上滚动时，App的Toolbar和FAB会再次出现。</p>
+</blockquote>
+<p>我们做出来的最终效果应该是下面这样的：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447324_1070.gif" alt=""></p>
+<p>在这篇博文的讲解中，我们将会用RecyclerView作为我们的list，但这不代表其他可滚动的容器就不能实现这样的效果了，只是其他的可滚动容器（如：ListView）需要要多花一些功夫才能实现这个效果。那么我们要怎么去实现呢？我想到了两个办法：</p>
+<ul>
+<li>对list容器加一个Padding</li>
+<li>对list容器加一个Header</li>
+</ul>
+<p>就我个人而言，我更想用第二种方法去实现，因为在设计代码的过程中我发现：为RecyclerView添加Header会产生几个问题，这给了我很好的机会去思考如何解决它，与此同时，在这个思考和解决问题的过程中我还能学习到更多的知识，何乐而不为呢？不过我还是会给大家简要地介绍如何使用第一种方法实现的啦！</p>
+<h2 id="那就让我们开始今天的讲解吧！">那就让我们开始今天的讲解吧！</h2><p>首先，我们需要创建一个工程和添加必要的工具库：</p>
+<p>接着我们需要定义 styles.xml ，以确保我们的App没有添加Actionbar（因为我们将会使用Toolbar），同时我们App的设计风格要符合Google的 Material Design 规范。</p>
+<p>最后我们就要创建我们activity中显示的布局：</p>
+<p>事实上，我们只需要一个简单的布局，其中包含了：RecyclerView，Toolbar和ImageButton。但需要注意的是：我们需要把它们放在一个FrameLayout里，否则当我们隐藏Toolbar时list的上方将会出现一个空白区域，这显然不会是我们想要的效果。我们理想的效果应该是：当Toolbar被隐藏，list能在屏幕的可见区域中显示出一整个列表，而这就需要通过使Toolbar覆盖在RecycleView上面来实现。</p>
+<p>接着来看看我们MainActivity代码吧：</p>
+<p>就像你看到的那样，这是一个只重写了OnCreate()方法，非常非常非常简单的Activity。而且OnCreate()方法也只做了下面三件事情：</p>
+<ol>
+<li><p>初始化Toolbar</p>
+</li>
+<li><p>获取mFabButton的引用（mFabButton是FAB的对象哦，也就是屏幕右下方的小按钮）</p>
+</li>
+<li><p>初始化RecyclerView</p>
+</li>
+</ol>
+<p>为了在list中显示出内容，我们现在就要为RecyclerView创建一个Adapter啦。但在此之前，我们应该为我们list中的item添加相应的子布局以及对应的ViewHolder：</p>
+<p>list的每一个item只需要一个text用来显示文字，非常简单！</p>
+<p>那RecyclerAdapter该怎么实现呢：</p>
+<p>就像你看到的这样，这是一个非常普通的RecycleView.Adapter，没有任何特别的地方，是不是感觉被骗了呐  23333～（如果你想要了解更多有关RecyclerView知识，我强烈建议你去看大牛 Mark Allison’s 巨巨写的这些优秀文章 <a href="https://blog.stylingandroid.com/material-part-4/" target="_blank" rel="external">series of posts</a>）</p>
+<p>经过上面的努力，我们已经把车子的小零件组装的七七八八啦，是时候让小车子上路跑一跑，展现真正的技术了！</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447324_5421.png" alt=""></p>
+<p>WTF，谁能告诉我这是什么鬼……？</p>
+<p>我相信只要不是瞎子都会发现，App的Toolbar竟然把我们的item挡住了！！！或许部分机智的小伙伴已经发现了问题所在：出现这样的问题是因为我们在activity_main.xml里使用了FrameLayout，正是FrameLayout导致了这样的问题，而这就是我开头所提到的问题之一了。</p>
+<p>第一个解决办法是为我们的RecyclerView添加一个PaddingTop，并将PaddingTop的值设置为Toolbar的高度。但有一个细节我们不能忽略，那就是RecyclerView会默认裁剪到子View的Padding区域，所以为了我们伟大的事业，我们必须把这个特性关掉。</p>
+<p>经过这些修改之后，我们就能实现我们想要的效果，这就是我所说的第一种方法。但如我所说，我写这篇博文的目的，不仅仅只是教你实现这个效果，然后就完了。我想教给你实现同一个效果各种各样的方法，并且为你介绍其中的思想，让你接触到平常很难接触到的问题并教你如何解决它。有些方法固然会更加复杂（在本文中是为list添加一个Header），但你在实现过程中也能学到更多的知识，毕竟授人以鱼不如授人以渔嘛。</p>
+<h2 id="为RecycleView添加一个Header">为RecycleView添加一个Header</h2><p>要用第二种方法去实现这个效果，首先我们要做的就是稍微修改一下我们的Adapter：</p>
+<p>下面是其实现原理：</p>
+<p>我们需要定义一个常量来区分Recycler展现的item的类型。这里我需要为你介绍的是:RecyclerView是一个非常灵活的组件,RecyclerView 完全能实现你想要让list的item具有各种各样不同的布局的愿望，而此时，我们定义来区分item类型的常量就会被利用到。而这样的特性正是我们想要的——让Header成为RecyclerView的第一个item，显然这会与其余的item不一样。（第3-4行）</p>
+<p>因而我们需要让Recycler知道它需要展示的子布局是什么类型的，在本文中我们用作类型区分的常量则是TYPE_ITEM和TYPE_HEADER。（第49-54行）</p>
+<p>接着，我们需要修改onCreateViewHolder()和onBindViewHolder()方法，如果item的类型是TYPE_ITEM的话，使它们返回和绑定一个普通的item；如果item的类型是TYPE_HEADER的话，则返回Header。（第14-34行）</p>
+<p>此外，由于我们的list并不仅仅只有普通的item，我们还在list中添加了Header，因此我们需要修改getItemCount()方法的返回值，让我们的返回值是普通item的总数量 + 1（第43-45行）</p>
+<p>最后让我们来为Header布局创建一个layout和一个ViewHolder，但出乎意料的是，我们需要为Header创建的layout和ViewHolder都非常简单，唯一需要注意的是：Header的高度必须和Toolbar的高度一致。</p>
+<p>那么这样我们就把布局弄好啦～不信你看图！</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447325_8379.png" alt=""></p>
+<p>所以总的来说，我们为RecyclerView添加了一个和Toolbar有相同高度的Header，而现在我们的Toolbar把header隐藏起来了（因为header现在是一个空的view)，同时，我们所有的普通item都是可见的。那么现在就让我们来实现滚动时改变Toolbar和FAB的出现和隐藏吧！</p>
+<h2 id="滚动时控制Toolbar和FAB的出现和隐藏">滚动时控制Toolbar和FAB的出现和隐藏</h2><p>为了实现这个效果，我们为RecyclerView再创建一个——OnScrollListener类就够了你敢信？</p>
+<p>我现在还要告诉你，在OnScrollListener类里，我们只需要重载onScrolled()方法就能让这个酷炫的效果成为App中秒杀用户的黑魔法！其中，onScrolled()方法的参数——dx,dy分别是水平和垂直方向上的滚动距离。但大家需要注意的是：这里dx，dy并不是代表屏幕上的物理距离，而是两个事件的相对距离。</p>
+<p>具体的实现算法大体如下：</p>
+<p>只有当list向上滚动且Toolbar和FAB被隐藏，抑或是当list向下滚动且Toolbar和FAB出现，我们才会计算总的滚动距离，因为这两种情况下的滚动距离才是我们实现这个效果所需要关心的。</p>
+<p>总的滚动距离需要超过我们展现/隐藏Toolbar和FAB所在的方向的极限值才能将其展现/隐藏（你把极限值调整的越大，通过滚动展示/隐藏Toolbar和FAB需要的距离就越大）（dy&gt;0意味着我们在向下滚动，dy&lt;0意味着我们在向上滑动）</p>
+<p>实际上我们并没有在我们的滚动监听类里面展现/隐藏Toolbar和FAB，我们是通过调用show()/hide()方法来展现/隐藏Toolbar和FAB的，所以调用者可以通过接口实现它。</p>
+<p>现在我们需要为RecyclerView添加它的监听：</p>
+<p>下面是我们通过动画改变我们的视图的方法：</p>
+<p>当我们隐藏Toolbar和FAB的时候，我们必须把Padding也考虑进去，不然的话视图并不能够完全被隐藏。</p>
+<p>是骡子是马，让我们拉出来溜一溜！</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447325_8449.gif" alt=""></p>
+<p>虽然现在看起来已经很nice了，但其实这里有一个小小的bug——如果你在list的顶部，此时临界值非常小，因而你能隐藏Toolbar，但你在list的顶部会看到有一个空白的区域。不过幸好这里有一个很简单的方法可以解决这个bug：我们可以通过检测当前list的第一个item是否为可见的，只有当它不可见，才使用我们设计的展示/隐藏逻辑。</p>
+<p>在这样的修改后，即使第一个item是可见的并且有item被它挡住了，我们也在展示它们，除此以外的情况我们都像之前说的那样实现我们的效果。</p>
+<p>各位观众，接下来，就是见证奇迹的时刻：</p>
+<p><img src="http://img.my.csdn.net/uploads/201503/27/1427447326_5458.gif" alt=""></p>
+<p>太棒了思密达！感觉之前的失败都如雨后甘霖温润我脆弱的心灵呐～</p>
+<p>其实羞羞地说一句……这篇文章是我人生中的第一篇博文呐，如果你觉得很无聊或者我有哪里讲解错误的话千万不要喷我哦。我会在未来变得更棒哒，然后尽我所能为大家贡献更多的文章！</p>
+<p>如果你看到这里还是通过添加Header来实现这个效果很恼火的话，用第一种方法结合HidingScrolllistener 也是可以实现这个效果的～</p>
+<p>如果你有什么疑问的话，可以在评论区问我哦，我都会尽我所能为你解答的！</p>
+<h2 id="源码">源码</h2><p>整个项目的源码在GitHub上面都有，大家可以在这看 <a href="https://github.com/mzgreen/HideOnScrollExample" target="_blank" rel="external">repo</a></p>
+<p>感谢Mirek Stanek帮我校对文章，么么哒！爱你的好基友Michal Z～</p>
+<p>如果你喜欢这篇博文的话，你可以<a href="https://twitter.com/intent/tweet?url=http://mzgreen.github.io/2015/02/15/How-to-hideshow-Toolbar-when-list-is-scroling(part1" target="_blank" rel="external">在Twitter上分享给你的小伙伴</a>/&amp;text=How%20to%20hide/show%20Toolbar%20when%20list%20is%20scroling%20(part%201)&amp;via=mzmzgreen)或者<a href="https://twitter.com/mzmzgreen" target="_blank" rel="external">在Twitter上关注我哦</a>!</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://mzgreen.github.io/2015/02/15/How-to-hideshow-Toolbar-when-list-is-scroling%28part1%29/" target="_blank" rel="external">How to hide/show Toolbar when list is scroling (part 1)</a></li>
+<li>译者 : <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a> </li>
+<li>校对者: <a href="github链接">这里校对者的github用户名</a>  </li>
+<li>状态 :  校对中</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/" data-id="cibd5w1w10000swflvx4gd1f9" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Google+ 团队的 Android UI 测试
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/the-clean-architecture/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">The Clean Architecture</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/" data-title="ListView或者RecycleView滚动时隐藏Toolbar (1)" data-url="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">13</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/">Google+ 团队的 Android UI 测试</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/">ListView或者RecycleView滚动时隐藏Toolbar (1)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/the-clean-architecture/">The Clean Architecture</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/">让你的Android应用能使用多种主题 ( Part 2 )</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/android-mvp-an-alternate-approach/">一种在android中实现MVP模式的新思路</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

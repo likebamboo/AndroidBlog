@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>一种更清晰的Android架构 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="过去几个月以来，通过在Tuenti网站上与@pedro_g_s和@flipper83（安卓开发两位大牛）进行友好讨论之后，我决定写这篇关于架构安卓应用的文章。     
+我写这篇文章的目的是想把我在过去几个月体悟到的小方法以及在调查和应用中学到的有用的东西分享给大家。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一种更清晰的Android架构">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/04/29/architecting-android-the-clean-way/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="过去几个月以来，通过在Tuenti网站上与@pedro_g_s和@flipper83（安卓开发两位大牛）进行友好讨论之后，我决定写这篇关于架构安卓应用的文章。     
+我写这篇文章的目的是想把我在过去几个月体悟到的小方法以及在调查和应用中学到的有用的东西分享给大家。">
+<meta property="og:image" content="https://camo.githubusercontent.com/dd69e725f30c30031dea279adc5a9d09ea3432f2/687474703a2f2f6665726e616e646f63656a61732e636f6d2f77702d636f6e74656e742f75706c6f6164732f323031342f30392f636c65616e5f617263686974656374757265312e706e67">
+<meta property="og:image" content="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_android.png">
+<meta property="og:image" content="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_mvp.png">
+<meta property="og:image" content="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_domain.png">
+<meta property="og:image" content="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_data.png">
+<meta property="og:updated_time" content="2015-06-26T02:55:03.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一种更清晰的Android架构">
+<meta name="twitter:description" content="过去几个月以来，通过在Tuenti网站上与@pedro_g_s和@flipper83（安卓开发两位大牛）进行友好讨论之后，我决定写这篇关于架构安卓应用的文章。     
+我写这篇文章的目的是想把我在过去几个月体悟到的小方法以及在调查和应用中学到的有用的东西分享给大家。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-architecting-android-the-clean-way" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/architecting-android-the-clean-way/" class="article-date">
+  <time datetime="2015-04-28T16:00:00.000Z" itemprop="datePublished">2015-04-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      一种更清晰的Android架构
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>过去几个月以来，通过在Tuenti网站上与@pedro_g_s和@flipper83（安卓开发两位大牛）进行友好讨论之后，我决定写这篇关于架构安卓应用的文章。     </p>
+<p>我写这篇文章的目的是想把我在过去几个月体悟到的小方法以及在调查和应用中学到的有用的东西分享给大家。<br><a id="more"></a></p>
+<h2 id="入门指南">入门指南</h2><p>大家都知道要写一款精品软件是有难度且很复杂的：不仅要满足特定要求，而且软件还必须具有稳健性，可维护、可测试性强，并且能够灵活适应各种发展与变化。这时候，“清晰架构”就应运而生了，这一架构在开发任何软件应用的时候用起来非常顺手。</p>
+<p>这个思路很简单：简洁架构 意味着产品系统中遵循一系列的习惯原则：</p>
+<ul>
+<li>框架独立性</li>
+<li>可测试</li>
+<li>UI独立性</li>
+<li>数据库独立性</li>
+<li>任何外部代理模块的独立性  </li>
+</ul>
+<p><img src="https://camo.githubusercontent.com/dd69e725f30c30031dea279adc5a9d09ea3432f2/687474703a2f2f6665726e616e646f63656a61732e636f6d2f77702d636f6e74656e742f75706c6f6164732f323031342f30392f636c65616e5f617263686974656374757265312e706e67" alt="arch"></p>
+<p>我们并不要求一定要用四环结构（如图所示），这只是一个示例图解，但是要考虑的是依赖项规则：源码依赖项只能向内指向，内环里的所有项不能了解外环所发生的东西。  </p>
+<p>以下是更好地理解和熟悉本方法的一些相关词汇：     </p>
+<ul>
+<li>Entities：是指一款应用的业务对象</li>
+<li>Use cases：是指结合数据流和实体中的用例，也称为Interactor</li>
+<li>Interface Adapters： 这一组适配器，是负责以最合理的格式转换用例（use cases）和实体（entities）之间的数据，表现层（Presenters ）和控制层（Controllers ），就属于这一块的。</li>
+<li>Frameworks and Drivers: 这里是所有具体的实现了：比如：UI，工具类，基础框架，等等。</li>
+</ul>
+<p>想要更具体，更生动丰富的解释，可以参考<a href="http://blog.8thlight.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank" rel="external">这篇文章</a>或者<a href="https://vimeo.com/43612849" target="_blank" rel="external">这个视频</a>。</p>
+<h2 id="场景">场景</h2><p>我会设置一个简单的场景来开始：创建一个简单的小app，app中显示从云端获取的一个朋友或用户列表。当点击其中任何一个时，会打开一个新的窗口，显示该用户的详细信息。这里我放了一段视频，大家看看<a href="http://fernandocejas.com/2014/09/03/architecting-android-the-clean-way/" target="_blank" rel="external">这个视频 (需翻墙)</a>大概就可以对我所描述的东西了解个大概了。 </p>
+<h2 id="Android应用架构">Android应用架构</h2><p>这一对象遵循关注分离原则，也就是通过业务规则让内环操作对外环事物一无所知，这样一来，在测试时它们就不会依赖任何的外部元素了。<br>要达到这个目的，我的建议就是把一个项目分成三个层次，每个层次拥有自己的目的并且各自独立于堆放运作。<br>值得一提的是，每一层次使用其自有的数据模型以达到独立性的目的（大家可以看到，在代码中需要一个数据映射器来完成数据转换。如果你不想把你的模型和整个应用交叉使用，这是你要付出的代价）。    </p>
+<p>以下是图解，大家感受下：   </p>
+<p><img src="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_android.png" alt="schema"></p>
+<blockquote>
+<p>注：我并没有使用任何的外部库（除了用于json数据句法分析的gson和用于测试的junit, mockito, robolectric和espresso以外）。原因是它可以使这个示例更清晰。总之，在存储磁盘数据时，记得加上ORM、依赖注入框架或者你熟悉的任何工具或库，这些都会带来很大帮助。（记住：重复制造轮子可不是明智的选择）</p>
+</blockquote>
+<h2 id="表现层_(Presentation_Layer)">表现层 (Presentation Layer)</h2><p>表现层在此，表现的是与视图和动画相关的逻辑。这里仅用了一个Model View Presenter（下文简称MVP），但是大家也可以用MVC或MVVM等模式。这里我不再赘述细节，但是需要强调的是，这里的fragment和activity都是View,其内部除了UI逻辑以外没有其他逻辑，这也是所有渲染的东西发生的地方。<br>本层次的Presenter由多个interactor（用例）组成，Presenter在 android UI 线程以外的新线程里工作，并通过回调将要渲染到View上的数据传递回来。<br><img src="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_mvp.png" alt="mvp"> </p>
+<p>如果你需要一个使用MVP和MVVM的<a href="https://github.com/pedrovgs/EffectiveAndroidUI/" target="_blank" rel="external">Effective Android UI</a>典型案例，可以参考我朋友Pedro Gómez的文章。</p>
+<h2 id="领域层_(Domain_Layer)">领域层 (Domain Layer)</h2><p>这里的业务规则是指所有在本层发生的逻辑。对于Android项目来说，大家还可以看到所有的interactor（用例）实施。这一层是纯粹的java模块，没有任何的Android依赖性。当涉及到业务对象时，所有的外部组件都使用接口。    </p>
+<p><img src="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_domain.png" alt="domain"> </p>
+<h2 id="数据层_(Data_Layer)">数据层 (Data Layer)</h2><p>应用所需的所有数据都来自这一层中的UserRepository实现（接口在领域层）。这一实现采用了<a href="http://martinfowler.com/eaaCatalog/repository.html" target="_blank" rel="external">Repository Pattern</a>，主要策略是通过一个工厂根据一定的条件选取不同的数据来源。<br>比如，通过ID获取一个用户时，如果这个用户在缓存中已经存在，则硬盘缓存数据源会被选中，否则会通过向云端发起请求获取数据，然后存储到硬盘缓存。<br>这一切背后的原理是由于原始数据对于客户端是透明的，客户端并不关心数据是来源于内存、硬盘还是云端，它需要关心的是数据可以正确地获取到。</p>
+<p><img src="http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_data.png" alt="data">   </p>
+<p>&gt;<br>注：在代码方面，出于学习目的，我通过文件系统和Android preference实现了一个简单、原始的硬盘缓存。请记住，如果已经存在了能够完成这些工作的库，就不要重复制造轮子。</p>
+<h2 id="错误处理">错误处理</h2><p>这是一个长期待解决的讨论话题，如果大家能够分享各自的解决方案，那真真是极好的。<br>我的策略是使用回调，这样的话，如果数据仓库发生了变化，回调有两个方法：onResponse()和onError(). onError方法将异常信息封装到一个ErrorBundle对象中: 这种方法的难点在于这其中会存在一环扣一环的回调链，错误会沿着这条回调链到达展示层。因此会牺牲一点代码的可读性。另外，如果出现错误，我本来可以通过事件总线系统抛出事件，但是这种实现方式类似于使用C语言的goto语法。在我看来，当你订阅多个事件时，如果不能很好的控制，你可能会被弄得晕头转向。</p>
+<h2 id="测试">测试</h2><p>关于测试方面，我根据不同的层来选择不同的方法:    </p>
+<ul>
+<li>展示层 ( Presentation Layer) : 使用android instrumentation和 espresso进行集成和功能测试</li>
+<li>领域层 ( Domain Layer) : 使用JUnit和Mockito进行单元测试；</li>
+<li>数据层 ( Data Layer) : 使用Robolectric （ 因为依赖于Android SDK中的类 ）进行集成测试和单元测试。</li>
+</ul>
+<h2 id="代码展示">代码展示</h2><p>我猜你现在在想，扯了那么久的淡，代码究竟在哪里呢？ 好吧，这就是你可以找到上述解决方案的<a href="https://github.com/android10/Android-CleanArchitecture" target="_blank" rel="external">github链接</a>。还要提一点，在文件夹结构方面，不同的层是通过以下不同的模块反应的:     </p>
+<ul>
+<li>presentation: 展示层的Android模块</li>
+<li>domain: 一个没有android依赖的java模块</li>
+<li>data: 一个数据获取来源的android模块。</li>
+<li>data-test: 数据层测试，由于使用Robolectric 存在一些限制，所以我得再独立的java模块中使用。</li>
+</ul>
+<h2 id="结论">结论</h2><p>正如 Bob大叔 所说：“Architecture is About Intent, not Frameworks” ，我非常同意这个说法，当然了，有很多不同的方法做不同的事情（不同的实现方法），我很确定，你每天（像我一样）会面临很多挑战，但是遵循这些方法，可以确保你的应用会：   </p>
+<ul>
+<li>易维护 Easy to maintain</li>
+<li>易测试 Easy to tes.</li>
+<li>高内聚 Very cohesive.</li>
+<li>低耦合 Decoupled.     </li>
+</ul>
+<p>最后，我强烈推荐你去实践一下，并且分享你的经验。也许你会找到更好的解决方案：我们都知道，不断提升自己是一件件非常好的事。我希望这篇文章对你有所帮助，欢迎拍砖。</p>
+<h2 id="参考资料">参考资料</h2><ol><br><li>Source code: <a href="https://github.com/android10/Android-CleanArchitecture" target="_blank" rel="external">https://github.com/android10/Android-CleanArchitecture</a></li><br><li><a href="http://blog.8thlight.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank" rel="external">The clean architecture by Uncle Bob</a></li><br><li><a href="http://www.infoq.com/news/2013/07/architecture_intent_frameworks" target="_blank" rel="external">Architecture is about Intent, not Frameworks</a></li><br><li><a href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter" target="_blank" rel="external">Model View Presenter</a></li><br><li><a href="http://martinfowler.com/eaaCatalog/repository.html" target="_blank" rel="external">Repository Pattern by Martin Fowler</a></li><br><li><a href="http://www.slideshare.net/PedroVicenteGmezSnch/" target="_blank" rel="external">Android Design Patterns Presentation</a></li><br></ol>
+
+
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://fernandocejas.com/2014/09/03/architecting-android-the-clean-way/" target="_blank" rel="external">Architecting Android…The clean way?</a></li>
+<li>译者 : <a href="https://www.github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple &amp; Sophie.Ping</a></li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/29/architecting-android-the-clean-way/" data-id="cibd5w1xc001aswfl2agxazua" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/29/architecting-android-the-clean-way/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/android-mvx/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          简化Android的UI开发
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/androids-font-renderer/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">安卓字体渲染器</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/29/architecting-android-the-clean-way/" data-title="一种更清晰的Android架构" data-url="http://likebamboo.com/AndroidBlog/2015/04/29/architecting-android-the-clean-way/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">13</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/">Google+ 团队的 Android UI 测试</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/">ListView或者RecycleView滚动时隐藏Toolbar (1)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/the-clean-architecture/">The Clean Architecture</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/">让你的Android应用能使用多种主题 ( Part 2 )</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/android-mvp-an-alternate-approach/">一种在android中实现MVP模式的新思路</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>
