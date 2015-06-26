@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  
+  <title><![CDATA[Android博客]]></title>
+  <subtitle><![CDATA[读万卷书]]></subtitle>
+  <link href="http://likebamboo.com/AndroidBlog/atom.xml" rel="self"/>
+  <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog//"/>
+  <updated>2015-06-25T12:38:52.000Z</updated>
+  <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog//</id>
+  
+  <author>
+    <name><![CDATA[likebamboo]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[欢迎来到Android多进程时代]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/28/going-multiprocess-on-android/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/28/going-multiprocess-on-android/</id>
+    <published>2015-04-27T16:00:00.000Z</published>
+    <updated>2015-06-25T12:38:52.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="That_moment_when_one_Dalvik_alone_is_no_longer_enough-">That moment when one Dalvik alone is no longer enough.</h3><h2 id="生活在内存限制中">生活在内存限制中</h2><p>有很多方面使得Android成为一个独特的移动平台操作系统，但有时候却让人觉得难以融入，特别是从开发人员的角度看。<br><a id="more"></a><br>例如,把内存限制。iOS应用程序提供几乎没有限制的内存预算(200 MB不是什么大不了的事),Android有严重的局限性,从最近设备的24/32/48 MB以及旧设备极小的16 MB便可以看出。</p>
+<p>RAM预算就是一切你的应用运行时所能获得的全部了，这意味着，它必须满足加载类、线程、服务、资源和你的应用程序想要显示的内容。想象一个通过网格视图展示优美图片的照片浏览应用,或一个需要在后台播放的音乐播放器:这太恐怖了</p>
+<blockquote>
+<p>那时候你的体会应该是这样的</p>
+</blockquote>
+<p><img src="http://7xi8kj.com1.z0.glb.clouddn.com/img01.gif" alt="Life’s a bitch, sometimes."></p>
+<p>要理解为什么Android提出了这些限制以及提供了什么解决方案来应对他们,我们需要知道一点点在这背后之后发生了些什么。</p>
+<h2 id="理解Android进程">理解Android进程</h2><p>你应该已经知道了,安卓系统是基于Linux的。因此,每个应用程序都运行在其本身的进程(拥有一个独一无二的PID)中:这允许应用运行在一个相互隔离的环境中,不能被其他应用程序/进程干扰。通常来说,当你想启动一个应用程序,Android创建一个进程(从Zygote中fork出来的),并创建一个主线程，然后开始运行Main Activity。</p>
+<p>你可能不知道的是,你可以指定应用程序的一些组件运行在不同的进程中，而不是那个被用于启动应用程序的。先来看一下这个Nice的属性:</p>
+<center><br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">android:process</span><br></pre></td></tr></table></figure><br><br></center>
+
+<p>该进程属性可用于activities、services、content providers和broadcast receivers 和指定的进程中应该执行的特定组件。</p>
+<p>在这个例子中,我指定MusicService必须执行在一个单独的“music”的进程:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">manifest</span> <span class="attribute">...</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">application</span></span><br><span class="line">    <span class="attribute">android:icon</span>=<span class="value">"@drawable/ic_launcher"</span></span><br><span class="line">    <span class="attribute">android:label</span>=<span class="value">"@string/app_name"</span></span><br><span class="line">    <span class="attribute">android:theme</span>=<span class="value">"@style/Theme.Main"</span> &gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="title">activity</span></span><br><span class="line">      <span class="attribute">android:name</span>=<span class="value">".MusicActivity"</span></span><br><span class="line">      /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">service</span></span><br><span class="line">      <span class="attribute">android:name</span>=<span class="value">".MusicService"</span></span><br><span class="line">      <span class="attribute">android:process</span>=<span class="value">":music"</span></span><br><span class="line">    /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="title">application</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">manifest</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>它有什么意义呢?</p>
+<p>在这个简短的介绍中，我提到了每一个Android应用程序在运行的时候都有一个不能超出的内存预算值。更精确的说，这限制了它只能在单个基础的进程上运行。换句话说，应用程序的每一个进程都将会有一个专门的内存预算(更不用说其中止时也有更酷的不同的规则)</p>
+<p>让我们看看这种方法将是一件好事还是坏事。(剧透:两者都是)</p>
+<h2 id="使用多进程有啥好处">使用多进程有啥好处</h2><p>正如我刚才提到的,一个独立的进程可以充分利用自己的RAM预算,使其主进程拥有更多的空间处理资源。</p>
+<p>此外，操作系统对待运行在不同组件中的进程是不一样的。这意味着，当系统运行在低可用内存的条件时，并不是所有的进程都会被杀死。想象一下：你的音乐播放器正在后台运行，音乐突然播放，系统需要释放一些内存(因为facebook,这就是原因)。由于播放音乐的服务跑在另一个进程中，一种极为可能的情况就是操作系统将会先杀死你的主进程(那个运行着你的UI的)，而留下那个在另一个进程播放音乐的。</p>
+<p>最后一点对于用户来说看起来似乎很不错！因为你的程序的每一个进程都有自身的在应用程序管理器上的屏幕显示RAM用度。其中有一个或多个将出现在“缓存”部分(这意味着它们是不活跃的)。</p>
+<blockquote>
+<p>正如你所看到的,Spotify在后台播放一些音乐。有一个活跃的带有服务的进程 [上图]，而另一个进程(持有UI的)是缓存状态的，因为不再可见/不活动的[下图]。</p>
+</blockquote>
+<p><img src="http://7xi8kj.com1.z0.glb.clouddn.com/img02.png" alt=""><br><img src="http://7xi8kj.com1.z0.glb.clouddn.com/img03.png" alt=""></p>
+<h2 id="使用多进程时的那些坑">使用多进程时的那些坑  </h2><p>不幸的是,坑有很多。事实上,你要学习拥有多个进程不是一下子就能完成的事</p>
+<p>首先,进程是被设计成独立的(如安全特性),这意味着每一个进程将有自己的Dalvik VM实例。反过来,这意味着你不能通过这些实例共享数据,至少不是传统意义上的。例如,静态字段在每个进程都有自己的值,而不是你倾向于相信的只有一个值。并且这延伸到应用程序每一个的状态。</p>
+<p>这是否意味着两个独立的进程之间互相交流是不可能的吗?不,实际上是可能的,有几种方法可以做到。最值得注意的是,Intent可以跨进程“旅行”,Handlers和Messengers也可以。。你也可以依靠AIDL(Android接口定义语言)和Binder,和你通常声明一个bound service茶不错(但你可以做更多的事!)。</p>
+<h2 id="我需要使用多进程吗">我需要使用多进程吗</h2><p>当然,这取决于你需要查看到的迹象。如果你的用户正在经历越来越频繁OutOfMemory错误或者他们抱怨你的应用程序是极其消耗RAM,你可能需要考虑使用一个或多个独立的进程。</p>
+<p>音乐播放器的例子是第二个进程能使你的App做的更好的其中最常见的一个场景，当然，还有更多。<br>例如,你的应用程序是一个客户端云存储服务：委托同步服务组件专用的进程似乎是完全合理的，所以即使UI会被系统杀死，服务仍然可以运行并且保持文件更新。</p>
+<blockquote>
+<p>类似的情况会发生在你第一次真正意识到进程隔离的意思时</p>
+</blockquote>
+<p><img src="http://7xi8kj.com1.z0.glb.clouddn.com/img04.gif" alt="This happens when you first realize what “isolation between processes” really means."></p>
+<p>如果你认为你需要它,那么我建议你先玩一个小试验台应用:只有通过实际体验过使用多个进程的优势和其内在的复杂性，你才能够决定你是否真的需要它,如果是这样,什么是最好的处理它的方式而不至于把我们逼疯。</p>
+<h2 id="结语">结语</h2><p>我知道我仅仅触及到这个问题的表面，我只是想给你一些实用的建议，而不是告诉你在操作系统层调控进程的全部理论与工作机制。</p>
+<p>还是那句话，如果你对此感兴趣并愿意深入其中，那就留言让我知道！同时，不要忘记文档是你最好的朋友<a href="http://developer.android.com/guide/components/processes-and-threads.html#Processes" target="_blank" rel="external">[1]</a> <a href="https://developer.android.com/training/articles/memory.html" target="_blank" rel="external">[2]</a> <a href="https://developer.android.com/tools/debugging/debugging-memory.html" target="_blank" rel="external">[3]</a></p>
+<blockquote>
+<ul>
+<li>原文标题 : Going multiprocess on Android</li>
+<li>原文链接 : <a href="https://medium.com/@rotxed/going-multiprocess-on-android-52975ed8863c" target="_blank" rel="external">Going multiprocess on Android</a></li>
+<li>译者 : <a href="https://github.com/Lollypo" target="_blank" rel="external">Lollypo</a> </li>
+<li>校对者: <a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a>   </li>
+<li>状态 :  完成</li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h3 id="That_moment_when_one_Dalvik_alone_is_no_longer_enough-">That moment when one Dalvik alone is no longer enough.</h3><h2 id="生活在内存限制中">生活在内存限制中</h2><p>有很多方面使得Android成为一个独特的移动平台操作系统，但有时候却让人觉得难以融入，特别是从开发人员的角度看。<br>]]>
+    
+    </summary>
+    
+      <category term="多进程" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%A4%9A%E8%BF%9B%E7%A8%8B/"/>
+    
+      <category term="性能优化" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[在你的Android App中支持多主题]]></title>
+    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/"/>
+    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/</id>
+    <published>2015-04-27T16:00:00.000Z</published>
+    <updated>2015-06-25T12:40:23.000Z</updated>
+    <content type="html"><![CDATA[<p><img src="http://www.hidroh.com/assets/img/multiple-theme-dark.png" alt=""><br><a id="more"></a><br><img src="http://www.hidroh.com/assets/img/multiple-theme-light.png" alt=""></p>
+<p>我最近一直在忙着整我的黑客资讯App——Materialistic，今天难得有空，就让我来给大家分享一下我在Materialistic里使用的一个有趣的功能吧。</p>
+<p>纵观现在的主流阅读类App，用户最常见的需求就是能够基于自己的阅读习惯选择明亮/灰暗两种风格的主题。为了用户的使用体验，我当然要为Materialistic添加这样的功能啦，要不然没人用我会很伤心的！而且很幸运的是，在Android里支持多种主题的切换并不麻烦（如果你的代码没有问题的话），实现这个功能蛮顺利的。所以今天我打算通过这篇博客给大家介绍我在Materialistic里面为了支持多种主题切换所使用的方法。</p>
+<p>准备工作：</p>
+<ol>
+<li><p>你最少要有两个由Android 基本的light/dark主题衍生而来的主题。如果你使用了最新的appcompat-v7包，所对应的就是Theme.AppCompat.Light 或 Theme.AppCompat.Light.DarkActionBar（明亮风格），和Theme.AppCompat（灰暗风格）主题</p>
+</li>
+<li><p>你需要为你的主题设置颜色。你可以在 <a href="http://www.google.com/design/spec/style/color.html#color-color-palette" title=" Google design spec website" target="_blank" rel="external">Google design spec</a> 里面看到有关颜色搭配的指导</p>
+</li>
+<li><p>（可选项）为每一个主题的选项菜单图标加上颜色。取决于你的实现方式，染色过程可以是自动的，也可以是手动的，不过自动化的过程不就意味着你可以把一套图标应用于一种主题嘛，其他的调整只要改改颜色就可以了；但就Materialistic的实际需求来考虑，我还是为一个主题预留了多套不同的图标来避免麻烦……</p>
+</li>
+</ol>
+<p>我今天就以明亮风格的主题来开始讲解吧：</p>
+<h2 id="values/styles-xml">values/styles.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"AppTheme"</span> <span class="attribute">parent</span>=<span class="value">"Theme.AppCompat.Light"</span>&gt;</span><span class="css"></span><br><span class="line">	 &lt;<span class="tag">item</span> <span class="tag">name</span>="<span class="tag">colorPrimary</span>"&gt;<span class="at_rule">@<span class="keyword">color/colorPrimary&lt;/item&gt;</span></span><br><span class="line">	 &lt;item name=<span class="string">"colorPrimaryDark"</span>&gt;@color/colorPrimaryDark&lt;/item&gt;</span><br><span class="line">	 &lt;item name=<span class="string">"colorAccent"</span>&gt;@color/colorAccent&lt;/item&gt;</span><br><span class="line">	 &lt;item name=<span class="string">"android:textColorPrimary"</span>&gt;@color/textColorPrimary&lt;/item&gt;</span><br><span class="line">	 &lt;item name=<span class="string">"android:textColorSecondary"</span>&gt;@color/textColorSecondary&lt;/item&gt;</span><br><span class="line">	 &lt;item name=<span class="string">"android:textColorPrimaryInverse"</span>&gt;@color/textColorPrimaryInverse&lt;/item&gt;</span><br><span class="line">    &lt;item name=<span class="string">"android:textColorSecondaryInverse"</span>&gt;@color/textColorSecondaryInverse&lt;/item&gt;</span><br><span class="line">	 &lt;!-- some other theme configurations for actionbar, overflow menu etc. --&gt;</span><br><span class="line">	 ...</span><br><span class="line"></span></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="values/colors-xml">values/colors.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- brand color: orange --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimary"</span>&gt;</span>#FF9800<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimaryDark"</span>&gt;</span>#F57C00<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimaryLight"</span>&gt;</span>#FFE0B2<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- accent color: red --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorAccent"</span>&gt;</span>#FF5252<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- text color: white --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"textColorPrimary"</span>&gt;</span>#FFFFFF<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"textColorSecondary"</span>&gt;</span>#9E9E9E<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- inverse text color: 87% black --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"textColorPrimaryInverse"</span>&gt;</span>#DE000000<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"textColorSecondaryInverse"</span>&gt;</span>#9E9E9E<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="AndroidManifest-xml">AndroidManifest.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">application</span> <span class="attribute">android:name</span>=<span class="value">".Application"</span> <span class="attribute">android:theme</span>=<span class="value">"@style/AppTheme"</span>&gt;</span></span><br><span class="line">...</span><br><span class="line"><span class="tag">&lt;/<span class="title">application</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>theme 中涉及的各种属性的含义可以在<a href="http://android-developers.blogspot.sg/2014/10/appcompat-v21-material-design-for-pre.html" title="Android Developers blog" target="_blank" rel="external">Android Developers blog</a> 里面找到解释</p>
+<h2 id="贴心小提示">贴心小提示</h2><blockquote>
+<p>虽然Android里面style的属性/值非常全面，我们想要实现的效果style基本上都包含了有，但是Android文档有关这些主题属性的解释特别少，尤其是对appcompat的解释。所以我们还是建议你写一个小Demo去测试style里面的属性/值应该怎么使用、能实现什么样的效果，然后再根据我们的需求去考虑使用哪些属性/值来实现我们想要的效果。</p>
+</blockquote>
+<p>根据Android的Material Design规范，选项菜单图标的颜色应该和action bar上面的文字颜色保持一致，在我这是通过 android:textColorPrimary 来实现的，也就是使用#FFFFFF，基于这样的规范，我们需要为action bar提供一套白色的选项菜单图标。</p>
+<h2 id="贴心小提示-1">贴心小提示</h2><blockquote>
+<p>Google 有在 <a href="https://github.com/google/material-design-icons" title="Github" target="_blank" rel="external">material-design-icons - Github</a> 上提供一些开源的Material Design图标哦。</p>
+</blockquote>
+<h2 id="menu/my_menu-xml">menu/my_menu.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">menu</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">item</span> <span class="attribute">android:id</span>=<span class="value">"@id/menu_comment"</span></span><br><span class="line"><span class="attribute">android:icon</span>=<span class="value">"@drawable/ic_mode_comment_white_24dp"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">item</span> <span class="attribute">android:id</span>=<span class="value">"@id/menu_story"</span></span><br><span class="line"><span class="attribute">android:icon</span>=<span class="value">"@drawable/ic_subject_white_24dp"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">item</span> <span class="attribute">android:id</span>=<span class="value">"@id/menu_share"</span></span><br><span class="line"><span class="attribute">app:actionProviderClass</span>=<span class="value">"android.support.v7.widget.ShareActionProvider"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">menu</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>为了使颜色一致，并且能让我们的Views和Texts能够在多个主题下被使用，最好的解决办法就是把颜色变成资源的引用，例如：android:textColor=”@color/textColorPrimary；又或者是通过设置style来改变，例如：在textEmptyStyle.xml文件下，我们只使用被选中的颜色</p>
+<h2 id="values/styles-xml-1">values/styles.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"textEmptyStyle"</span>&gt;</span><span class="css"></span><br><span class="line">	 &lt;<span class="tag">item</span> <span class="tag">name</span>="<span class="rule"><span class="attribute">android</span>:<span class="value">textColor<span class="string">"&gt;@color/textColorSecondary&lt;/item&gt;</span><br><span class="line">	 &lt;item name="</span>android:textSize<span class="string">"&gt;@dimen/abc_text_size_headline_material&lt;/item&gt;</span><br><span class="line">...</span><br><span class="line"></span></span></span></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我相信通过今天在上面所介绍的这些内容已经足够让我们实现一个符合Material Design的明亮风格的主题了，下一篇博文我将会给大家介绍如何实现一个符合Material Design的灰暗风格的主题，以及如何在运行App的过程中切换主题。希望大家继续关注我的博客哦。</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://www.hidroh.com/2015/02/16/support-multiple-themes-android-app/" target="_blank" rel="external">Supporting multiple themes in your Android app (Part 1)</a></li>
+<li>译者 : <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a> </li>
+<li>校对者: <a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a>  </li>
+<li>状态 :  完成</li>
+</ul>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p><img src="http://www.hidroh.com/assets/img/multiple-theme-dark.png" alt=""><br>]]>
+    
+    </summary>
+    
+      <category term="主题" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E4%B8%BB%E9%A2%98/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E8%BF%9E%E8%BD%BD/"/>
+    
+  </entry>
+  
+</feed>
