@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>延迟共享元素的过渡动画 (part 3b) | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="通过讨论 Lollipop Transition API 的一个重要的特性：延迟共享元素的过渡动画，这篇博文将继续我们关于共享元素 Transition 的深度解析。这也是我关于 Transition 这个专栏的第四篇文章。
+
+Part 1: 在 Activity 和 Fragment 中使用 Transition 
+Part 2: 深入理解 Transition
+Part 3a: 深入理解共享元">
+<meta property="og:type" content="article">
+<meta property="og:title" content="延迟共享元素的过渡动画 (part 3b)">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="通过讨论 Lollipop Transition API 的一个重要的特性：延迟共享元素的过渡动画，这篇博文将继续我们关于共享元素 Transition 的深度解析。这也是我关于 Transition 这个专栏的第四篇文章。
+
+Part 1: 在 Activity 和 Fragment 中使用 Transition 
+Part 2: 深入理解 Transition
+Part 3a: 深入理解共享元">
+<meta property="og:updated_time" content="2015-06-29T14:05:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="延迟共享元素的过渡动画 (part 3b)">
+<meta name="twitter:description" content="通过讨论 Lollipop Transition API 的一个重要的特性：延迟共享元素的过渡动画，这篇博文将继续我们关于共享元素 Transition 的深度解析。这也是我关于 Transition 这个专栏的第四篇文章。
+
+Part 1: 在 Activity 和 Fragment 中使用 Transition 
+Part 2: 深入理解 Transition
+Part 3a: 深入理解共享元">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-activity-postponed-shared-element-transitions-part3b" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/" class="article-date">
+  <time datetime="2015-04-30T16:00:00.000Z" itemprop="datePublished">2015-05-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      延迟共享元素的过渡动画 (part 3b)
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>通过讨论 Lollipop Transition API 的一个重要的特性：延迟共享元素的过渡动画，这篇博文将继续我们关于共享元素 Transition 的深度解析。这也是我关于 Transition 这个专栏的第四篇文章。</p>
+<ul>
+<li>Part 1: <a href="https://github.com/bboyfeiyu/android-tech-frontier/tree/master/others/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAAndroid%20%E6%96%B0%E7%89%B9%E6%80%A7-Transition-Part-1" target="_blank" rel="external">在 Activity 和 Fragment 中使用 Transition </a></li>
+<li>Part 2: <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-content-transitions-in-depth-part2.html" target="_blank" rel="external">深入理解 Transition</a></li>
+<li>Part 3a: <a href="http://www.androiddesignpatterns.com/2015/01/activity-fragment-shared-element-transitions-in-depth-part3a.html" target="_blank" rel="external">深入理解共享元素的 Transition</a></li>
+<li>Part 3b:  <a href="http://www.androiddesignpatterns.com/2015/03/activity-postponed-shared-element-transitions-part3b.html" target="_blank" rel="external">延迟共享元素的 Transition</a></li>
+<li>Part 3c: 共享元素回调实践 (coming soon!)</li>
+<li>Part 4:  Activity &amp; Fragment 过渡动画示例(coming soon!)</li>
+</ul>
+<p>我们通过一个常见的问题来解释为什么需要推迟某些共享元素的过渡动画。<br><a id="more"></a></p>
+<h2 id="理解问题">理解问题</h2><p>通常问题的根源是框架在 Activity 生命周期非常早的时候启动共享元素 Transition 。回想我们的第一篇文章，Transitions 必须捕获目标 View 的起始和结束状态来构建合适的动画。因此，如果框架在共享元素获得它在调用它的 Activity 中所给定的大小和位置前启动共享元素的过渡动画，这个 Transition 将不能正确捕获到共享元素的结束状态值,生成动画也会失败(一个过渡失败的例子<a href="http://www.androiddesignpatterns.com/assets/videos/posts/2015/03/09/postpone-bug-opt.mp4" target="_blank" rel="external">Video 3.3</a>).</p>
+<p>Transition 开始前，能否计算出正确的共享元素的结束值主要依靠两个因素:</p>
+<p>(1) 调用共享元素的 Activity 的布局复杂度以及布局层次结构的深度<br>(2)调用共享元素Activity载入数据消耗的时间</p>
+<p>布局越复杂，在屏幕上确定共享元素的大小位置耗时越长。同样，如果调用共享元素的 Activity 依赖一个异步的数据载入，框架仍有可能会在数据载入完成前自动开始共享元素 Transition。下面列出的是你可能遇到的常见问题:</p>
+<ul>
+<li><p><strong>存在于 Activity 托管的 Fragment 中的共享元素</strong>。<a href="https://developer.android.com/reference/android/app/FragmentTransaction.html#commit()" target="_blank" rel="external">FragmentTransactions 在 commit 后并不会被立即执行</a>，它们会被安排到主线程中等待执行。因此，如果共享元素存在的 Fragment 的视图层和FragmentTransaction没有被及时执行，框架有可能在共享元素被正确测量大小和布局到屏幕前启动共享元素 Transition。<a id="b1" href="#1">(1)</a></p>
+</li>
+<li><p><strong>共享元素是一个高分辨率的图片</strong>。给 <strong>ImageView</strong> 设置一个超过其初始化边界的高分辨率图片，最终可能会导致在这个视图层里出现<a href="https://github.com/android/platform_frameworks_base/blob/lollipop-release/core/java/android/widget/ImageView.java#L453-L455" target="_blank" rel="external">额外的布局传递</a>，由此增加在共享元素准备好前就启动 Transition 的几率。流行的异步图片处理库比如 <a href="https://android.googlesource.com/platform/frameworks/volley" target="_blank" rel="external"><code>Volley</code></a> 和 <a href="http://square.github.io/picasso/" target="_blank" rel="external"><code>Picasso</code></a> ，也不能可靠的解决这个问题：框架不能预先了解图片是要被下载，缩放还是在后台线程中从磁盘读取，也不管图片是否处理完毕就启动共享元素 Transition。</p>
+</li>
+<li><p><strong>共享元素依赖于异步的数据加载</strong>如果共享元素所需的数据是通过<strong>AsyncTask</strong>，<strong>AsyncQueryHandler</strong>,<strong>Loader</strong>或者其他类似的东西加载，在它们获得在调用它们的 Activity 的最终数据（大小、位置）前，框架就有可能在主线程中启动 Transition。</p>
+</li>
+</ul>
+<p>现在你可能会想：如果有办法能让暂时延迟 Transition 的使用，直到我们确定了共享元素的确切大小和位置才使用它就好了。幸好 Activity Transitions API<a id="b2" href="#2">(2)</a> 为我们提供了解决方案。</p>
+<p>在 Activity 的<code>onCreate()</code>中调用<a href="https://developer.android.com/reference/android/app/Activity.html#postponeEnterTransition()" target="_blank" rel="external"><code>postponeEnterTransition()</code></a> 方法来暂时阻止启动共享元素 Transition。之后，你需要在共享元素准备好后调用 <a href="https://developer.android.com/reference/android/app/Activity.html#startPostponedEnterTransition()" target="_blank" rel="external"><code>startPostponedEnterTransition</code></a> 来恢复过渡效果。常见的模式是在一个<a href="http://developer.android.com/reference/android/view/ViewTreeObserver.OnPreDrawListener.html" target="_blank" rel="external"><code>OnPreDrawListener</code></a>中启动延时 Transition，它会在共享元素测量和布局完毕后被调用<a id="b3" href="#3">(3)</a>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Postpone the shared element enter transition.</span></span><br><span class="line">    postponeEnterTransition();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// <span class="doctag"><span class="keyword">TODO</span></span>: Call the "scheduleStartPostponedTransition()" method</span></span><br><span class="line">    <span class="comment">// below when you know for certain that the shared element is</span></span><br><span class="line">    <span class="comment">// ready for the transition to begin.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * Schedules the shared element transition to be started immediately</span><br><span class="line"> * after the shared element has been measured and laid out within the</span><br><span class="line"> * activity's view hierarchy. Some common places where it might make</span><br><span class="line"> * sense to call this method are:</span><br><span class="line"> *</span><br><span class="line"> * (1) Inside a Fragment's onCreateView() method (if the shared element</span><br><span class="line"> *     lives inside a Fragment hosted by the called Activity).</span><br><span class="line"> *</span><br><span class="line"> * (2) Inside a Picasso Callback object (if you need to wait for Picasso to</span><br><span class="line"> *     asynchronously load/scale a bitmap before the transition can begin).</span><br><span class="line"> *</span><br><span class="line"> * (3) Inside a LoaderCallback's onLoadFinished() method (if the shared</span><br><span class="line"> *     element depends on data queried by a Loader).</span><br><span class="line"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">scheduleStartPostponedTransition</span><span class="params">(<span class="keyword">final</span> View sharedElement)</span> </span>&#123;</span><br><span class="line">    sharedElement.getViewTreeObserver().addOnPreDrawListener(</span><br><span class="line">        <span class="keyword">new</span> ViewTreeObserver.OnPreDrawListener() &#123;</span><br><span class="line">            <span class="annotation">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onPreDraw</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                sharedElement.getViewTreeObserver().removeOnPreDrawListener(<span class="keyword">this</span>);</span><br><span class="line">                startPostponedEnterTransition();</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>忽略方法名，这里还有第二种方法可以延迟共享元素的返回 Transition，在调用Activity的<a href="https://developer.android.com/reference/android/app/Activity.html#onActivityReenter(int,%20android.content.Intent)" target="_blank" rel="external"><code>onActivityReenter()</code></a> 方法中延缓返回 Transition<a id="b4" href="#4">(4)</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Don't forget to call setResult(Activity.RESULT_OK) in the returning</span><br><span class="line"> * activity or else this method won't be called!</span><br><span class="line"> */</span></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onActivityReenter</span><span class="params">(<span class="keyword">int</span> resultCode, Intent data)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onActivityReenter(resultCode, data);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Postpone the shared element return transition.</span></span><br><span class="line">    postponeEnterTransition();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// <span class="doctag"><span class="keyword">TODO</span></span>: Call the "scheduleStartPostponedTransition()" method</span></span><br><span class="line">    <span class="comment">// above when you know for certain that the shared element is</span></span><br><span class="line">    <span class="comment">// ready for the transition to begin.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>尽管添加延时可以让共享元素 Transition 更加流畅准确，但是你也要知道在应用中引入共享元素 Transition 的延迟可能会产生一些负面影响：</p>
+<ul>
+<li><strong>调用<code>postponeEnterTransition</code>后不要忘记调用<code>startPostponedEnterTransition</code></strong>。<br>忘记调用<code>startPostponedEnterTransition</code>会让你的应用处于死锁状态，用户无法进入下个Activity。</li>
+</ul>
+<ul>
+<li><strong>不要将共享元素 Transition 延迟设置到1s以上</strong>。延迟时间过长会在应用中产生不必要的卡顿，影响用户体验。</li>
+</ul>
+<p>感谢阅读！希望这篇文章对你有所帮助。</p>
+<p><a id="1" href="#b1"><strong>1</strong></a>: 当然，许多应用通过调用 <a href="https://developer.android.com/reference/android/app/FragmentManager.html#executePendingTransactions(" target="_blank" rel="external"><code>FragmentManager#executePendingTransactions()</code></a>) 来避开这个问题，这样会强制立即执行FragmentTransactions而不是异步。</p>
+<p><a id="2" href="#b2"><strong>2</strong></a>: 注意!<code>postponeEnterTransition()</code>和<code>startPostponedEnterTransition()</code>只对 Activity Transition起作用，对Fragment无效。详细信息可以在这里找到 <a href="http://stackoverflow.com/questions/26977303/how-to-postpone-a-fragments-enter-transition-in-android-lollipop" target="_blank" rel="external">StackOverflow</a> &amp; <a href="https://plus.google.com/+AlexLockwood/posts/3DxHT42rmmY" target="_blank" rel="external">Google+</a></p>
+<p><a id="3" href="#b3"><strong>3</strong></a>: 小贴士:你可以先调用 <a href="http://developer.android.com/reference/android/view/View.html#isLayoutRequested(" target="_blank" rel="external"><code>View#isLayoutRequested()</code></a>) 来确认是否需要调用 <a href="http://developer.android.com/reference/android/view/ViewTreeObserver.OnPreDrawListener.html" target="_blank" rel="external"><code>OnPreDrawListener</code></a>，有必要的话 <a href="http://developer.android.com/reference/android/view/View.html#isLaidOut(" target="_blank" rel="external"><code>View#isLaidOut()</code></a>) 在一些情况下也能派上用场</p>
+<p><a id="4" href="#b4"><strong>4</strong></a>: 在开发者选项中启用不保留 Activity 选项可以方便调试共享元素返回/重新进入时对应过渡动画的行为，这也可以帮助测试在返回的过渡效果开始之前可能发生最糟糕的情况( Activity 需要重新构造布局加载数据…)</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://www.androiddesignpatterns.com/2015/03/activity-postponed-shared-element-transitions-part3b.html" target="_blank" rel="external">Postponed Shared Element Transitions (part 3b)</a></li>
+<li>作者 : <a href="https://plus.google.com/+AlexLockwood" target="_blank" rel="external">Alex Lockwood</a></li>
+<li><a href="http://www.devtf.cn" target="_blank" rel="external">译文出自 :  开发技术前线 www.devtf.cn</a></li>
+<li>译者 : <a href="https://github.com/tiiime" target="_blank" rel="external">tiiime</a></li>
+<li>校对者: <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a>  </li>
+<li>状态 :  完成</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/" data-id="cibhzt7h2002c6c1io5vufkny" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          深入理解 Shared Element Transition (part 3a)
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">在Activity中使用Thread导致的内存泄漏</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/01/activity-postponed-shared-element-transitions-part3b/" data-title="延迟共享元素的过渡动画 (part 3b)" data-url="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

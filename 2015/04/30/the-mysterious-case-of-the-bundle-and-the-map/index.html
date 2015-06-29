@@ -1,0 +1,547 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>深入了解Bundle和Map | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言因为往Bundle对象中放入Map实际上没有表面上看起来那么容易。
+这篇博客是在Eugenio @workingkills Marletti的帮助下完成的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入了解Bundle和Map">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/04/30/the-mysterious-case-of-the-bundle-and-the-map/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="前言因为往Bundle对象中放入Map实际上没有表面上看起来那么容易。
+这篇博客是在Eugenio @workingkills Marletti的帮助下完成的。">
+<meta property="og:image" content="https://d262ilb51hltx0.cloudfront.net/max/800/1*GokSVk3wQIhGoCQtVIwNTA.gif">
+<meta property="og:image" content="https://d262ilb51hltx0.cloudfront.net/max/800/1*TOBlt2WOVLElnQTyG-R7YQ.gif">
+<meta property="og:image" content="https://d262ilb51hltx0.cloudfront.net/max/800/1*zA893bdM9QmLYPlRe7estg.gif">
+<meta property="og:image" content="https://d262ilb51hltx0.cloudfront.net/max/600/1*sOK3EennxwiAPNzz5s0C4Q.gif">
+<meta property="og:image" content="https://d262ilb51hltx0.cloudfront.net/max/800/0*40IPQ7jhknFGYKNR.">
+<meta property="og:updated_time" content="2015-06-29T13:40:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入了解Bundle和Map">
+<meta name="twitter:description" content="前言因为往Bundle对象中放入Map实际上没有表面上看起来那么容易。
+这篇博客是在Eugenio @workingkills Marletti的帮助下完成的。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-the-mysterious-case-of-the-bundle-and-the-map" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/the-mysterious-case-of-the-bundle-and-the-map/" class="article-date">
+  <time datetime="2015-04-29T16:00:00.000Z" itemprop="datePublished">2015-04-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深入了解Bundle和Map
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言">前言</h2><p>因为往Bundle对象中放入Map实际上没有表面上看起来那么容易。</p>
+<p>这篇博客是在Eugenio @workingkills Marletti的帮助下完成的。<br><a id="more"></a><br><strong>警告</strong>：这是一篇篇幅较长的博客</p>
+<h2 id="案例：往Bundle对象放入特殊的Map">案例：往Bundle对象放入特殊的Map</h2><p>假设有这样一个案例：你需要将一个要传递的map附加到Intent对象。这个案例虽然不常见，但是，这种情况也是很有可能发生。</p>
+<p>如果你在Intent对象中附加的是一个Map最常见的接口实现类HashMap，而不是包含附加信息的自定义类，你是幸运的，你可以用以下方法将map附加到Intent对象:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">intent.putExtra(<span class="string">"map"</span>,myHashMap);</span><br></pre></td></tr></table></figure>
+<p>在你接收的Activity里，你可以用以下方法毫无问题地取出之前在Intent中附加的Map:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HashMap map = (HashMap) getIntent().getSerializableExtra(<span class="string">"map"</span>);</span><br></pre></td></tr></table></figure>
+<p>但是，如果你在Intent对象附加另一种类型的Map，比如：一个TreeMap（或者其他的自定义Map接口实现类），你在Intent中取出之前附加的TreeMap时，你用如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TreeMap map = (TreeMap) getIntent().getSerializableExtra(<span class="string">"map"</span>);`</span><br></pre></td></tr></table></figure>
+<p>然后就会出现一个类转换异常:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.lang.ClassCastException: java.util.HashMap cannot be cast to java.util.TreeMap`</span><br></pre></td></tr></table></figure></p>
+<p>因为编译器认为你的Map(TreeMap)正试图转换成一个HashMap</p>
+<p>稍后我会详细地为大家讲解我为什么用 getSerializableExtra() 这个方法来取出附加到Intent中的Map。现在我可以先给大家一个通俗易懂的解释：因为所有默认的 Map 接口实现类都是Serializable,并且 putExtra()/getExtra() 方法接受的参数几乎都是“键-值”对，而其中值的类型非常广泛，Serializable就是其中之一，因此我们能够使用 getSerializableExtra() 来取得我们传递的Map。</p>
+<p>在我们进行下一步之前，让我们去了解调用putExtra()/get*Extra()时涉及到的一些类或方法。</p>
+<p><strong>提示</strong>：文章很长，如果你只是想要一个解决方案的话，请跳到文章的最后面解决方案那里。</p>
+<h2 id="Parcels:">Parcels:</h2><p>大家都知道（也许少部分人不知道），在Android 系统中所有进程间通信是基于Binder机制。但是，希望大家明白的是允许数据在进程间传递是基于Parcel。</p>
+<p>Parcel是Android进程间通信中， 高效的专用序列化机制。</p>
+<p>与 Serializable 相反，Parcels 决不应该被用于储存任何类型的持久性数据，因为 Parcels 并不是为“操作可更新数据”（可更新数据指的是，具有持久性的数据会由于它的长留存时间会不断更新它的值）提供的，Parcels 更多的是传递 “短暂的一次性数据”，所以，不管什么时候使用Bundle，你在底层处理的都是Parcel。比如附加数据到Intent对象，在Fragment中设参数，等等。</p>
+<p>Parcels 能处理很多类型，包括：本地类型，字符串类型，数组类型，Map类型，sparse arrays类型，以及parcelables和serializables对象。<br>除非你必须使用Serializable,一般情况下推荐使用Parcelables读写数据到Parcel.</p>
+<p>相较于Serializable，Parcelable的优势更多地体现在性能上，因为Parcelable在内存开销方面更小，而这个理由足以让我们在大多数情况下毫不犹豫地选择Parcelable而不是Serializable。</p>
+<h2 id="深入底层分析">深入底层分析</h2><p>让我们来了解下是什么原因使我们得到了ClassCastException异常。<br>从我们的代码中可以看到，我们对Intent中putExtras()的调用实际上是传入了一个String值和一个Serializable的对象，而不是传入一个Map值。因为Map接口实现类都是Serializable的，而不是Parcelable的。</p>
+<h3 id="第一步：找到第一个突破口">第一步：找到第一个突破口</h3><p>让我们来看看在Intent.putExtra(String, Serializable)方法中做了什么。</p>
+<blockquote>
+<p>Intent.java</p>
+</blockquote>
+<pre><code class="java"><span class="function"><span class="keyword">public</span> Intent <span class="title">putExtra</span><span class="params">(String name, Serializable value)</span> </span>{
+      <span class="comment">// ...</span>
+      mExtras.putSerializable(name, value);
+      <span class="keyword">return</span> <span class="keyword">this</span>;
+    }
+}
+</code></pre>
+<p>在这里，mExtras是个Bundle，Intent指令所有附加信息到bundle，从而调用了Bundle的putSerializable()方法，让我们来看看在Bundle中的putSerializable()方法中做了什么：</p>
+<blockquote>
+<p>Bundle.java</p>
+</blockquote>
+<pre><code class="java"><span class="annotation">@Override</span>
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">putSerializable</span><span class="params">(String key, Serializable value)</span> </span>{
+      <span class="keyword">super</span>.putSerializable(key, value);
+    }
+</code></pre>
+<p>从上面代码我们可以看出，Bundle中的putSerializable()方法中只是对父类的实现，调用了父类BaseBundle中的putSerializable（）方法。</p>
+<blockquote>
+<p>BaseBundle.java</p>
+</blockquote>
+<pre><code class="java"><span class="function"><span class="keyword">void</span> <span class="title">putSerializable</span><span class="params">(String key, Serializable value)</span> </span>{
+     unparcel();
+     mMap.put(key, value);
+   }
+</code></pre>
+<p>首先，让我们忽略其中的unparcel()这个方法。我们注意到mMap是一个ArrayMap<string, object="">类型的。这告诉我们，到了这步，我们往mMap中设入的是一个Object类型的。也就是说，不管我们之前是什么类型，在父类BaseBundle这里都转成了Obeject类型。</string,></p>
+<h4 id="这里开始出现问题了">这里开始出现问题了</h4><p><img src="https://d262ilb51hltx0.cloudfront.net/max/800/1*GokSVk3wQIhGoCQtVIwNTA.gif" alt=""></p>
+<h3 id="第二步：分析写入_map">第二步：分析写入 map</h3><p>有趣的是当把Bundle中的值写入到一个Parcel中时，如果此时我们去检查我们附加值的类型，我们发现仍然能得到正确的类型。</p>
+<pre><code class="java"> Intent intent = <span class="keyword">new</span> Intent(<span class="keyword">this</span>, ReceiverActivity.class);
+intent.putExtra(<span class="string">"map"</span>, treeMap);
+Serializable map = intent.getSerializableExtra(<span class="string">"map"</span>);
+Log.i(<span class="string">"MAP TYPE"</span>, map.getClass().getSimpleName());
+</code></pre>
+<p>如我们所料，这里打印出来的是TreeMap类型的。因此，在Bundle中写成一个Parcel，与再次读这期间一定发生了类型转换。</p>
+<p>如果我们观察下是怎样写入Parcel的，我们看到，实际上是调BaseBundle中的writeToParcelInner()方法。</p>
+<blockquote>
+<p>BaseBundle.java</p>
+</blockquote>
+<pre><code class="java">     <span class="function"><span class="keyword">void</span> <span class="title">writeToParcelInner</span><span class="params">(Parcel parcel, <span class="keyword">int</span> flags)</span> </span>{
+  <span class="keyword">if</span> (mParcelledData != <span class="keyword">null</span>) {
+    <span class="comment">// ...</span>
+  } <span class="keyword">else</span> {
+    <span class="comment">// ...</span>
+    <span class="keyword">int</span> startPos = parcel.dataPosition();
+    parcel.writeArrayMapInternal(mMap);
+    <span class="keyword">int</span> endPos = parcel.dataPosition();
+    <span class="comment">// ...</span>
+  }
+}
+</code></pre>
+<p>跳过所有不相干的代码，我们看到在Parcel的writeArrayMapInternal()方法中做了大量的事（mMap 是一个 ArrayMap类型）</p>
+<blockquote>
+<p>Parcel.java</p>
+</blockquote>
+<pre><code class="java"><span class="comment">/* package */</span> <span class="function"><span class="keyword">void</span> <span class="title">writeArrayMapInternal</span><span class="params">(
+      ArrayMap&lt;String, Object&gt; val)</span> </span>{
+        <span class="comment">// ...</span>
+        <span class="keyword">int</span> startPos;
+        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;N; i++) {
+      <span class="comment">// ...</span>
+      writeString(val.keyAt(i));
+      writeValue(val.valueAt(i));
+      <span class="comment">// ...</span>
+    }
+  }
+</code></pre>
+<h4 id="下一步让我们更深入地分析">下一步让我们更深入地分析</h4><p><img src="https://d262ilb51hltx0.cloudfront.net/max/800/1*TOBlt2WOVLElnQTyG-R7YQ.gif" alt=""></p>
+<h3 id="第三步：分析写入Map值">第三步：分析写入Map值</h3><p>那么，在Parcel中writeValue() 方法又是怎样呢？主要是一些if…else语句。</p>
+<blockquote>
+<p>Parcel.java</p>
+</blockquote>
+<pre><code class="java"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">writeValue</span><span class="params">(Object v)</span> </span>{
+       <span class="keyword">if</span> (v == <span class="keyword">null</span>) {
+         writeInt(VAL_NULL);
+       } <span class="keyword">else</span> <span class="keyword">if</span> (v <span class="keyword">instanceof</span> String) {
+         writeInt(VAL_STRING);
+         writeString((String) v);
+       } <span class="keyword">else</span> <span class="keyword">if</span> (v <span class="keyword">instanceof</span> Integer) {
+         writeInt(VAL_INTEGER);
+         writeInt((Integer) v);
+       } <span class="keyword">else</span> <span class="keyword">if</span> (v <span class="keyword">instanceof</span> Map) {
+         writeInt(VAL_MAP);
+         writeMap((Map) v);
+       } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="comment">/* you get the idea, this goes on and on */</span>) {
+         <span class="comment">// ...</span>
+       } <span class="keyword">else</span> {
+         Class&lt;?&gt; clazz = v.getClass();
+         <span class="keyword">if</span> (clazz.isArray() &amp;&amp;
+         clazz.getComponentType() == Object.class) {
+       <span class="comment">// Only pure Object[] are written here, Other arrays of non-primitive types are</span>
+       <span class="comment">// handled by serialization as this does not record the component type.</span>
+           writeInt(VAL_OBJECTARRAY);
+           writeArray((Object[]) v);
+     } <span class="keyword">else</span> <span class="keyword">if</span> (v <span class="keyword">instanceof</span> Serializable) {
+       <span class="comment">// Must be last</span>
+       writeInt(VAL_SERIALIZABLE);
+       writeSerializable((Serializable) v);
+     } <span class="keyword">else</span> {
+       <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Parcel: unable to marshal value "</span>+ v);
+     }
+       }
+     }
+</code></pre>
+<p>虽然TreeMap是以Serializable的类型传入到 bundle，但是在Parcel中writeValue(）方法执行的是map这个分支的代码—-“v instanceof Map”，（“v instanceof Map”在“v instanceOf Serializable”之前）</p>
+<h4 id="到了这里，问题更明显了。">到了这里，问题更明显了。</h4><p><img src="https://d262ilb51hltx0.cloudfront.net/max/800/1*zA893bdM9QmLYPlRe7estg.gif" alt=""></p>
+<p>现在我想，他们是不是对 Map 进行了一些非常规的处理，使得 Map 将无可避免地被转换为 HashMap 类型。</p>
+<h3 id="第四步：分析将Map写入到Parcel中">第四步：分析将Map写入到Parcel中</h3><p>Parcel中的writeMap()方法并没有做什么事，只是将我们传入的Map值强转成Map<string, object="">类型，调用writeMapInternal（）方法。</string,></p>
+<blockquote>
+<p>Parcel.java</p>
+</blockquote>
+<pre><code class="java"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">writeMap</span><span class="params">(Map val)</span> </span>{
+       writeMapInternal((Map&lt;String, Object&gt;) val);
+ }
+</code></pre>
+<p>JavaDoc文档对这个方法的解释非常清楚：即Map必须是String类型的。</p>
+<p>尽管我们可能传入一个key值不为String的Map,类型擦除也使我们不会获得运行时错误。(这是完全非法的)</p>
+<p>事实上，看一下Parcel中的writeMapInternal()方法，这更打击我们。</p>
+<blockquote>
+<p>Parcel.java</p>
+</blockquote>
+<pre><code class="java"><span class="comment">/* package */</span> <span class="function"><span class="keyword">void</span> <span class="title">writeMapInternal</span><span class="params">(Map&lt;String,Object&gt; val)</span> </span>{
+    <span class="comment">// ...</span>
+    Set&lt;Map.Entry&lt;String,Object&gt;&gt; entries = val.entrySet();
+    writeInt(entries.size());
+    <span class="keyword">for</span> (Map.Entry&lt;String,Object&gt; e : entries) {
+      writeValue(e.getKey());
+      writeValue(e.getValue());
+    }
+  }
+</code></pre>
+<p>类型擦除使所有的这些代码都不会出现运行时错误。</p>
+<p>实际上，在我们遍历Map调用writeValue()方法时，依赖的是原先的类型检查。从我们之前分析writeValue() 这个方法能看出，writeValue(）能处理非String类型的key值。</p>
+<p>也许这里的文档和代码在某些地方有些不一致（还没有同步）。<br>但是，如果你在一个Bundle里对TreeMap<integer, object="">进行设值和取值，将不会出现问题。<br>当然也还是会出现TreeMap转换成HashMap的异常。</integer,></p>
+<h4 id="黑洞启示录：">黑洞启示录：</h4><p><img src="https://d262ilb51hltx0.cloudfront.net/max/600/1*sOK3EennxwiAPNzz5s0C4Q.gif" alt=""></p>
+<p>在这里已经非常清楚了，当Map写入到一个Parcel时，Map丢失了它们的类型，所以当我们再次读时是没办法来复原原来的信息。</p>
+<h3 id="第五步：分析读Map">第五步：分析读Map</h3><p>让我们来看看Parcel中readValue()这个方法，这个方法和writeValue()相对应。</p>
+<blockquote>
+<p>Parcel.java</p>
+</blockquote>
+<pre><code class="java"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Object <span class="title">readValue</span><span class="params">(ClassLoader loader)</span> </span>{
+     <span class="keyword">int</span> type = readInt();
+
+     <span class="keyword">switch</span> (type) {
+       <span class="keyword">case</span> VAL_NULL:
+         <span class="keyword">return</span> <span class="keyword">null</span>;
+
+       <span class="keyword">case</span> VAL_STRING:
+         <span class="keyword">return</span> readString();
+
+       <span class="keyword">case</span> VAL_INTEGER:
+         <span class="keyword">return</span> readInt();
+
+       <span class="keyword">case</span> VAL_MAP:
+        <span class="keyword">return</span> readHashMap(loader);
+
+   <span class="comment">// ...</span>
+     }
+   }
+</code></pre>
+<blockquote>
+<p>parcel处理写入数据的方式是：</p>
+</blockquote>
+<ol>
+<li><p>写入一个int来定义数据类型（一个VAL_*的常量）。</p>
+</li>
+<li><p>存储数据本身（包括其他一些元数据，比如String这种没有固定大小的类型的数据长度）。</p>
+</li>
+<li><p>递归调用非原始数据类型。</p>
+</li>
+</ol>
+<p>这里我们可以看到，readValue()方法中，首先读取一个int的数据，这个int数据是在writeValue（）中将TreeMap设成的VAL_MAP的常量，然后去匹配后面的分支,调用readHashMap()方法来取回数据。</p>
+<blockquote>
+<p>Parcel.java</p>
+</blockquote>
+<pre><code class="java"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> HashMap <span class="title">readHashMap</span><span class="params">(ClassLoader loader)</span>
+  </span>{
+    <span class="keyword">int</span> N = readInt();
+    <span class="keyword">if</span> (N &lt; <span class="number">0</span>) {
+   <span class="keyword">return</span> <span class="keyword">null</span>;
+    }
+    HashMap m = <span class="keyword">new</span> HashMap(N);
+    readMapInternal(m, N, loader);
+    <span class="keyword">return</span> m;
+  }
+</code></pre>
+<p>readMapInternal()这个方法只是将我们从Parcel中读取的map重新进行打包。</p>
+<p>这就是为什么我们总是从Bundle中获得一个HashMap，同样的，如果你创建了一个实现了Parcelable自定义类型Map,得到的也是一个HashMap。</p>
+<p>很难说本身设计如此，还是是一个疏忽。<br>这确实是一个极端例子，因为在一个Intent中传一个Map是比较少见的，你也只有很小的理由来传Serializable而不是Parcelable的。<br>但是文档上没有写，这让我觉得应该是个疏忽，而不是本身设计如此。</p>
+<h2 id="解决方案：">解决方案：</h2><p>好了，分析底层代码我们已经弄明白了我们的问题，现在我们定位到问题的关键位置。<br>我们需要明白的是在writeValue()方法中，TreeMap没有进入“v instanceOf Map”这个分支</p>
+<p>当我和 Eugenio谈话时，我想到的第一个想法是将map包裹成一个Serializable的容器，这个想法是丑陋的但是有效的。<br>Eugenio迅速写了个通用的wrapper类解决了这个问题。</p>
+<blockquote>
+<p>MapWrapper.java</p>
+</blockquote>
+<pre><code class="java">  <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapWrapper</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">Map</span> &amp; <span class="title">Serializable</span>&gt; <span class="keyword">implements</span> <span class="title">Serializable</span> </span>{
+
+  <span class="keyword">private</span> <span class="keyword">final</span> T map;
+
+  <span class="function"><span class="keyword">public</span> <span class="title">MapWrapper</span><span class="params">(T map)</span> </span>{
+    <span class="keyword">this</span>.map = map;
+  }
+
+  <span class="function"><span class="keyword">public</span> T <span class="title">getMap</span><span class="params">()</span> </span>{
+    <span class="keyword">return</span> map;  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends Map &amp; Serializable&gt; <span class="function">Intent
+         <span class="title">putMapExtra</span><span class="params">(Intent intent, String name, T map)</span> </span>{
+
+    <span class="keyword">return</span> intent.putExtra(name, <span class="keyword">new</span> MapWrapper&lt;&gt;(map));
+  }
+
+  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends Map &amp; Serializable&gt; <span class="function">T
+         <span class="title">getMapExtra</span><span class="params">(Intent intent, String name)</span>
+         <span class="keyword">throws</span> ClassCastException </span>{
+
+    Serializable s = intent.getSerializableExtra(name);
+    <span class="keyword">return</span> s == <span class="keyword">null</span> ? <span class="keyword">null</span> : ((MapWrapper&lt;T&gt;)s).getMap();
+  }
+}
+  }
+</code></pre>
+<h2 id="另一个可行的解决方案：">另一个可行的解决方案：</h2><p>另一个解决方法是，在你将Map附加到Intent前，将Map转成byte array的。然后调用getByteArrayExtra()方法。但是这种方法你必须处理序列化与反序列化的问题。</p>
+<p>如果你想要其他的解决方案，你可以依据Eugenio提供的代码要点来写一个。</p>
+<h2 id="当你不能掌控Intent上面的代码时：">当你不能掌控Intent上面的代码时：</h2><p>也许，有这样或那样的原因，对于Bundle中的代码你无法掌控，比如可能在第三方的library中。</p>
+<p>这种情况，要想到，<br>Map接口实现类有一个构造器方法，可以将map作为参数传入，比如 new TreeMap(Map)，你可以把从Bundle中取回的HashMap，用构造器的方式转成你想要的类型。</p>
+<p>不过，要记得的是，这种用构造器的方式，map中的附加属性将会丢失，只有键值对被保存了下来。</p>
+<h2 id="总结：">总结：</h2><p>在Android开发中，你可能会被一些表面的事所欺骗，特别是一些小的，似乎是无关紧要的事。</p>
+<p>当事情没有像我们期盼中那样发生时，不要死盯着JavaDoc文档，因为JavaDoc可能过时了，JavaDoc的作者也不知道你的特殊需求。这个时候去看看源码，答案可能在AOSP代码里。</p>
+<p>AOSP代码是我们的巨大财富，这在移动开发领域几乎是独一无二的，因为我们能够准确的知道在底层都做了些什么。</p>
+<p>当你知道了底层代码执行了什么，你也就能够成为一个更好的开发人员。</p>
+<p>记住：凡事要嘛就是成功，要嘛就是失败</p>
+<p><img src="https://d262ilb51hltx0.cloudfront.net/max/800/0*40IPQ7jhknFGYKNR." alt=""></p>
+<h2 id="最后：">最后：</h2><p>感谢<a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a>  帮我校对文章</p>
+<p>初次翻译，Android也是刚接触，翻译不好的地方，请大家多多指教。</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="https://medium.com/the-wtf-files/the-mysterious-case-of-the-bundle-and-the-map-7b15279a794e" target="_blank" rel="external">The mysterious case of the Bundle and the Map</a></li>
+<li>译者 : <a href="https://github.com/yinna317" target="_blank" rel="external">yinna317</a> </li>
+<li>校对者: <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a>  </li>
+<li>状态 :  翻译完成</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/30/the-mysterious-case-of-the-bundle-and-the-map/" data-id="cibhzt7dk00036c1ip2iyvz2t" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/30/the-mysterious-case-of-the-bundle-and-the-map/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/Instagram-with-Material-Design-concept-is-getting-real/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          实现Instagram的Material Design概念设计
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/architecting-android-the-clean-way/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">一种更清晰的Android架构</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/30/the-mysterious-case-of-the-bundle-and-the-map/" data-title="深入了解Bundle和Map" data-url="http://likebamboo.com/AndroidBlog/2015/04/30/the-mysterious-case-of-the-bundle-and-the-map/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

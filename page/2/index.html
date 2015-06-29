@@ -73,14 +73,14 @@
     <div class="outer">
       <section id="main">
   
-    <article id="post-How-to-hideshow-Toolbar-when-list-is-scrolling-part-2" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-dagger-2-espresso-2-mockito" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scrolling-part-2/" class="article-date">
-  <time datetime="2015-04-28T16:00:00.000Z" itemprop="datePublished">2015-04-29</time>
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/dagger-2-espresso-2-mockito/" class="article-date">
+  <time datetime="2015-04-30T16:00:00.000Z" itemprop="datePublished">2015-05-01</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a>
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a>
   </div>
 
   </div>
@@ -91,7 +91,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scrolling-part-2/">ListView或者RecycleView滚动时隐藏Toolbar (2)</a>
+      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/05/01/dagger-2-espresso-2-mockito/">Android测试框架--Dagger 2 + Espresso 2 + Mockito</a>
     </h1>
   
 
@@ -99,26 +99,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Hello，各位小伙伴，俺胡汉三又来了！！！今天我打算接着上一篇博文继续给大家讲解展现/隐藏Toolbar的效果。我建议没有读过 <a href="https://github.com/bboyfeiyu/android-tech-frontier/blob/master/androidweekly/ListView%E6%88%96%E8%80%85RecycleView%E6%BB%9A%E5%8A%A8%E6%97%B6%E9%9A%90%E8%97%8FToolbar/readme.md">ListView或者RecycleView滚动时隐藏Toolbar</a> 这篇文章的小伙伴先去看看那篇博文再来看这篇博文，不然会跟不上我的讲解节奏的哦。在上一篇博文里，我们学习了如何去实现Google+那个酷炫的展现/隐藏Toolbar的效果，今天，我将会给大家讲解怎么让上一篇博文的效果进化成Google Play Store Toolbar那样，废话不多说，我们现在进入正题吧：</p>
-<p>在我们开始之前，我想先告诉大家的是我已经对这个项目进行了一些重构——我继承项目的 MainActivity 实现了两个新的子类：PartOneActivity 和 PartTwoActivity。源码在包 partone 和 parttwo里，你可以在这两个包里挑选你喜欢的那一个使用<br>
+        <p>我一直在用Dagger, Espresso和Mockito做Android测试，爱死这个组合了！为了庆祝<a href="http://google.github.io/dagger/">Dagger 2</a>的推出，我分享了一个用Dagger 2, Espresso 2和Mockito做Android测试的<a href="https://github.com/chiuki/android-test-demo">Demo</a><br>
         
           <p class="article-more-link">
-            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scrolling-part-2/#more">Read More</a>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/dagger-2-espresso-2-mockito/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scrolling-part-2/" data-id="cibd5w1xo001rswflb7qdqu6b" class="article-share-link" data-share="baidu">分享到</a>
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/01/dagger-2-espresso-2-mockito/" data-id="cibhzt7ev000w6c1ikpftl5ft" class="article-share-link" data-share="baidu">分享到</a>
       
 
       
-        <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scrolling-part-2/#ds-thread" class="article-comment-link">评论</a>
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/01/dagger-2-espresso-2-mockito/#ds-thread" class="article-comment-link">评论</a>
       
 
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a></li></ul>
 
     </footer>
   </div>
@@ -127,10 +126,10 @@
 
 
   
-    <article id="post-going-multiprocess-on-android" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-custom-drawables" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="http://likebamboo.com/AndroidBlog/2015/04/28/going-multiprocess-on-android/" class="article-date">
-  <time datetime="2015-04-27T16:00:00.000Z" itemprop="datePublished">2015-04-28</time>
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/custom-drawables/" class="article-date">
+  <time datetime="2015-04-30T16:00:00.000Z" itemprop="datePublished">2015-05-01</time>
 </a>
     
   <div class="article-category">
@@ -145,7 +144,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/04/28/going-multiprocess-on-android/">欢迎来到Android多进程时代</a>
+      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/05/01/custom-drawables/">自定义Drawables</a>
     </h1>
   
 
@@ -153,25 +152,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="That_moment_when_one_Dalvik_alone_is_no_longer_enough-">That moment when one Dalvik alone is no longer enough.</h3><h2 id="生活在内存限制中">生活在内存限制中</h2><p>有很多方面使得Android成为一个独特的移动平台操作系统，但有时候却让人觉得难以融入，特别是从开发人员的角度看。<br>
+        <p>我们都看过关于为什么你应该适当的使<a href="http://www.ryanharter.com/blog/2014/05/14/using-custom-compound-views-in-android/">自定义Views</a>和如何能帮助你正确的封装你的应用程序代码的帖子。但非视图相关的部分如何转化为我们apps的其他部分的这种思考方式，我们对此并不非常了解。<br>
         
           <p class="article-more-link">
-            <a href="http://likebamboo.com/AndroidBlog/2015/04/28/going-multiprocess-on-android/#more">Read More</a>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/custom-drawables/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/28/going-multiprocess-on-android/" data-id="cibd5w1x90013swfl9d5vf6lp" class="article-share-link" data-share="baidu">分享到</a>
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/01/custom-drawables/" data-id="cibhzt7fa00116c1icnysnsrp" class="article-share-link" data-share="baidu">分享到</a>
       
 
       
-        <a href="http://likebamboo.com/AndroidBlog/2015/04/28/going-multiprocess-on-android/#ds-thread" class="article-comment-link">评论</a>
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/01/custom-drawables/#ds-thread" class="article-comment-link">评论</a>
       
 
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a></li></ul>
 
     </footer>
   </div>
@@ -180,14 +179,14 @@
 
 
   
-    <article id="post-support-multiple-themes-android-app-part-1" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-code-coverage-reports-using-robolectric" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="http://likebamboo.com/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/" class="article-date">
-  <time datetime="2015-04-27T16:00:00.000Z" itemprop="datePublished">2015-04-28</time>
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/code-coverage-reports-using-robolectric/" class="article-date">
+  <time datetime="2015-04-30T16:00:00.000Z" itemprop="datePublished">2015-05-01</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a>
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
   </div>
 
   </div>
@@ -198,7 +197,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/">在你的Android App中支持多主题</a>
+      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/05/01/code-coverage-reports-using-robolectric/">开始使用 Transitions（过渡动画） (part 1)</a>
     </h1>
   
 
@@ -206,25 +205,403 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><img src="http://www.hidroh.com/assets/img/multiple-theme-dark.png" alt=""><br>
+        <h2 id="使用_Robolectric_和_Android_生成代码覆盖率（测试）报告">使用 Robolectric 和 Android 生成代码覆盖率（测试）报告</h2><h1 id="介绍">介绍</h1><p>我写过许多测试驱动开发与陷阱方面的文章。我认为，其中对测试驱动开发中遇到的陷阱的描述让整个介绍更加完整。测试驱动开发或者通常的测试中，最重要的是你清楚代码中哪些部分经过了测试，而哪些部分需要继续测试。<br>
         
           <p class="article-more-link">
-            <a href="http://likebamboo.com/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/#more">Read More</a>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/code-coverage-reports-using-robolectric/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/" data-id="cibd5w1wy000mswflg1jxgyxp" class="article-share-link" data-share="baidu">分享到</a>
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/01/code-coverage-reports-using-robolectric/" data-id="cibhzt7fa00146c1ih664xq1d" class="article-share-link" data-share="baidu">分享到</a>
       
 
       
-        <a href="http://likebamboo.com/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/#ds-thread" class="article-comment-link">评论</a>
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/01/code-coverage-reports-using-robolectric/#ds-thread" class="article-comment-link">评论</a>
       
 
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-android-support-library-221" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-support-library-221/" class="article-date">
+  <time datetime="2015-04-30T16:00:00.000Z" itemprop="datePublished">2015-05-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/05/01/android-support-library-221/">Android Support库 22.1</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>你可能听过这么一句话 “最好的代码就是没有代码。” 然而我想对你说的是：你写下的每一行代码应该能为应用增加独特的价值，而不是为应用添加一行又一行繁复、无趣的模板代码。Android提供支持库的初衷正是如此：让 Android 开发工程师把精力更多地放在逻辑实现上，而不是写业务代码。<br>
+        
+          <p class="article-more-link">
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-support-library-221/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/01/android-support-library-221/" data-id="cibhzt7fr001c6c1ikj22whyr" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-support-library-221/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-introducing-fresco-a-new-image-library-for-android" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/introducing-fresco-a-new-image-library-for-android/" class="article-date">
+  <time datetime="2015-04-29T16:00:00.000Z" itemprop="datePublished">2015-04-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/04/30/introducing-fresco-a-new-image-library-for-android/">FaceBook推出的Android图片加载库-Fresco</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在Android设备上面，快速高效的显示图片是极为重要的。过去的几年里，我们在如何高效的存储图像这方面遇到了很多问题。图片太大，但是手机的内存却很小。每一个像素的R、G、B和alpha通道总共要占用4byte的空间。如果手机的屏幕是480*800,那么一张屏幕大小的图片就要占用1.5M的内存。手机的内存通常很小，特别是Android设备还要给各个应用分配内存。在某些设备上，分给Facebook App的内存仅仅有16MB。一张图片就要占据其内存的十分之一。<br>
+        
+          <p class="article-more-link">
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/30/introducing-fresco-a-new-image-library-for-android/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/30/introducing-fresco-a-new-image-library-for-android/" data-id="cibhzt7ev000q6c1i9njbd7gd" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/30/introducing-fresco-a-new-image-library-for-android/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-an-investigation-into-flow-and-mortar" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/an-investigation-into-flow-and-mortar/" class="article-date">
+  <time datetime="2015-04-29T16:00:00.000Z" itemprop="datePublished">2015-04-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/04/30/an-investigation-into-flow-and-mortar/">Square开源库Flow和Mortar介绍</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>“在 App 开发过程中尽可能使用 Fragment 替代 Activity”，Google 官方的这个建议无疑让万千 Android 开发者开始关注、使用 Fragment。但随着使用 Fragment 的人数增多，Fragment 存在的各种问题也开始暴露，在各种 Android 社区中，已经开始有人质疑用 Fragment 替代 Activity 在应用开发中是否真的像 Google 说的那样有益。质疑 Fragment 的理由大体如下：<br>
+        
+          <p class="article-more-link">
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/30/an-investigation-into-flow-and-mortar/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/30/an-investigation-into-flow-and-mortar/" data-id="cibhzt7gm00206c1ins8genoo" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/30/an-investigation-into-flow-and-mortar/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-stetho-for-android-debug-builds-only" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/stetho-for-android-debug-builds-only/" class="article-date">
+  <time datetime="2015-04-29T16:00:00.000Z" itemprop="datePublished">2015-04-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/04/30/stetho-for-android-debug-builds-only/">在Android调试模式中使用Stetho</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近FaceBook发布了一个叫做<a href="https://github.com/facebook/stetho">Stetho</a>的工具.这个工具是一个谷歌浏览器的开发者工具扩展 ，它可以用来检测你的应用。我发现这东西挺好用的，因为它还提供了访问应用中SQLite数据库的接口。很明显，这种类型的工具只应该在应用的调试模式中使用。接下来我们来看看怎么用这个工具。<br>
+        
+          <p class="article-more-link">
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/30/stetho-for-android-debug-builds-only/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/30/stetho-for-android-debug-builds-only/" data-id="cibhzt7dz000a6c1ir9scgvpd" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/30/stetho-for-android-debug-builds-only/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-screenshot_automation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/screenshot_automation/" class="article-date">
+  <time datetime="2015-04-29T16:00:00.000Z" itemprop="datePublished">2015-04-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/04/30/screenshot_automation/">自动化截图－应用分发时的自动截图方案</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在发布 App 到应用商店时有一件的事情不得不做，就是上传最新的高清无码截图到应用商店上。可是如果你的 App 有许多页面，那你每次发布更新都可能是一场梦魇，因为你需要一页一页地去截图。为了解决众多 App 开发者的这个痛点，我将在这篇博文中介绍一个实现自动化截图的方法：<br>
+        
+          <p class="article-more-link">
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/30/screenshot_automation/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/30/screenshot_automation/" data-id="cibhzt7dz000d6c1is0b27u3p" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/30/screenshot_automation/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-activity-fragment-transitions-in-android-lollipop-part1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/" class="article-date">
+  <time datetime="2015-04-29T16:00:00.000Z" itemprop="datePublished">2015-04-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/">开始使用 Transitions（过渡动画） (part 1)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="首先">首先</h2><p>这篇文章主要介绍 Android 5.0 新加入的 Transition (过渡动画) API，这是这个系列的第一篇文章。主要介绍下面几个话题:</p>
+<ul>
+<li>Part 1: <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html">在 Activity 和 Fragment 中使用 Transition </a></li>
+<li>Part 2: <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-content-transitions-in-depth-part2.html">深入理解 Transition</a></li>
+<li>Part 3a: <a href="http://www.androiddesignpatterns.com/2015/01/activity-fragment-shared-element-transitions-in-depth-part3a.html">深入理解共享元素的 Transition</a></li>
+<li>Part 3b:  <a href="http://www.androiddesignpatterns.com/2015/03/activity-postponed-shared-element-transitions-part3b.html">延迟共享元素的 Transition</a></li>
+<li>Part 3c: 共享元素回调实践 (coming soon!)</li>
+<li>Part 4:  Activity &amp; Fragment 过渡动画示例(coming soon!)
+        
+          <p class="article-more-link">
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/" data-id="cibhzt7h2002g6c1ib20bsoxy" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/" class="article-date">
+  <time datetime="2015-04-29T16:00:00.000Z" itemprop="datePublished">2015-04-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/">使用RxJava.Observable取代AsyncTask和AsyncTaskLoader</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在网上有很多关于RxJava入门指南的帖子，其中一些是基于Android环境的。但是，我想到目前为止，很多人只是喜欢他们所看到的这些，当要解决在他们的Android项目中出现的具体问题时，他们并不知道如何或者是为什么要使用RxJava。在这一系列的文章中，我想要探索在我工作过的一些依赖于RxJava架构的Android项目中的模式。<br>
+        
+          <p class="article-more-link">
+            <a href="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/" data-id="cibhzt7ef000k6c1ihz5wrupb" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a></li></ul>
 
     </footer>
   </div>
@@ -235,7 +612,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="http://likebamboo.com/AndroidBlog/">&laquo; Prev</a><a class="page-number" href="http://likebamboo.com/AndroidBlog/">1</a><span class="page-number current">2</span>
+      <a class="extend prev" rel="prev" href="http://likebamboo.com/AndroidBlog/">&laquo; Prev</a><a class="page-number" href="http://likebamboo.com/AndroidBlog/">1</a><span class="page-number current">2</span><a class="page-number" href="http://likebamboo.com/AndroidBlog/page/3/">3</a><a class="page-number" href="http://likebamboo.com/AndroidBlog/page/4/">4</a><a class="page-number" href="http://likebamboo.com/AndroidBlog/page/5/">5</a><a class="extend next" rel="next" href="http://likebamboo.com/AndroidBlog/page/3/">Next &raquo;</a>
     </nav>
   
 </section>
@@ -246,7 +623,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -255,7 +632,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">7</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
     </div>
   </div>
 
@@ -264,7 +641,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
     </div>
   </div>
 
@@ -276,23 +653,23 @@
       <ul>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/">Google+ 团队的 Android UI 测试</a>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/">ListView或者RecycleView滚动时隐藏Toolbar (1)</a>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/the-clean-architecture/">The Clean Architecture</a>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/">让你的Android应用能使用多种主题 ( Part 2 )</a>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/04/29/android-mvp-an-alternate-approach/">一种在android中实现MVP模式的新思路</a>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
           </li>
         
       </ul>

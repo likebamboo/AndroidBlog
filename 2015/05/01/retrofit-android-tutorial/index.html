@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Retrofit指南 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这是一篇关于如何使用Retrofit写一个Android的REST客户端的小教程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Retrofit指南">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/01/retrofit-android-tutorial/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="这是一篇关于如何使用Retrofit写一个Android的REST客户端的小教程。">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/13/1428932650_8819.jpg">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/13/1428929622_5444.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/13/1428929608_5673.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/13/1428929607_5991.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/13/1428929609_1240.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/13/1428929609_9928.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/13/1428929622_5732.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/13/1428929583_4905.jpg">
+<meta property="og:updated_time" content="2015-06-29T14:08:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Retrofit指南">
+<meta name="twitter:description" content="这是一篇关于如何使用Retrofit写一个Android的REST客户端的小教程。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-retrofit-android-tutorial" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/retrofit-android-tutorial/" class="article-date">
+  <time datetime="2015-04-30T16:00:00.000Z" itemprop="datePublished">2015-05-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Retrofit指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这是一篇关于如何使用Retrofit写一个Android的REST客户端的小教程。<br><a id="more"></a><br><img src="http://img.my.csdn.net/uploads/201504/13/1428932650_8819.jpg" alt="Retrofit+Android"></p>
+<h2 id="我为什么选择Retrofit？">我为什么选择Retrofit？</h2><p>在使用square的<a href="http://square.github.io/retrofit/" target="_blank" rel="external">Retrofit</a>之前，我尝试过Volley和AsyncTask。但在使用过Retrofit之后，我的工作变得更加简单了。在开始阅读教程之前，建议先阅读一下下面的几个话题。这是一个入门项目，可以让你了解如何使用Retrofit从API获取数据。</p>
+<p>这个项目也加到了<a href="https://github.com/basil2style/Retrofit-Android-Basic" target="_blank" rel="external">我的Github</a>中。</p>
+<p><a href="https://instructure.github.io/blog/2013/12/09/volley-vs-retrofit/" target="_blank" rel="external">AsyncHttp ,Volley和Retrofit的对比</a></p>
+<p><img src="http://img.my.csdn.net/uploads/201504/13/1428929622_5444.png" alt="volley-vs-retrofit"></p>
+<p>与Retrofit相比，Volley是一个小型的、缺乏正式文档说明库。Retrofit是<a href="https://github.com/square" target="_blank" rel="external">Square</a>开发的，后者还开发过okhttp，picasso…等一些著名的库(你可以在<a href="https://square.github.io/#android" target="_blank" rel="external">这里</a>找到其他的库)。如果你需要Volley的指引，你可以在<a href="https://developer.android.com/training/volley/index.html" target="_blank" rel="external">Google Training</a>或者<a href="https://github.com/DWorkS/VolleyPlus" target="_blank" rel="external">Volley Plus from DWork</a>找到相关文档。</p>
+<h2 id="简介">简介</h2><p><a href="http://square.github.io/retrofit/" target="_blank" rel="external">Retrofit</a>是<a href="http://square.github.io/" target="_blank" rel="external">Square</a>开发的一个Android和Java的REST客户端库。这个库非常简单并且具有很多特性，相比其他的网络库，更容易让初学者快速掌握。它可以处理GET、POST、PUT、DELETE…等请求，还可以使用picasso加载图片。在使用Picasso或Volley之前，可以先来读读<a href="https://www.bignerdranch.com/blog/solving-the-android-image-loading-problem-volley-vs-picasso/" target="_blank" rel="external">这个</a>。</p>
+<p>别纠结简介了，开始编码吧!!!</p>
+<p>Demo里使用是Github的API : <a href="https://api.github.com/users/basil2style" target="_blank" rel="external">https://api.github.com/users/basil2style</a></p>
+<p>你可以使用这个Demo App来搜索github的用户详细信息</p>
+<p><a href="https://github.com/basil2style/Retrofit-Android-Basic" target="_blank" rel="external">GITHUB</a></p>
+<p><img src="http://img.my.csdn.net/uploads/201504/13/1428929608_5673.png" alt="Download-Code"></p>
+<p><a href="https://github.com/basil2style/Retrofit-Android-Basic/blob/master/APK/Retrofit%20Example.apk" target="_blank" rel="external">Download APK </a></p>
+<p><a href="https://github.com/basil2style/Retrofit-Android-Basic/blob/master/APK/Retrofit%20Example.apk" target="_blank" rel="external"><img class="" src="http://img.my.csdn.net/uploads/201504/13/1428929607_5991.png" alt="qr code" width="196" height="196"></a></p>
+<h2 id="1)_概述">1) 概述</h2><p><img src="http://img.my.csdn.net/uploads/201504/13/1428929609_1240.png" alt="Retrofit-3-classes"></p>
+<p>1) <strong>POJO或模型实体类</strong> : 从服务器获取的JSON数据将被填充到这种类的实例中。</p>
+<p>2) <strong>接口</strong> : 我们需要创建一个接口来管理像GET,POST…等请求的URL，这是一个服务类。</p>
+<p>3) <strong>RestAdapter类</strong> : 这是一个REST客户端(RestClient)类，retrofit中默认用的是Gson来解析JSON数据，你也可以设置自己的JSON解析器，比如jackson，我们将在下面的教程中详细解说明。</p>
+<h2 id="2)_添加Retrofit库到项目中">2) 添加Retrofit库到项目中</h2><p><em><strong>Gradle</strong></em> :</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile <span class="string">'com.squareup.retrofit:retrofit:1.9.0'</span></span><br></pre></td></tr></table></figure>
+<p>目前，1.9.0是最新的版本. 你可以在<a href="https://github.com/square/retrofit" target="_blank" rel="external">这里</a>获取更新的版本。</p>
+<p><em><strong>JAR</strong></em> :</p>
+<p> <a href="https://search.maven.org/remote_content?g=com.squareup.retrofit&amp;a=retrofit&amp;v=LATEST" target="_blank" rel="external">下载Jar包</a></p>
+<h2 id="3)_创建项目">3) 创建项目</h2><p>1) 在Android Studio中创建新项目: <strong>File  =&gt;  New Project</strong> ，填写描述信息并点击<strong>Next</strong>.</p>
+<p>2) 填写<strong>minimum SDK</strong>，我用的是<strong>4.0+</strong>(Retrofit支持Android <strong>2.3+</strong>或Java <strong>6</strong>以上)</p>
+<p>3) 选择<strong>Blank Activity</strong>然后填写<strong>Activity Name</strong>和<strong>Layout Name</strong>，最后点击 <strong>Finish</strong>.</p>
+<p>4) <strong>Gradle</strong> : 你可以在<strong>app =&gt;build.gradle</strong>中添加Retrofit的库文件。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/13/1428929609_9928.png" alt="gradle-dependencies"></p>
+<p>Jar包的添加方式 :  将jar包添加到libs文件夹下，右键点击Add as Library.</p>
+<p>5) 创建两个包：<strong>API</strong>和<strong>model</strong>。</p>
+<p>6) 在<strong>API</strong>包下右键点击<strong>New</strong> =&gt; <strong>Java Class</strong> , 填写<strong>Name</strong>为<font style="color: #ff0000;">gitapi</font>并设置为<font style="color: #ff0000;">Interface</font>。</p>
+<p>6) 在<strong>API</strong>包下创建名<font style="color: #ff0000;">gitapi</font>的<font style="color: #ff0000;">接口</font>。</p>
+<p>7) 在<strong>model</strong>包下右键点击<strong>New</strong> =&gt; <strong>Java Class</strong>, 填写<strong>Name</strong>为<font style="color: #ff0000;">gitmodel</font>并设置为<font style="color: #ff0000;">Class</font>。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/13/1428929622_5732.png" alt="proj-structure"></p>
+<h2 id="4)_Android_Manifest">4) Android Manifest</h2><p>1) 添加<font style="color: #ff0000;">INTERNET PERMISSION</font>权限</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">uses-permission</span> <span class="attribute">android:name</span>=<span class="value">"android.permission.INTERNET"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>你的<code>Manifest</code>文件看起来应该是这样的 :</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">manifest</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>  </span><br><span class="line">          <span class="attribute">package</span>=<span class="value">"com.makeinfo.flowerpi"</span> &gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="title">uses-permission</span> <span class="attribute">android:name</span>=<span class="value">"android.permission.INTERNET"</span>/&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="title">application</span> <span class="attribute">android:allowBackup</span>=<span class="value">"true"</span></span><br><span class="line">   	   <span class="attribute">android:icon</span>=<span class="value">"@mipmap/ic_launcher"</span></span><br><span class="line">       <span class="attribute">android:label</span>=<span class="value">"@string/app_name"</span></span><br><span class="line">       <span class="attribute">android:theme</span>=<span class="value">"@style/AppTheme"</span> &gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="title">activity</span></span><br><span class="line">           <span class="attribute">android:name</span>=<span class="value">".MainActivity"</span></span><br><span class="line">           <span class="attribute">android:label</span>=<span class="value">"@string/app_name"</span> &gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="title">intent-filter</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="title">action</span> <span class="attribute">android:name</span>=<span class="value">"android.intent.action.MAIN"</span> /&gt;</span></span><br><span class="line">                 <span class="tag">&lt;<span class="title">category</span> <span class="attribute">android:name</span>=<span class="value">"android.intent.category.LAUNCHER"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="title">intent-filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="title">activity</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">application</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="title">manifest</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="5)_模型类">5) 模型类</h2><p>首先，我们需要创建一个POJO或模型类。服务器返回的JSON数据不能在Java里直接使用，所以我们需要用模型类来做转换。</p>
+<p>URL的结构是这样的：<a href="https://api.github.com/users/" target="_blank" rel="external">https://api.github.com/users/</a> + “search term”</p>
+<p>举个栗子：<a href="https://api.github.com/users/basil2style" target="_blank" rel="external">https://api.github.com/users/basil2style</a></p>
+<p>我们的JSON返回数据是这样的：</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/13/1428929583_4905.jpg" alt="json object response"></p>
+<p>这是一个<strong>JSON Object</strong>，如果你不了解<strong>JSON Array</strong>和<strong>JSON Object</strong>的区别，请看<a href="http://stackoverflow.com/questions/12289844/difference-between-jsonobject-and-jsonarray" target="_blank" rel="external">这里</a>。</p>
+<p>使用<a href="http://www.jsonschema2pojo.org/" target="_blank" rel="external">jsonschema2pojo</a>来创建POJO更加简单，不要每一个JSON数据的POJO转换都用它，有时候会报错。选择源代码类型为<strong>Json</strong>，注解类型是<strong>Gson</strong>,然后点击<strong>preview</strong>。</p>
+<p>点击<a href="http://pastebin.com/4xckerN1" target="_blank" rel="external">这里</a>(需翻墙)查看<code>gitmodel.java</code>源代码。</p>
+<h2 id="6)_gitapi-java">6) gitapi.java</h2><p>1) 现在我们需要使用接口调用URL.</p>
+<p><strong><code>@GET(&quot;/users/{user}&quot;)</code></strong>, 添加这个注解会调用服务器，参数url基于BASE URL，服务调用的参数以’/‘开头，其中<font style="color: #ff0000;">{user}</font>是从EditText获取的字符串。</p>
+<p><strong><code>@Path(&quot;user&quot;) String user</code></strong> 就是我们从EditText获取的字符串。</p>
+<p>服务器端响应的数据则会被存储到POJO实例中去。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">gitapi</span> </span>&#123;</span><br><span class="line">   </span><br><span class="line">    <span class="annotation">@GET</span>(<span class="string">"/users/&#123;user&#125;"</span>)      <span class="comment">// here is the other url part.best way is to start using /</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getFeed</span><span class="params">(@Path(<span class="string">"user"</span>)</span> String user, Callback&lt;gitmodel&gt; response)</span>;</span><br><span class="line">     <span class="comment">// string user is for passing values from edittext for eg: user=basil2style,google</span></span><br><span class="line">   	 <span class="comment">// response is the response from the server which is now in the POJO</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="7)_RestAdapter">7) RestAdapter</h2><p>现在该主要部分了，你需要设置<code>Rest Adapter</code>和<code>service</code>类.</p>
+<p>1) <font style="color: #ff0000;">API</font>就是<code>Base URL</code>.</p>
+<p>2) 我们需要设置<strong><code>Endpoint(API)</code></strong>并调用<strong><code>buid()</code></strong>方法来创建一个<strong><code>RestAdapter</code></strong>对象。</p>
+<p>3) 使用我们的<strong><code>gitapi</code></strong>来创建一个服务适配器(service for adapter)。</p>
+<p>4) 调用函数并获得响应数据，回调接口是用来异步的获取模型实例的，我们的回调接口需要实现成功回调方法(success request)和错误处理方法(error handling)。</p>
+<p>5) 我们解析好的json数据的现在就存在于POJO实例中了，你可以每次调用一条。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">String API = <span class="string">"https://api.github.com"</span>;</span><br><span class="line"></span><br><span class="line">RestAdapter restAdapter = <span class="keyword">new</span> RestAdapter.Builder().setLogLevel(RestAdapter.LogLevel.FULL).setEndpoint(API).build(); </span><br><span class="line"></span><br><span class="line">gitapi git = restAdapter.create(gitapi.class);</span><br><span class="line"></span><br><span class="line">git.getFeed(user, <span class="keyword">new</span> Callback&lt;gitmodel&gt;() &#123;</span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">success</span><span class="params">(gitmodel gitmodel, Response response)</span> </span>&#123;</span><br><span class="line">		tv.setText(<span class="string">"Github Name :"</span> + gitmodel.getName() + </span><br><span class="line">		           <span class="string">"\nWebsite :"</span> + gitmodel.getBlog() + </span><br><span class="line">		           <span class="string">"\nCompany Name :"</span> + gitmodel.getCompany());</span><br><span class="line"></span><br><span class="line">		pbar.setVisibility(View.INVISIBLE); <span class="comment">// disable progressbar</span></span><br><span class="line"> 	&#125;</span><br><span class="line"></span><br><span class="line"> 	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">failure</span><span class="params">(RetrofitError error)</span> </span>&#123;</span><br><span class="line"> 		tv.setText(error.getMessage());</span><br><span class="line"> 		pbar.setVisibility(View.INVISIBLE); <span class="comment">//disable progressbar</span></span><br><span class="line"> 	&#125;</span><br><span class="line"> &#125;);</span><br></pre></td></tr></table></figure>
+<p>完整的<code>MainActivty.java</code>代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.makeinfo.flowerpi;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> android.support.v7.app.ActionBarActivity;</span><br><span class="line"><span class="keyword">import</span> android.os.Bundle;</span><br><span class="line"><span class="keyword">import</span> android.view.Menu;</span><br><span class="line"><span class="keyword">import</span> android.view.MenuItem;</span><br><span class="line"><span class="keyword">import</span> android.view.View;</span><br><span class="line"><span class="keyword">import</span> android.widget.Button;</span><br><span class="line"><span class="keyword">import</span> android.widget.EditText;</span><br><span class="line"><span class="keyword">import</span> android.widget.ProgressBar;</span><br><span class="line"><span class="keyword">import</span> android.widget.TextView;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> com.makeinfo.flowerpi.API.gitapi;</span><br><span class="line"><span class="keyword">import</span> com.makeinfo.flowerpi.model.gitmodel;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> retrofit.Callback;</span><br><span class="line"><span class="keyword">import</span> retrofit.RestAdapter;</span><br><span class="line"><span class="keyword">import</span> retrofit.RetrofitError;</span><br><span class="line"><span class="keyword">import</span> retrofit.client.Response;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">ActionBarActivity</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    Button click;</span><br><span class="line">    TextView tv;</span><br><span class="line">    EditText edit_user;</span><br><span class="line">    ProgressBar pbar;</span><br><span class="line">    String API = <span class="string">"https://api.github.com"</span>;	<span class="comment">// BASE URL</span></span><br><span class="line">   </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line"> </span><br><span class="line">        click = (Button) findViewById(R.id.button);</span><br><span class="line">        tv = (TextView) findViewById(R.id.tv);</span><br><span class="line">        edit_user = (EditText) findViewById(R.id.edit);</span><br><span class="line">        pbar = (ProgressBar) findViewById(R.id.pb);</span><br><span class="line">        pbar.setVisibility(View.INVISIBLE);</span><br><span class="line">       </span><br><span class="line">        click.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">            <span class="annotation">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">                String user = edit_user.getText().toString();</span><br><span class="line">                pbar.setVisibility(View.VISIBLE);</span><br><span class="line">               </span><br><span class="line">                <span class="comment">// Retrofit section start from here...</span></span><br><span class="line">                <span class="comment">// create an adapter for retrofit with base url</span></span><br><span class="line">                RestAdapter restAdapter = <span class="keyword">new</span> RestAdapter.Builder().setEndpoint(API).build(); </span><br><span class="line">                       </span><br><span class="line">                <span class="comment">// creating a service for adapter with our GET class       </span></span><br><span class="line">                gitapi git = restAdapter.create(gitapi.class);	</span><br><span class="line"> </span><br><span class="line">                <span class="comment">// Now ,we need to call for response</span></span><br><span class="line">                <span class="comment">// Retrofit using gson for JSON-POJO conversion</span></span><br><span class="line">               </span><br><span class="line">                git.getFeed(user,<span class="keyword">new</span> Callback&lt;gitmodel&gt;() &#123;</span><br><span class="line">                    <span class="annotation">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">success</span><span class="params">(gitmodel gitmodel, Response response)</span> </span>&#123;</span><br><span class="line">                        <span class="comment">// we get json object from github server to our POJO or model class</span></span><br><span class="line">                       </span><br><span class="line">                        tv.setText(<span class="string">"Github Name :"</span> + gitmodel.getName() + </span><br><span class="line">                                    <span class="string">"\nWebsite :"</span>+gitmodel.getBlog() + </span><br><span class="line">                                    <span class="string">"\nCompany Name :"</span>+gitmodel.getCompany());</span><br><span class="line">                       </span><br><span class="line">                        pbar.setVisibility(View.INVISIBLE);	<span class="comment">// disable progressbar</span></span><br><span class="line">                    &#125;</span><br><span class="line"> </span><br><span class="line">                    <span class="annotation">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">failure</span><span class="params">(RetrofitError error)</span> </span>&#123;</span><br><span class="line">                     	tv.setText(error.getMessage());</span><br><span class="line">                        pbar.setVisibility(View.INVISIBLE);	<span class="comment">// disable progressbar</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreateOptionsMenu</span><span class="params">(Menu menu)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Inflate the menu; this adds items to the action bar if it is present.</span></span><br><span class="line">        getMenuInflater().inflate(R.menu.menu_main, menu);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onOptionsItemSelected</span><span class="params">(MenuItem item)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Handle action bar item clicks here. The action bar will</span></span><br><span class="line">        <span class="comment">// automatically handle clicks on the Home/Up button, so long</span></span><br><span class="line">        <span class="comment">// as you specify a parent activity in AndroidManifest.xml.</span></span><br><span class="line">        <span class="keyword">int</span> id = item.getItemId();</span><br><span class="line"> </span><br><span class="line">        <span class="comment">//noinspection SimplifiableIfStatement</span></span><br><span class="line">        <span class="keyword">if</span> (id == R.id.action_settings) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onOptionsItemSelected(item);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://themakeinfo.com/2015/04/retrofit-android-tutorial/" target="_blank" rel="external">Retrofit Android Tutorial</a></li>
+<li><a href="http://www.devtf.cn" target="_blank" rel="external">译文出自 :  开发技术前线 www.devtf.cn</a></li>
+<li>译者 : <a href="https://github.com/yaoqinwei" target="_blank" rel="external">yaoqinwei</a> </li>
+<li>校对者: <a href="https://github.com/chaossss" target="_blank" rel="external">chaosssss</a></li>
+<li>状态 :  完成</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/01/retrofit-android-tutorial/" data-id="cibhzt7dz000g6c1iplpouczq" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/01/retrofit-android-tutorial/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/the-hitchhikers-guide-to-android-testing-part-2-espresso/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          功能测试框架 espresso
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/dagger-2-espresso-2-mockito/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android测试框架--Dagger 2 + Espresso 2 + Mockito</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/01/retrofit-android-tutorial/" data-title="Retrofit指南" data-url="http://likebamboo.com/AndroidBlog/2015/05/01/retrofit-android-tutorial/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

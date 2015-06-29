@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>深入了解Android Graphics Pipeline-part-1 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在这个小型博文系列中我们想给有兴趣研究 Android Graphics Pipeline 内部结构的开发者带来一些启发。在此主题上，Google自己也发布了一些见解和文档，如由Chet Haase 和 Romain Guy主持的Google I/O 2012演讲For Butter or Worse (如果没看过就去看看吧!) 和文章 Graphics architecture 。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入了解Android Graphics Pipeline-part-1">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/04/30/android-graphics-pipeline-from-button-to-framebuffer-part-1/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="在这个小型博文系列中我们想给有兴趣研究 Android Graphics Pipeline 内部结构的开发者带来一些启发。在此主题上，Google自己也发布了一些见解和文档，如由Chet Haase 和 Romain Guy主持的Google I/O 2012演讲For Butter or Worse (如果没看过就去看看吧!) 和文章 Graphics architecture 。">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/09/1428538541_6558.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/09/1428538541_8737.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/09/1428538607_4861.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/09/1428538541_4202.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/09/1428538540_9146.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/09/1428538608_9350.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/09/1428538542_9748.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/09/1428538608_4788.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/09/1428538608_8013.png">
+<meta property="og:updated_time" content="2015-06-29T13:40:08.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入了解Android Graphics Pipeline-part-1">
+<meta name="twitter:description" content="在这个小型博文系列中我们想给有兴趣研究 Android Graphics Pipeline 内部结构的开发者带来一些启发。在此主题上，Google自己也发布了一些见解和文档，如由Chet Haase 和 Romain Guy主持的Google I/O 2012演讲For Butter or Worse (如果没看过就去看看吧!) 和文章 Graphics architecture 。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-android-graphics-pipeline-from-button-to-framebuffer-part-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/android-graphics-pipeline-from-button-to-framebuffer-part-1/" class="article-date">
+  <time datetime="2015-04-29T16:00:00.000Z" itemprop="datePublished">2015-04-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深入了解Android Graphics Pipeline-part-1
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在这个小型博文系列中我们想给有兴趣研究 Android Graphics Pipeline 内部结构的开发者带来一些启发。在此主题上，Google自己也发布了一些见解和文档，如由Chet Haase 和 Romain Guy主持的Google I/O 2012演讲<a href="https://www.youtube.com/watch?v=Q8m9sHdyXnE" target="_blank" rel="external">For Butter or Worse</a> (如果没看过就去看看吧!) 和文章 <a href="http://source.android.com/devices/graphics/architecture.html" target="_blank" rel="external">Graphics architecture</a> 。<a id="more"></a>虽然这些资料肯定能帮助我们从宏观上理解一个简单的view是如何显示在屏幕上，但是当我们尝试去理解背后的源代码时，这些对我们的帮助并不大。本系列博文将带你走进Android Graphics Pipeline这个有趣的世界。</p>
+<p>请注意，本小型系列博文中会涉及大量的源代码和序列图！它值得一读，就算你对Android Graphics Pipeline一点兴趣也没有，你也可以学到很多（或者你至少看看这些漂亮的图片）。所以给自己一杯咖啡，读吧！</p>
+<h2 id="引言">引言</h2><p>为了充分理解view显示到屏幕的过程，我们采用一个小Demo来描述Android Graphics Pipeline的每个主要阶段，由Android Java API (SDK)开始，然后是本地C++代码，最后看原始的OpenGL绘图操作。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/09/1428538541_6558.png" alt="one-button-layout-cropped"></p>
+<p>这个 Demo 非常值得我们研究，因为这个不起眼的 App 的代码就能充分覆盖整个 Android Graphics 的内部结构，所以，它实际上是一个相当好的例子。</p>
+<p>这个activity由一个简单 RelativeLayout，一个带应用图标和标题 ActionBar 和一个读作“Hello world!”的简单 Button 组成。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/09/1428538541_8737.png" alt="one-button-viewhierarchy"></p>
+<p>但从上图你也可以看到，我们这个简单的 Demo 的视图层实际上是相当复杂。</p>
+<p>在Android 视图层内部，相对布局（RelativeLayout）由一个简单的颜色渐变背景组成。更复杂的， Actionbar 由一个渐变的背景结合一个bitmap，<strong>One Button</strong> 文本元素和应用图标（也是一个bitmap）组成。9-Patch用作按钮的背景，文本 <strong>Hello World!</strong> 画在它的最上层。屏幕顶部的导航栏和底部的状态栏不属于 App 的 Activity 部分，它们由系统服务<code>SystemUI</code>进行渲染。</p>
+<h2 id="Pipeline概述">Pipeline概述</h2><p>如果有看过Google I/O演讲<strong>For Butter or Worse</strong>，你肯定认识下面的幻灯片，因为它它显示了完整的 Android Graphics Pipeline 结构。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/09/1428538607_4861.png" alt="pipeline"></p>
+<p>上图就是在 Google 在 Google I/O 2012 大会中提供的完整的 Android Graphics Pipeline 结构。</p>
+<p>Surface Flinger负责创建图形缓冲区并将其合成到主显示器，虽然这对应安卓系统非常重要，但是在此不作赘述。</p>
+<p>相反，我们将注意力放在其他组件上，因为这些组件的主要任务就是将view显示到屏幕上。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/09/1428538541_4202.png" alt="interesting_bits"></p>
+<h2 id="Display_Lists">Display Lists</h2><p>可能你已经知道，Android 使用一个叫做 DisplayLists 的概念去渲染所有的view。对于不知道的人来说，display list是一个绘图命令序列集合，需要执行这些命令去渲染指定的view。display lists是Android Graphics Pipeline达到高性能的重要元素。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/09/1428538540_9146.png" alt="display-lists"></p>
+<p>每个视图层的 view 都有其对应的 display list，每个开发者都知道 <code>onDraw()</code> 方法，这个 display list 就是由 view 的 <code>onDraw()</code> 方法生成的。为了将视图层画到屏幕上，只有 display lists 需要被评估并执行。假如某个单一 view 失效（因用户输入、动画或转换），受影响的 display lists 将会重建和重绘。这就避免Android在每个frame层调用相当耗费资源的 <code>onDraw()</code>。</p>
+<p>Display lists can also be nested, meaning that a display list can issue a command to draw a childrens display list. This is important in order to be able to reproduce view hierarchies with display lists. After all, even our simple app has multiple nested views.</p>
+<p>Display lists 也可以被嵌套，这意味着一个Display list也可以发出一个命令绘制一个子display list。这对复制视图层的display lists来说非常重要。毕竟，即使是最简单的 App 也会具有多个嵌套视图。</p>
+<p>这些命令的语句的可以直接映射到OpenGL命令，如翻译和设置剪辑矩阵，或更复杂的命令如<code>DrawText</code> 和 <code>DrawPatch</code>，但这些复杂命令需要相应的OpenGL命令集，不然我们也无法使用。</p>
+<p><code>An example of a display list for a button.</code></p>
+<p><code>一个按钮的display list示例</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Save <span class="number">3</span></span><br><span class="line">DrawPatch</span><br><span class="line">Save <span class="number">3</span></span><br><span class="line">ClipRect <span class="number">20.00</span>, <span class="number">4.00</span>, <span class="number">99.00</span>, <span class="number">44.00</span>, <span class="number">1</span></span><br><span class="line">Translate <span class="number">20.00</span>, <span class="number">12.00</span></span><br><span class="line">DrawText <span class="number">9</span>, <span class="number">18</span>, <span class="number">9</span>, <span class="number">0.00</span>, <span class="number">19.00</span>, <span class="number">0x17e898</span></span><br><span class="line">Restore</span><br><span class="line">RestoreToCount <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>在上面的示例中，你可以清楚地看到 display list 为绘制一个简单的按钮进行了什么操作。第一个操作是保存当前翻译矩阵到栈中，使得它随后可以被恢复。然后又画了9-Patch按钮，接下来是另外一个保存命令，这是必要的，因为对于要绘制的文本来说，只有绘制文本的区域才会创建裁剪矩阵。手机绘图处理器将此矩形区域当做一个线索以便在后续阶段对绘图调用进一步优化。然后将绘画圆点转换到文本位置，并绘制文本。最后，最初的转换矩阵和状态从堆中还原，裁剪矩阵也被重置。</p>
+<p>在这篇文章的底部可以看到示例用的的display lists的完整日志。</p>
+<h2 id="深入代码">深入代码</h2><p>带着这些新获取的知识，我们准备深入研究代码。</p>
+<h3 id="根视图（Root_View）">根视图（Root View）</h3><p>每个Android activity在视图层的最顶层都有一个隐式根视图（Root View），包含一个子view。这个子view是程序员在应用中定义的第一个真正的view。根视图负责调度和执行多种操作，如绘图，使view无效等等。</p>
+<p>类似的，每个view都有一个parent的引用。视图层内部的第一个view将根视图作为parent。虽然View类作为每个可视化的元素或组件的基类，但是它并不支持任何子类。然而，其派生类ViewGroup支持多子类，并作为一个容器基类，它已经被标准布局（RelativeLayout 等等)所采用。</p>
+<p>如果一个view局部重绘，那么该view会调用根视图的invalidateChildInParent()方法。根视图跟踪所有重绘的区域，并在choreographer调度一个新的遍历，choreographer会在下一个VSync事件执行。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/09/1428538608_9350.png" alt="view-invalidate"></p>
+<p>ViewRoot: InvalidateChildInParent(…)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ViewParent <span class="title">invalidateChildInParent</span><span class="params">(<span class="keyword">int</span>[] location, Rect dirty)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Add the new dirty rect to the current one</span></span><br><span class="line">    mDirty.union(dirty.left, dirty.top, </span><br><span class="line">                 dirty.right, dirty.bottom);</span><br><span class="line">    <span class="comment">// Already scheduled?</span></span><br><span class="line">    <span class="keyword">if</span> (!mWillDrawSoon) &#123;</span><br><span class="line">        scheduleTraversals();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="创建Display_Lists">创建Display Lists</h2><p>As previously mentioned, each view is responsible to generate its own display list. When a VSync event is fired and the choreographer called performTraversals on the root view, the  HardwareRenderer is asked to draw the view, which in turn will ask the view to generate its display list.</p>
+<p>正如刚刚提到的，每个view负责生产自己的display list。当一个VSync事件被触发，choreographer调用根视图的<code>performTraversals</code>方法，根视图要求<code>HardwareRenderer</code>绘制view，<code>HardwareRenderer</code>反过来要求view生成自己的display list。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/09/1428538542_9748.png" alt="perform-traversals1"></p>
+<p>在Android framework层中，View是其中一个比较大的类，当前代码量将近20000行。这并不令人惊奇，因为它是每个小组件和应用的构建块。它处理键盘、轨迹球、触摸事件,以及滚动,滚动条,布局和测量,还有很多很多。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/09/1428538608_4788.png" alt="view-getdisplaylist"></p>
+<p><code>View.getDisplayList(…)</code>方法被Hardware Renderer调用时将会创建一个内部的display list，这个内部display list将会在view生命周期的剩余部分被使用。然后这个内部display list被要求提供一个足够大的画布来容纳这个view。并提供一个GLES20RecordingCanvas，所有view和它的children将会在上面绘图，然后传递给<code>draw(…)</code>方法。这个画布有点特殊，因为它不执行绘图命令，而是保存命令到display list。这意味着小组件和每个view能使用正常的绘图API，甚至无须关注display list内部的命令</p>
+<p><code>View: getDisplayList(…)</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> DisplayList <span class="title">getDisplayList</span><span class="params">(DisplayList displayList, </span><br><span class="line">                                   <span class="keyword">boolean</span> isLayer)</span> </span>&#123;</span><br><span class="line">    HardwareCanvas canvas = displayList.start(width, height);</span><br><span class="line">    <span class="keyword">if</span> (!isLayer &amp;&amp; layerType != LAYER_TYPE_NONE) &#123;</span><br><span class="line">        <span class="comment">// Layers don't get drawn via a display list</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        draw(canvas);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> displayList;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在<code>draw(…)</code>方法中，view将执行<code>onDraw()</code>方法的代码，渲染自己到画布上。如果这个view有任何children，children各自调用<code>draw()</code>方法。这些children可以是任何东西，可以是一个正常的按钮，也可以是一个布局或view group，这些children包含另外的children，都将被绘制。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/09/1428538608_8013.png" alt="view-draw"></p>
+<h2 id="寄语">寄语</h2><p>伴随着display list的产生，part 1结束了。如果你对这系列博文有兴趣的话，请关注 part 2,届时我们会知道 display lists 将如何被呈现在屏幕上!</p>
+<h2 id="下载">下载</h2><p>The full Bachelor’s Thesis on which this article is based is available for download.</p>
+<p>本文参考的所有学士论文可供<a href="http://mathias-garbe.de/files/introduction-android-graphics.pdf" target="_blank" rel="external">下载</a></p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="https://blog.inovex.de/android-graphics-pipeline-from-button-to-framebuffer-part-1/" target="_blank" rel="external">Android Graphics Pipeline: From Button to Framebuffer (Part 1)</a></li>
+<li>作者 : <a href="https://blog.inovex.de/author/mgarbe/" target="_blank" rel="external">mgarbe</a></li>
+<li>译者 : <a href="https://github.com/dupengwei" target="_blank" rel="external">dupengwei</a> </li>
+<li>校对者: <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a>   </li>
+<li>状态 :  完成 </li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/30/android-graphics-pipeline-from-button-to-framebuffer-part-1/" data-id="cibhzt7g6001q6c1i7bdkle7g" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/30/android-graphics-pipeline-from-button-to-framebuffer-part-1/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/a-blurring-view-for-android/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          安卓的模糊视图
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/android-graphics-pipeline-from-button-to-framebuffer-part-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">深入了解Android Graphics Pipeline-part-2</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/30/android-graphics-pipeline-from-button-to-framebuffer-part-1/" data-title="深入了解Android Graphics Pipeline-part-1" data-url="http://likebamboo.com/AndroidBlog/2015/04/30/android-graphics-pipeline-from-button-to-framebuffer-part-1/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>深入理解Content Transition  (part 2) | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="深入理解Content Transition这篇文章会深度分析 Content Transitions 和它在 Activity &amp;amp; Fragment Transitions API 中的作用。这篇文章是下面这个系列中的第二篇：
+
+Part 1: 在 Activity 和 Fragment 中使用 Transition 
+Part 2: 深入理解 Content Transition
+Pa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Content Transition  (part 2)">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-content-transitions-in-depth-part2/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="深入理解Content Transition这篇文章会深度分析 Content Transitions 和它在 Activity &amp;amp; Fragment Transitions API 中的作用。这篇文章是下面这个系列中的第二篇：
+
+Part 1: 在 Activity 和 Fragment 中使用 Transition 
+Part 2: 深入理解 Content Transition
+Pa">
+<meta property="og:updated_time" content="2015-06-29T14:07:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解Content Transition  (part 2)">
+<meta name="twitter:description" content="深入理解Content Transition这篇文章会深度分析 Content Transitions 和它在 Activity &amp;amp; Fragment Transitions API 中的作用。这篇文章是下面这个系列中的第二篇：
+
+Part 1: 在 Activity 和 Fragment 中使用 Transition 
+Part 2: 深入理解 Content Transition
+Pa">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-activity-fragment-content-transitions-in-depth-part2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-content-transitions-in-depth-part2/" class="article-date">
+  <time datetime="2015-04-30T16:00:00.000Z" itemprop="datePublished">2015-05-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深入理解Content Transition  (part 2)
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="深入理解Content_Transition">深入理解Content Transition</h1><p>这篇文章会深度分析 Content Transitions 和它在 Activity &amp; Fragment Transitions API 中的作用。这篇文章是下面这个系列中的第二篇：</p>
+<ul>
+<li>Part 1: <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html" target="_blank" rel="external">在 Activity 和 Fragment 中使用 Transition </a></li>
+<li>Part 2: <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-content-transitions-in-depth-part2.html" target="_blank" rel="external">深入理解 Content Transition</a></li>
+<li>Part 3a: <a href="http://www.androiddesignpatterns.com/2015/01/activity-fragment-shared-element-transitions-in-depth-part3a.html" target="_blank" rel="external">深入理解共享元素 Transition</a></li>
+<li>Part 3b:  <a href="http://www.androiddesignpatterns.com/2015/03/activity-postponed-shared-element-transitions-part3b.html" target="_blank" rel="external">延迟共享元素的 Transition</a></li>
+<li>Part 3c: 共享元素回调实践 (coming soon!)</li>
+<li>Part 4:  Activity &amp; Fragment 过渡动画示例(coming soon!)<a id="more"></a>
+我们先来总结下在 <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html" target="_blank" rel="external">part 1</a> 中提到的关于 Content Transitions 的知识点，然后<br>说一说在 Android Lollipop 中是怎样使用它来构建合适的过渡动画。</li>
+</ul>
+<hr>
+<h2 id="Content_Transition_是什么？">Content Transition 是什么？</h2><p>Content transition 决定了非共享元素 View (也称为 transitioning view) 在<br>Activity &amp; Fragment 过渡期间是如何进入或退出场景的。出于 Google 新的设计语言<br><a href="http://www.google.com/design/spec/animation/meaningful-transitions.html" target="_blank" rel="external">Material Design</a> , content transitions 允许我们协调 Activity/Fragment 中每一个<br> view 的进入和退出 transition，轻松搞定流畅的屏幕切换动作。<br>开始使用 Android Lollipop，调用下面这些<a href="http://developer.android.com/reference/android/view/Window.html" target="_blank" rel="external"> Window </a> 和<br><a href="http://developer.android.com/reference/android/app/Fragment.html" target="_blank" rel="external"> Fragment </a> 方法可以通过程序设置 content transitions :</p>
+<ul>
+<li><p><strong>setExitTransition()</strong> - 当 A <strong>启动</strong> B 时， <strong>A</strong> 中 views <strong>离开</strong>场景的退出过渡动画</p>
+</li>
+<li><p><strong>setEnterTransition()</strong> - 当 A <strong>启动</strong> B 时， <strong>B</strong> 中 views <strong>进入</strong>场景的进入过渡动画</p>
+</li>
+<li><p><strong>setReturnTransition()</strong> - 当 B <strong>返回</strong> A 时， <strong>B</strong> 中 views <strong>离开</strong>场景的返回过渡动画</p>
+</li>
+<li><p><strong>setReenterTransition()</strong> - 当 B <strong>返回</strong> A 时， <strong>A</strong> 中 views <strong>进入</strong>场景的重入过渡动画</p>
+</li>
+</ul>
+<p>(注:A 和 B 是Activity 见 <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html" target="_blank" rel="external">part 1</a>)。</p>
+<p><a href="http://www.androiddesignpatterns.com/assets/videos/posts/2014/12/15/games-opt.mp4" target="_blank" rel="external"><strong>Video 2.1</strong></a> - Content transitions in the Google Play Games app (as of v2.2). Click to play.</p>
+<hr>
+<p><a href="http://www.androiddesignpatterns.com/assets/videos/posts/2014/12/15/games-opt.mp4" target="_blank" rel="external"><strong>Video 2.1</strong></a>作为示例阐明了在 Google Play Games app 中是如何使<br>用 content transitions 实现流畅的 activitiy 切换动画。当第二个 activity 启动，<br>它的<strong>进入</strong> content transition 轻轻地从屏幕底部边缘将头像推入场景。按下返回按钮后，<br>第二个 activity 的<strong>返回</strong> content transition 将图层分成上下两块，分别推出屏幕。</p>
+<hr>
+<p>目前为止我们对 content transitions 的分析仅仅停留在表面，一些重要的问题仍然没有涉及。<br>例如 Content Transition 在底层是如何实现的？都有哪些类型的 <strong>Transition</strong> 对象可以使用?框架是如何确定哪些 view<br>是 transitioning view? 在 content transitions 中一个 <strong>ViewGroup</strong> 和它的子视图能不能当成一个整体<br>执行动画?下面我们就来一个一个解答这些问题。</p>
+<hr>
+<h2 id="Content_Transitions_底层深入">Content Transitions 底层深入</h2><p>上篇文章我们说过 Transition 的两个主要职责分别是获取目标视图的开始结束状态和创建这两个状态间的过渡动画。同样，框架必须先改变每个 transitioning view 的可见性并将状态信息交给 content<br>transition ，它才能创建过渡动画。更准确的说，当 Activity <strong>A</strong> 启动 Activity <strong>B</strong> 将会出现以下事件：<a id="1" href="#b1">(1)</a></p>
+<ol>
+<li><p>Activity <strong>A</strong> 调用 <strong>startActivity()</strong></p>
+<ul>
+<li>框架首先会遍历 <strong>A</strong> 的 view 层次结构，确定当 <strong>A</strong> 的退出 transition 运行后有哪些<br>transitioning views 会退出场景。</li>
+<li><strong>A</strong> 的退出 transition 捕获 A 中 transitioning views 的起始状态。</li>
+<li>框架将 <strong>A</strong> 中所有 transitioning views 设置为<strong>不可见</strong>。</li>
+<li>在下一个画面中，<strong>A</strong> 的退出 transition 捕获 <strong>A</strong> 中所有 transitioning views 的结束状态。</li>
+<li><strong>A</strong> 的退出 transition 比较每一个 transitioning view 开始和结束状态的不同，<br>并基于这些信息创建一个 <strong>Animator</strong>，最后运行 <strong>Animator</strong> 将所有 transitioning views<br>移出场景。</li>
+</ul>
+</li>
+<li><p>Activity <strong>B</strong> 被启动</p>
+<ul>
+<li>框架遍历 <strong>B</strong> 的 view 层次结构， 确定当 B 的进入 transition 运行后有哪些<br> transitioning views 会进入场景。</li>
+<li><strong>B</strong> 的进入 transition 捕获 B 中 transitioning views 的起始状态。</li>
+<li>框架将 <strong>B</strong> 中所有  transitioning views  设置为<strong>可见</strong></li>
+<li>在下一个画面中，<strong>B</strong> 的进入 transition 捕获 <strong>B</strong> 中所有 transitioning views 的结束状态。</li>
+<li><strong>B</strong> 的进入 transition 比较每一个 transitioning view 开始和结束状态的不同，<br>并基于这些信息创建一个 <strong>Animator</strong>，最后运行 <strong>Animator</strong> 将所有 transitioning views<br>移入场景。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p>框架通过在<strong>可见</strong>和<strong>不可见</strong>之间切换每个 transitioning view 的可见性来保证<br>content transition 能够获得用来构建目标动画所需要的状态信息。<br>显然所有的 content <strong>Transition</strong> 对象至少要能够获取和记录每个 transitioning view<br>起始和结束状态的可见性。还好 <a href="https://developer.android.com/reference/android/transition/Visibility.html" target="_blank" rel="external">Visibility</a> 这个抽象类已经提供了这个功能 :<br>需要创建并返回 (让 view 进入/退出场景的) <strong>Animator</strong> 的 <strong>Visibility</strong><br>子类只需要实现 <a href="https://developer.android.com/reference/android/transition/Visibility.html#onAppear(android.view.ViewGroup,%20android.transition.TransitionValues,%20int,%20android.transition.TransitionValues,%20int)" target="_blank" rel="external"><strong>onAppear()</strong></a>  和 <a href="https://developer.android.com/reference/android/transition/Visibility.html#onDisappear(android.view.ViewGroup,%20android.transition.TransitionValues,%20int,%20android.transition.TransitionValues,%20int)" target="_blank" rel="external"><strong>onDisappear()</strong></a> 这两个工厂方法。<br>从 API 21 开始，有三个已经写好的 <strong>Visibility</strong> 实现( <a href="https://developer.android.com/reference/android/transition/Fade.html" target="_blank" rel="external"><strong>Fade</strong></a>, <a href="https://developer.android.com/reference/android/transition/Slide.html" target="_blank" rel="external"><strong>Slide</strong></a> 和 <a href="https://developer.android.com/reference/android/transition/Explode.html" target="_blank" rel="external"><strong>Explode</strong></a>)，可以使用它们来构建  Activity 和 Fragment 的 content transitions。<br>有必要的话也可以自己实现 Visibility 类达到想实现的效果。后边的文章会有具体介绍。</p>
+<hr>
+<h2 id="Transitioning_Views_和_Transition_Groups">Transitioning Views 和 Transition Groups</h2><p>直到现在，我们已经假设 content transitions 操作一组叫做 transitioning views 的非共享 view 。<br>在这节中，我们将探讨 Transition 框架如何确定哪些 View 是非共享 View，以及如何使用 transition group 深度定制框架</p>
+<p>Transition 开始前，框架会在 Activity 窗口(或 Fragment) 的视图层上执行一个递归的搜索，用来<br>构建 transitioning views 的集合。这个搜索通过对图层的根视图递归调用重写的<strong>ViewGroup#captureTransitioningViews</strong> 方法启动，部分<a href="https://github.com/android/platform_frameworks_base/blob/lollipop-release/core/java/android/view/ViewGroup.java#L6243-L6258" target="_blank" rel="external">源码</a>如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** <span class="doctag">@hide</span> */</span></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">captureTransitioningViews</span><span class="params">(List&lt;View&gt; transitioningViews)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (getVisibility() != View.VISIBLE) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (isTransitionGroup()) &#123;</span><br><span class="line">        transitioningViews.add(<span class="keyword">this</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> count = getChildCount();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">            View child = getChildAt(i);</span><br><span class="line">            child.captureTransitioningViews(transitioningViews);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a href="http://www.androiddesignpatterns.com/assets/videos/posts/2014/12/15/webview-opt.mp4" target="_blank" rel="external"><strong>Video 2.2</strong></a> - A simple Radiohead app that illustrates a potential bug involving transition groups and WebViews. Click to play.</p>
+<hr>
+<p>这个递归调用很简单: 框架遍历树的每一层，直到找到一个<strong>可见的</strong><a href="https://github.com/android/platform_frameworks_base/blob/lollipop-release/core/java/android/view/View.java#L19351-L19362" target="_blank" rel="external"> leaf view </a> (子视图)或者一个 transition group。Transition groups 本质上允许我们在 Activity/Fragment 的 transition<br>期间将全部 <strong>ViewGroups</strong> 当作一个整体执行过渡动画。如果一个 <strong>ViewGroup</strong> 的<br><a href="https://developer.android.com/reference/android/view/ViewGroup.html#isTransitionGroup()" target="_blank" rel="external"><code>isTransitionGroup ()</code></a> <a id="2" href="#b2">(2)</a>方法返回值为 <strong>true</strong>，它和它的子视图会被当作一<br>个整体来执行过渡动画。否则，这个递归搜索会继续执行下去， 这个 ViewGroup 的子视图在动画期间<br>会执行自己的独立的过渡动画。搜索最终会返回一个全部由 content transition<br> 执行动画的 transitioning views 集合 。<a id="3" href="#b3">(3)</a></p>
+<hr>
+<p>上面的 <a href="http://www.androiddesignpatterns.com/assets/videos/posts/2014/12/15/games-opt.mp4" target="_blank" rel="external"><strong>Video 2.1</strong></a> 展示了 transition groups  的效果。在 enter transition ，<br>用户头像是作为一个单独的 View 进入屏幕，return transition 时却是和包含它的 parent<br><strong>ViewGroup</strong> 一起消失。在  Google Play Games 里可能用了一个 transition group<br>来实现在返回前一个 activity 时，让当前场景拦腰斩断的效果。</p>
+<hr>
+<p>有时 transition groups 还被用来修复 Activity/Fragment transitions 中诡异的 bugs。<br>例如，Video 2.2中: <strong>调用 Activity</strong> 显示了一个电台司令专辑图的网格布局，<br><strong>被调用 Activity</strong> 展示了一个背景标题图，一个共享元素专辑封面图还有一个 <strong>WebView</strong>。<br>这个 App 使用了一个和 Google Play Games app 类似的 return transition，将背景图和底部的<br><strong>WebView</strong> 分别推出屏幕。然而这里有个小故障导致 <strong>WebView</strong> 不能流畅的退出屏幕。</p>
+<p>好吧，错误在哪呢？原来 <strong>WebView</strong> 是一个 <strong>ViewGroup</strong>，因此在默认情况下 WebView 不会被当作 transitioning view<br>的。当 return transition 被执行时，<strong>WebView</strong> 会被完全忽略，直到过渡动画结束才会被移除屏幕。<br>找到问题就好解决了，只要在 return transition 开始前调用 <code>webView.setTransitionGroup(true)</code><br>就能修复这个bug。</p>
+<hr>
+<h2 id="结语">结语</h2><p>总之，这篇文章讲了三个重点:</p>
+<ul>
+<li>Content transition 决定了 Activity/Fragment 中非共享元素视图(被称为 transitioning views)<br> 在 Activity/Fragment transition 期间如何进入或退出场景。</li>
+<li>Content transitions 被触发是因为它的 transitioning views 可见性改变  ，并且应该总是继承<br>  <strong>Visibility</strong> 这个抽象类。</li>
+<li>Transition groups 可以让我们在 content transition 期间将 <strong>ViewGroups</strong><br>  当作一个整体执行过渡动画。</li>
+</ul>
+<p>希望这篇文章能够帮到你，欢迎留下评论～</p>
+<hr>
+<ol>
+<li>Activities 和 Fragments 在  return/reenter transitions 期间出现的一系列事件相似。<br> <a id="b1" href="#1">↩</a></li>
+<li>如果 ViewGroup 有一个非空的  background drawable 或者非空的默认 transition name 那么<br> <code>isTransitionGroup()</code> 将返回 <strong>true</strong> (所述方法<a href="https://developer.android.com/reference/android/view/ViewGroup.html#isTransitionGroup()" target="_blank" rel="external">文档</a>)<br> <a id="b2" href="#2">↩</a></li>
+<li>当 transition 运行时，任何在 content <strong>Transition</strong> 对象中被明确地 <a href="https://developer.android.com/reference/android/transition/Transition.html#addTarget(android.view.View)" target="_blank" rel="external"> added </a>或<br> <a href="https://developer.android.com/reference/android/transition/Transition.html#excludeTarget(android.view.View,%20boolean)" target="_blank" rel="external"> excluded </a> 的 view 也会被考虑。<a id="b3" href="#3">↩</a></li>
+</ol>
+<blockquote>
+<ul>
+<li>原文链接 :  <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-content-transitions-in-depth-part2.html" target="_blank" rel="external">Content Transitions In-Depth (part 2)</a></li>
+<li>译者 : <a href="https://github.com/tiiime" target="_blank" rel="external">tiiime</a></li>
+<li>校对者: <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a></li>
+<li>状态 :  完成</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-content-transitions-in-depth-part2/" data-id="cibhzt7hh002o6c1ivvwb9o3h" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-content-transitions-in-depth-part2/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-determine-when-app-is-opened-or-closed/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          检测Android应用的启动与关闭
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/01/the-hitchhikers-guide-to-android-testing-part-2-espresso/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">功能测试框架 espresso</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/01/activity-fragment-content-transitions-in-depth-part2/" data-title="深入理解Content Transition  (part 2)" data-url="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-content-transitions-in-depth-part2/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

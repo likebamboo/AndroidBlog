@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>开始使用 Transitions（过渡动画） (part 1) | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="首先这篇文章主要介绍 Android 5.0 新加入的 Transition (过渡动画) API，这是这个系列的第一篇文章。主要介绍下面几个话题:
+
+Part 1: 在 Activity 和 Fragment 中使用 Transition 
+Part 2: 深入理解 Transition
+Part 3a: 深入理解共享元素的 Transition
+Part 3b:  延迟共享元素的 Transi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开始使用 Transitions（过渡动画） (part 1)">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="首先这篇文章主要介绍 Android 5.0 新加入的 Transition (过渡动画) API，这是这个系列的第一篇文章。主要介绍下面几个话题:
+
+Part 1: 在 Activity 和 Fragment 中使用 Transition 
+Part 2: 深入理解 Transition
+Part 3a: 深入理解共享元素的 Transition
+Part 3b:  延迟共享元素的 Transi">
+<meta property="og:updated_time" content="2015-06-29T13:53:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="开始使用 Transitions（过渡动画） (part 1)">
+<meta name="twitter:description" content="首先这篇文章主要介绍 Android 5.0 新加入的 Transition (过渡动画) API，这是这个系列的第一篇文章。主要介绍下面几个话题:
+
+Part 1: 在 Activity 和 Fragment 中使用 Transition 
+Part 2: 深入理解 Transition
+Part 3a: 深入理解共享元素的 Transition
+Part 3b:  延迟共享元素的 Transi">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-activity-fragment-transitions-in-android-lollipop-part1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/" class="article-date">
+  <time datetime="2015-04-29T16:00:00.000Z" itemprop="datePublished">2015-04-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      开始使用 Transitions（过渡动画） (part 1)
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="首先">首先</h2><p>这篇文章主要介绍 Android 5.0 新加入的 Transition (过渡动画) API，这是这个系列的第一篇文章。主要介绍下面几个话题:</p>
+<ul>
+<li>Part 1: <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html" target="_blank" rel="external">在 Activity 和 Fragment 中使用 Transition </a></li>
+<li>Part 2: <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-content-transitions-in-depth-part2.html" target="_blank" rel="external">深入理解 Transition</a></li>
+<li>Part 3a: <a href="http://www.androiddesignpatterns.com/2015/01/activity-fragment-shared-element-transitions-in-depth-part3a.html" target="_blank" rel="external">深入理解共享元素的 Transition</a></li>
+<li>Part 3b:  <a href="http://www.androiddesignpatterns.com/2015/03/activity-postponed-shared-element-transitions-part3b.html" target="_blank" rel="external">延迟共享元素的 Transition</a></li>
+<li>Part 3c: 共享元素回调实践 (coming soon!)</li>
+<li>Part 4:  Activity &amp; Fragment 过渡动画示例(coming soon!)<a id="more"></a>
+今天这篇文章是 Transition 的概述，同时也象征着这个专栏的开始，希望大家喜欢啦。</li>
+</ul>
+<h1 id="先说下什么是_Transition(过渡动画)-">先说下什么是 Transition(过渡动画).</h1><p>Lollipop 中 Activity 和 Fragment 的过渡动画是基于 Android 一个叫作 Transition 的新特性实现的。<br>初次引入这个特性是在 KitKat 中，Transition 框架提供了一个方便的 API 来构建应用中不同 UI 状态切换时的动画。<br>这个框架始终围绕两个关键概念:场景和过渡。<br><strong>场景</strong> 描述应用中 UI 的状态，<a href="https://developer.android.com/reference/android/transition/Transition.html" target="_blank" rel="external"><strong>过渡</strong></a> 确定两个场景转换之间的过渡动画。</p>
+<p>当场景转换，Transition 的主要职责是：</p>
+<ol>
+<li>捕获每一个 View 的起始和结束状态</li>
+<li>根据这些数据来创建从一个场景到另一个场景间的过渡动画。</li>
+</ol>
+<p>下面是一个简单示例，当用户点击，我们需要 Activity 的 View 视图产生消失和出现的效果。使用 Transition ，实现这个需求只要几行代码，代码如下：<a id="1" href="#b1">(1)</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> <span class="keyword">implements</span> <span class="title">View</span>.<span class="title">OnClickListener</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> ViewGroup mRootView;</span><br><span class="line">    <span class="keyword">private</span> View mRedBox, mGreenBox, mBlueBox, mBlackBox;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">        mRootView = (ViewGroup) findViewById(R.id.layout_root_view);</span><br><span class="line">        mRootView.setOnClickListener(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">        mRedBox = findViewById(R.id.red_box);</span><br><span class="line">        mGreenBox = findViewById(R.id.green_box);</span><br><span class="line">        mBlueBox = findViewById(R.id.blue_box);</span><br><span class="line">        mBlackBox = findViewById(R.id.black_box);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">        TransitionManager.beginDelayedTransition(mRootView, <span class="keyword">new</span> Fade());</span><br><span class="line">        toggleVisibility(mRedBox, mGreenBox, mBlueBox, mBlackBox);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">toggleVisibility</span><span class="params">(View... views)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (View view : views) &#123;</span><br><span class="line">            <span class="keyword">boolean</span> isVisible = view.getVisibility() == View.VISIBLE;</span><br><span class="line">            view.setVisibility(isVisible ? View.INVISIBLE : View.VISIBLE);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了更好地理解底层中发生了什么，我们一步一步地分析下这段代码，首先假设屏幕上的所有的 View 都是<strong>可见</strong>的:</p>
+<ol>
+<li><p>首先，点击按钮后调用了 <a href="https://developer.android.com/reference/android/transition/TransitionManager.html#beginDelayedTransition(android.view.ViewGroup,%20android.transition.Transition)" target="_blank" rel="external">beginDelayedTransition()</a>，<br>将根场景和<a href="https://developer.android.com/reference/android/transition/Fade.html" target="_blank" rel="external">Fade</a> Transition对象（淡入/淡出过渡效果）作为参数传递出去。框架立即对场景中所有 View 调用 Transitions 的 <a href="https://developer.android.com/reference/android/transition/Transition.html#captureStartValues(android.transition.TransitionValues)" target="_blank" rel="external">captureStartValues()</a> 方法，同时， Transitions 将记录每个 View 的可见性。</p>
+</li>
+<li><p>调用结束后，开发者将场景中所有 View 设置为<strong>不可见</strong>的。</p>
+</li>
+<li><p>在下一个画面，框架对场景中所有 View(近期更新的) 调用 Transitions 的<a href="https://developer.android.com/reference/android/transition/Transition.html#captureEndValues(android.transition.TransitionValues)" target="_blank" rel="external">captureEndValues()</a><br>方法， Transitions 记录可见性。</p>
+</li>
+<li><p>框架调用 Transitions 的 <a href="https://developer.android.com/reference/android/transition/Transition.html#createAnimator(android.view.ViewGroup,%20android.transition.TransitionValues,%20android.transition.TransitionValues)" target="_blank" rel="external">createAnimator()</a> 方法。Transition 分析每一个 View 的起始/结束状态，注意到 View 的可见性发生了变化。之后 <strong>Fade</strong> 对象利用这些信息创建了一个<strong>AnimatorSet</strong> 对象，并将其返回到框架中，进而将每个 View 的 <strong>alpha</strong> 值渐变到 <strong>0f</strong>。</p>
+</li>
+<li><p>框架运行返回的<strong>动画</strong>,让所有 View 从屏幕中淡出。</p>
+</li>
+</ol>
+<p>这个例子强调了 Transition 框架的两个优点：第一，<strong>Transition</strong> 将开发人员所需要的<strong>动画</strong>概念抽象，减少了 Activity 和 Fragment 内的代码复用，使得我们只要设置好 View 的 起始 和 结束 时的状态，就能通过 Transition 自动创建动画。第二，只要更换 <strong>Transition</strong> 对象就可以修改两个场景间的动画。</p>
+<p><a href="http://www.androiddesignpatterns.com/assets/videos/posts/2014/12/04/trivial-opt.mp4" target="_blank" rel="external"> 示例 <strong>Video 1.1</strong></a>,只要少量代码就可以创建复杂的动画效果。<br>后续文章会介绍如何做到。</p>
+<h1 id="Lollipop_中的_Activity_&amp;_Fragment_Transitions">Lollipop 中的 Activity &amp; Fragment Transitions</h1><p>在 Android 5.0 中， 切换 <strong>Activitys</strong> 或者 <strong>Fragments</strong> 时可以使用 <strong>Transitions</strong> 来构建精致的过场动画。虽然在之前的版本中已经引入 Activity 和 Fragment 的切换动画(通过 <a href="http://developer.android.com/reference/android/app/Activity.html#overridePendingTransition(int,%20int)" target="_blank" rel="external">Activity#overridePendingTransition()</a> 和 <a href="http://developer.android.com/reference/android/app/FragmentTransaction.html#setCustomAnimations(int,%20int,%20int,%20int)" target="_blank" rel="external">FragmentTransaction#setCustomAnimation()</a> 方法实现)，但是动画的对象只能是<strong>Activity/Fragment</strong>整体。而新的 API 将这个特性延伸，使我们可以为每个 View 单独设置动画，甚至可以在两个独立的 Activity/Fragment 容器内共享某些 View的动画。</p>
+<p>接下来介绍些术语。注意，虽然下面是以 Activity 为例，但是在 Fragment 中这些术语也同样有效:</p>
+<blockquote>
+<p>假设 <strong>A</strong> 和 <strong>B</strong> 是两个 Activity，通过 <strong>A</strong> 来启动 <strong>B</strong>。<br><strong>A</strong> 叫做 “调用Activity”(调用 <code>startActivity()</code> 的那个)<br><strong>B</strong> 就是 “被调用Activity”</p>
+</blockquote>
+<p>Activity transition API 是围绕退出，进入，返回还有重入过渡动画效果构建的。根据之前的定义我们可以这样描述它们:</p>
+<blockquote>
+<p>Activity <strong>A</strong> 的 退出 Transition 确定 <strong>A</strong> 启动 <strong>B</strong> 时 <strong>A</strong> 中 View 的动画</p>
+<p>Activity <strong>B</strong> 的 进入 Transition 确定 <strong>A</strong> 启动 <strong>B</strong> 时 <strong>B</strong> 中 View 的动画</p>
+<p>Activity <strong>B</strong> 的 返回 Transition 确定 <strong>B</strong> 返回 <strong>A</strong> 时 <strong>B</strong> 中 View 的动画</p>
+<p>Activity <strong>A</strong> 的 重入 Transition 确定 <strong>B</strong> 返回 <strong>A</strong> 时 <strong>A</strong> 中 View 的动画</p>
+</blockquote>
+<p>最后，Transition 框架提供了 <strong>Content(内容)</strong>和<strong>共享元素(Shared Element)</strong> 两种类型的Activity过渡动画，每个都可以让我们以独特的方式自定义 Activity 切换间的动画</p>
+<blockquote>
+<p><strong>Content(内容) Transition</strong> 确定了非共享元素如何 进入/退出 Activity 场景</p>
+<p><strong>共享元素(Shared Element) Transition</strong> 确定了两个Activity 共享 View (也被叫做主角视图)的动画效果。</p>
+</blockquote>
+<p><a href="http://www.androiddesignpatterns.com/assets/videos/posts/2014/12/04/news-opt.mp4" target="_blank" rel="external">Video 1.2</a>这段视频很好的解释了 Content Transition 和 共享元素 Transition，我猜想它使用了下面的过渡动画。</p>
+<ul>
+<li><strong>A</strong>(调用Activity) 的<strong>退出</strong>和<strong>重新进入</strong> Content Transition 都是 <strong>null</strong>。因为用户退出和重新进入时 Activity A中的非共享视图没有动画效果。<a id="2" href="#b2">(2)</a></li>
+</ul>
+<ul>
+<li><p><strong>B</strong>(被调用Activity) 的<strong>进入</strong> Content Transition 使用了一个自定义的 Slide Transition 将list item从底部移至屏幕中。</p>
+</li>
+<li><p>Activity <strong>B</strong> 的<strong>返回</strong> Content Transition是一个 <strong>TransitionSet</strong>，同时进行两个子 Transition:一个Slide (Gravity.TOP) Transition<br>针对Activity上半部分的View，一个Slide (Gravity.BOTTOM) Transition 针对Activity 下半部分View。当用户点击按钮返回Activity A，Activity呈现一种断成两半的感觉。</p>
+</li>
+<li><p>共享元素的进入和退出 Transition 都是 <strong>ChangeImageTransform</strong>，使ImageView过渡动画可以在两个Activity间无缝衔接。</p>
+</li>
+</ul>
+<p>你可能也注意到了在共享元素 Transition 下还有一个圆形的过渡动画(circular reveal)，我们会在将来的章节中介绍它是如何实现的。现在，我们来继续了解 Activity 和 Fragment transition APIs</p>
+<h1 id="介绍Activity_Transition_API">介绍Activity Transition API</h1><p>使用 Lollipop 的 APIs 创建一个 Activity 过渡动画 非常简单，下面的总结是实现一个过渡动画的必要步骤。在接下来的文章中我们还会介绍很多提升水平的用例，不过现在先让我们来入个门:</p>
+<ul>
+<li><p>在你的A(调用Activity)和B(被调用Activity)的 <code>.java</code> 文件或者<br><code>xml</code><a id="3" href="#b3">(3)</a>布局中请求启用<br><a href="http://developer.android.com/reference/android/view/Window.html#FEATURE_ACTIVITY_TRANSITIONS" target="_blank" rel="external"><code>Window.FEATURE_ACTIVITY_TRANSITIONS</code></a> 窗口特性，<br>使用Material主题的应用默认已开启。</p>
+</li>
+<li><p>为A和B单独设置 <a href="https://developer.android.com/reference/android/view/Window.html#setExitTransition(android.transition.Transition)" target="_blank" rel="external"><strong>exit</strong></a> 和 <a href="https://developer.android.com/reference/android/view/Window.html#setEnterTransition(android.transition.Transition)" target="_blank" rel="external"><strong>enter</strong></a> Content Transition 。<br>Material主题的 <a href="https://developer.android.com/reference/android/view/Window.html#setExitTransition(android.transition.Transition)" target="_blank" rel="external"><strong>exit</strong></a> 和 <a href="https://developer.android.com/reference/android/view/Window.html#setEnterTransition(android.transition.Transition)" target="_blank" rel="external"><strong>enter</strong></a> Content Transition 默认分别是<br><code>null</code>和<code>Fade</code>。如果没有明确定义 <a href="https://developer.android.com/reference/android/view/Window.html#setSharedElementReenterTransition(android.transition.Transition)" target="_blank" rel="external"><strong>reenter</strong></a> 或 <a href="https://developer.android.com/reference/android/view/Window.html#setReturnTransition(android.transition.Transition)" target="_blank" rel="external"><strong>return</strong></a><br>Content Transition 将会使用 Activity 的 <a href="https://developer.android.com/reference/android/view/Window.html#setExitTransition(android.transition.Transition)" target="_blank" rel="external"><strong>exit</strong></a> 和 <a href="https://developer.android.com/reference/android/view/Window.html#setEnterTransition(android.transition.Transition)" target="_blank" rel="external"><strong>enter</strong></a><br>Transition 来代替。</p>
+</li>
+<li><p>为 A 和 B 设置 <a href="https://developer.android.com/reference/android/view/Window.html#setExitTransition(android.transition.Transition)" target="_blank" rel="external"><strong>exit</strong></a> 和 <a href="https://developer.android.com/reference/android/view/Window.html#setEnterTransition(android.transition.Transition)" target="_blank" rel="external"><strong>enter</strong></a> 共享元素 Transition。<br>Material主题中共享元素默认设置 <a href="https://github.com/android/platform_frameworks_base/blob/lollipop-release/core/res/res/transition/move.xml" target="_blank" rel="external"><code>@android:transition/move</code></a> 作为<br><a href="https://developer.android.com/reference/android/view/Window.html#setExitTransition(android.transition.Transition)" target="_blank" rel="external"><strong>exit</strong></a> 和 <a href="https://developer.android.com/reference/android/view/Window.html#setEnterTransition(android.transition.Transition)" target="_blank" rel="external"><strong>enter</strong></a> 过渡动画。如果没有明确定义<br><a href="https://developer.android.com/reference/android/view/Window.html#setSharedElementReenterTransition(android.transition.Transition)" target="_blank" rel="external"><strong>reenter</strong></a> 和 <a href="https://developer.android.com/reference/android/view/Window.html#setReturnTransition(android.transition.Transition)" target="_blank" rel="external"><strong>return</strong></a> 的过渡动画将会使用 Activity 的<br><a href="https://developer.android.com/reference/android/view/Window.html#setExitTransition(android.transition.Transition)" target="_blank" rel="external"><strong>exit</strong></a> 和 <a href="https://developer.android.com/reference/android/view/Window.html#setEnterTransition(android.transition.Transition)" target="_blank" rel="external"><strong>enter</strong></a> 过渡动画作为替代。</p>
+</li>
+<li>启动一个包含 Content Transition 和 共享元素 Transition 的 Activity 时要调用<br><code>startActivity(Context, Bundle)</code>方法，其中第二参数 Bundle 通过下面这段代码获得：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ActivityOptions.makeSceneTransitionAnimation(activity, pairs).toBundle();</span><br></pre></td></tr></table></figure>
+<p><strong>pairs</strong> 是一个 <strong>Pair&lt; View, String &gt;</strong> 数组，记录Activity间<a id="4" href="#b4">(4)</a> 共享元素的View 和 相对应的特征字符串。别忘了在<a href="https://developer.android.com/reference/android/view/View.html#setTransitionName(java.lang.String)" target="_blank" rel="external">程序</a>中或 <a href="https://developer.android.com/reference/android/view/View.html#attr_android:transitionName" target="_blank" rel="external">xml</a> 文件里给共享元素设置不重复的名称，否则过渡动画不会正常运行。</p>
+<ul>
+<li><p>通过启动程序返回一个 Transition，调用 <strong>finishAfterTransition()</strong> 代替 <strong>finish()</strong>。</p>
+</li>
+<li><p>Material主题应用默认会在他们的<strong>退出/重入</strong> Transition 完成前一点点启动<strong>进入/返回</strong> Content Transition，这样会在两个动画间产生一些重叠，让过渡动画更好看。如果你想关闭这个特性可以调用 <a href="http://developer.android.com/reference/android/view/Window.html#setAllowEnterTransitionOverlap(boolean)" target="_blank" rel="external"> setWindowAllowEnterTransitionOverlap()</a> 和 <a href="http://developer.android.com/reference/android/view/Window.html#setAllowReturnTransitionOverlap(boolean)" target="_blank" rel="external">setWindowAllowReturnTransitionOverlap()</a> 方法或者在xml文件里给定适当的属性</p>
+</li>
+</ul>
+<h2 id="Fragment_的_Transition_API">Fragment 的 Transition API</h2><p>如果你使用 Fragment 的 transition API，大部分 API 相似，但是会有一些小的不同:</p>
+<ul>
+<li><p>Content 的<a href="https://developer.android.com/reference/android/view/Window.html#setExitTransition(android.transition.Transition)" target="_blank" rel="external">退出</a>，<a href="https://developer.android.com/reference/android/view/Window.html#setEnterTransition(android.transition.Transition)" target="_blank" rel="external">进入</a>，<a href="https://developer.android.com/reference/android/view/Window.html#setSharedElementReenterTransition(android.transition.Transition)" target="_blank" rel="external">重入</a>和<a href="https://developer.android.com/reference/android/view/Window.html#setReturnTransition(android.transition.Transition)" target="_blank" rel="external">返回</a> 过渡动画应该在 Fragment 的<code>.java</code>文件中调用对应的方法或者在 xml 属性声明里设置。</p>
+</li>
+<li><p>共享元素 的<a href="https://developer.android.com/reference/android/view/Window.html#setEnterTransition(android.transition.Transition)" target="_blank" rel="external">进入</a>和 <a href="https://developer.android.com/reference/android/view/Window.html#setReturnTransition(android.transition.Transition)" target="_blank" rel="external">返回</a> 过渡动画应该在 Fragment 的<code>.java</code>文件中调用对应的方法或者在 xml 属性声明里设置。</p>
+</li>
+<li><p>鉴于Activity的 Transition 是通过调用 <strong>startActivity()</strong> 和 <strong>finishAfterTransition()</strong> 直接启动的,Fragment 的过渡是在 Fragment<br>被add, remove, attach, detach, show,或 hidden 后由 FragmentTransaction 自动启动。</p>
+</li>
+<li><p>共享元素应该在transaction(事务)提交前调用<a href="https://developer.android.com/reference/android/app/FragmentTransaction.html#addSharedElement(android.view.View,%20java.lang.String)" target="_blank" rel="external"><code>addSharedElement(View, String)</code></a>声明为 <strong>FragmentTransaction</strong> 的一部分。</p>
+</li>
+</ul>
+<h2 id="结语">结语</h2><p>这篇文章里我们只是简单的介绍了 Activitiy 和 Fragment transition API，但是在接下来的文章你会发现扎实的基础给你带来的好处，尤其是在讲到<strong>自定义过渡动画</strong>时。后面我们会非常深入的讲解 Content Transition 和 共享元素 Transition，让你更加了解 Activity 和 Fragment 背后的工作。</p>
+<p>希望你喜欢我的文章，感谢观看～</p>
+<ol>
+<li><p>如果你想尝试这个例子，这里有<a href="https://gist.github.com/alexjlockwood/a96781b876138c37e88e" target="_blank" rel="external">xml代码</a> <a id="b1" href="#1">↩</a></p>
+</li>
+<li><p>第一眼看上去可能感觉是Activity A fade in/out 屏幕, 事实上是Activity B 在 Activity A 的上面渐变. A 中的 View 事实上是没有动画的. 你可以在被调用 Activity 的 Window 中使用 <a href="http://developer.android.com/reference/android/view/Window.html#setTransitionBackgroundFadeDuration(long)" target="_blank" rel="external">setTransitionBackgroundFadeDuration()</a> 方法调节背景渐变持续时间。 <a id="b2" href="#2">↩</a></p>
+</li>
+<li><p>了解更多关于 <strong>FEATURE_ACTIVITY_TRANSITIONS</strong> 和 <strong>FEATURE_CONTENT_TRANSITIONS</strong> 窗口特性的不同可以看<a href="http://stackoverflow.com/questions/28975840/feature-activity-transitions-vs-feature-content-transitions" target="_blank" rel="external">这里StackOverflow Post</a><a id="b3" href="#3">↩</a></p>
+</li>
+<li><p>启动一个包含Content Transition 而不是共享元素 Transition 的Activity,可以这样创建<strong>Bundle</strong></p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ActivityOptions.makeSceneTransitionAnimation(activity).toBundle()</span><br></pre></td></tr></table></figure>
+<p>如果想完全禁用Content Transition 和 共享元素 Transition 可以将 Bundle 设为 <strong>null</strong>. <a id="b4" href="#4">↩</a></p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html" target="_blank" rel="external">Getting Started with Activity &amp; Fragment Transitions (part 1)</a></li>
+<li>作者 : <a href="https://plus.google.com/+AlexLockwood" target="_blank" rel="external">Alex Lockwood</a></li>
+<li>译者 : <a href="https://github.com/tiiime" target="_blank" rel="external">tiiime</a></li>
+<li>校对者: <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a>  </li>
+<li>状态 :  校对完成</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/" data-id="cibhzt7h2002g6c1ib20bsoxy" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/screenshot_automation/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          自动化截图－应用分发时的自动截图方案
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">使用RxJava.Observable取代AsyncTask和AsyncTaskLoader</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/" data-title="开始使用 Transitions（过渡动画） (part 1)" data-url="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>
