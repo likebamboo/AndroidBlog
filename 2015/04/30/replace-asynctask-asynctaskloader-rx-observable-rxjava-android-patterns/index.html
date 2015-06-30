@@ -9,10 +9,10 @@
   <meta name="description" content="在网上有很多关于RxJava入门指南的帖子，其中一些是基于Android环境的。但是，我想到目前为止，很多人只是喜欢他们所看到的这些，当要解决在他们的Android项目中出现的具体问题时，他们并不知道如何或者是为什么要使用RxJava。在这一系列的文章中，我想要探索在我工作过的一些依赖于RxJava架构的Android项目中的模式。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用RxJava.Observable取代AsyncTask和AsyncTaskLoader">
-<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/index.html">
+<meta property="og:url" content="http://localhost:8080/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/index.html">
 <meta property="og:site_name" content="Android博客">
 <meta property="og:description" content="在网上有很多关于RxJava入门指南的帖子，其中一些是基于Android环境的。但是，我想到目前为止，很多人只是喜欢他们所看到的这些，当要解决在他们的Android项目中出现的具体问题时，他们并不知道如何或者是为什么要使用RxJava。在这一系列的文章中，我想要探索在我工作过的一些依赖于RxJava架构的Android项目中的模式。">
-<meta property="og:updated_time" content="2015-06-29T13:40:34.000Z">
+<meta property="og:updated_time" content="2015-06-30T01:20:05.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用RxJava.Observable取代AsyncTask和AsyncTaskLoader">
 <meta name="twitter:description" content="在网上有很多关于RxJava入门指南的帖子，其中一些是基于Android环境的。但是，我想到目前为止，很多人只是喜欢他们所看到的这些，当要解决在他们的Android项目中出现的具体问题时，他们并不知道如何或者是为什么要使用RxJava。在这一系列的文章中，我想要探索在我工作过的一些依赖于RxJava架构的Android项目中的模式。">
@@ -22,7 +22,7 @@
   
     <link rel="icon" href="/favicon.png">
   
-  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link rel="stylesheet" href="http://localhost:8080/AndroidBlog/css/style.css" type="text/css">
   <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
   <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
   
@@ -35,11 +35,11 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+        <a href="http://localhost:8080/AndroidBlog/" id="logo">Android博客</a>
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+          <a href="http://localhost:8080/AndroidBlog/" id="subtitle">读万卷书</a>
         </h2>
       
     </div>
@@ -47,9 +47,9 @@
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"></a>
         
-          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+          <a class="main-nav-link" href="http://localhost:8080/AndroidBlog/index.html">首页</a>
         
-          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+          <a class="main-nav-link" href="http://localhost:8080/AndroidBlog/archives">归档</a>
         
       </nav>
       <nav id="sub-nav">
@@ -65,7 +65,7 @@
           <input name=tn type=hidden value="bds">
           <input name=cl type=hidden value="3">
           <input name=ct type=hidden value="2097152">
-          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+          <input type="hidden" name="si" value="localhost:8080/AndroidBlog">
         </form>
       </div>
     </div>
@@ -74,12 +74,12 @@
     <div class="outer">
       <section id="main"><article id="post-replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/" class="article-date">
+    <a href="http://localhost:8080/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/" class="article-date">
   <time datetime="2015-04-29T16:00:00.000Z" itemprop="datePublished">2015-04-30</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+    <a class="article-category-link" href="http://localhost:8080/AndroidBlog/categories/翻译/">翻译</a>
   </div>
 
   </div>
@@ -102,17 +102,31 @@
 <h1 id="问题一：后台任务">问题一：后台任务</h1><p>Android开发者首先遇到的挑战就是如何有效的在后台线程中工作，然后在UI线程中更新UI。这经常是因为需要从web service中获取数据。对于已经有相关经验的你可能会说：“这有什么挑战性？你只需要启动一个AsyncTask，然后所有的工作它就都给你做了。”如果你是这样想的，那么你有一个机会去改善这种状况。这是因为你已经习惯了这种复杂的方式并且忘记这本应该是很简洁的，或者是说你没有处理所有应该处理的边界情况。让我们来谈谈这个。</p>
 <h2 id="默认的解决方案：AsyncTask">默认的解决方案：AsyncTask</h2><p>AsyncTask是在Android里面默认的处理工具，开发者可以做里面一些长时间的处理工作，而不会阻塞用户界面。(注意：最近，AsyncTaskLoader用来处理一些更加具体的数据加载任务，我们以后会再谈谈这个)</p>
 <p>表面上，这似乎很简单，你定义一些代码在后台线程中运行，然后定义一些代码运行在UI线程中，在后台任务处理完之后，它在UI线程会处理从后台任务传递过来的执行结果。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">	<span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">CallWebServiceTask</span> <span class="keyword">extends</span> <span class="title">AsyncTask</span>&lt;<span class="title">String</span>, <span class="title">Result</span>, <span class="title">Void</span>&gt; </span>&#123;</span><br><span class="line">    </span><br><span class="line">	    <span class="function"><span class="keyword">protected</span> Result <span class="title">doInBackground</span><span class="params">(String... someData)</span> </span>&#123;</span><br><span class="line">	        Result result = webService.doSomething(someData);</span><br><span class="line">	        <span class="keyword">return</span> result;</span><br><span class="line">	    &#125;</span><br><span class="line">    </span><br><span class="line">	    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onPostExecute</span><span class="params">(Result result)</span> </span>&#123;</span><br><span class="line">	        <span class="keyword">if</span> (result.isSuccess() &#123;</span><br><span class="line">	            resultText.setText(<span class="string">"It worked!"</span>);</span><br><span class="line">	        &#125;</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">使用AsyncTask的最大的问题是在细节的处理上，让我们谈谈这个问题。</span><br><span class="line"></span><br><span class="line">###错误处理</span><br><span class="line">这种简单用法的第一个问题就是：“如果出现了错误怎么办？”不幸的是，暂时没有非常好的解决方案。所以很多的开发者最终要继承AsyncTask，然后在doInBackground()中包裹一个<span class="keyword">try</span>/<span class="keyword">catch</span>，返回一个&lt;TResult, Exception&gt;，然后根据发生的情况，分发到新定义的例如onSuccess()或者是onError()中。(我也曾经见过仅捕获异常的引用，然后在 onPostExcecute()中进行检查的写法) </span><br><span class="line"></span><br><span class="line">这最终是有点帮助的，但是你必须为你的每个项目写上额外的代码，随着时间的推移，这些自定义的代码在开发者之间和项目之间，可能不会保持很好的一致性和可预见性。</span><br><span class="line"></span><br><span class="line">###Activity和Fragment的生命周期</span><br><span class="line">另外一个你必须面对的问题是：“当AsyncTask正在运行的时候，如果我退出Activity或者是旋转设备的话会发生什么？”嗯，如果你只是发送一些数据，之后就不再关心发送结果，那可能是没有问题的，但是如果你需要根据Task的返回结果更新UI呢？如果你不做一些事情阻止的话，那么当你试图去调用Activity或者是view的话，你将得到一个空指针异常导致程序崩溃，因为他们现在是不可见或者是<span class="keyword">null</span>的。</span><br><span class="line"></span><br><span class="line">同样，在这个问题上AsyncTask没有做很多工作去帮助你。作为一个开发者，你需要确保保持一个Task的引用，并且要么当Activity正在被销毁的时候取消Task，要么当你试图在onPostExecute()里面更新UI的时候，确保Activity是在一个可达状态。当你只想明确的做一些工作，并且让项目容易维护的时候，这将会继续提高维护项目的难度。</span><br><span class="line"></span><br><span class="line">###旋转时的缓存(或是其他情况)</span><br><span class="line">当你的用户还是待在当前Activity，仅仅是旋转屏幕会发生什么？在这种情况下，取消Task没有任何意义，因为在旋转之后，你最终还是需要重新启动Task。或者是你不想重启Task，因为状况在一些地方以非幕等的方式发生了突变(because it mutates some state somewhere in a non-idempotent way),但是你确实想要得到结果，因为这样你就可以更新UI来反映这种情况。</span><br><span class="line"></span><br><span class="line">如果你专门的做一个只读的加载操作，你可以使用AsyncTaskLoader去解决这个问题。但是对于标准的Android方式来说，它还是很沉重，因为缺少错误处理，在Activity中没有缓存，还有很多独有的其他怪癖。</span><br><span class="line"></span><br><span class="line">###组合的多个Web Server调用</span><br><span class="line">现在，假如说我们已经想办法把上面的问题都解决了，但是我们现在需要做一些连续的网络请求，每一个请求都需要基于前一个请求的结果。或者是，我们想做一些并发的网络请求，然后把结果合并在一起发送到UI线程，但是，再次抱歉，AsyncTask在这里帮不到你。</span><br><span class="line"></span><br><span class="line">一旦你开始做这样的事情，随着更多的复杂线程模型的增长，之前的问题会导致处理这样的事情非常的痛苦和苍白无力。如果想要这些线程一起运行，要么你就让它们单独运行，然后回调，要么让它们在一个后台线程中同步运行，最后复制组成不同。(To chain calls together, you either keep them separate and end up in callback hell, or run them synchronously together in one background task end up duplicating work to compose them differently in other situations.)</span><br><span class="line"></span><br><span class="line">如果要并行运行，你必须创建一个自定义的executor然后传递给AsyncTaskTask，因为默认的AsyncTask不支持并行。并且为了协调并行线程，你需要使用像是CountDownLatchs, Threads, Executors 和 Futures去降低更复杂的同步模式。</span><br><span class="line"></span><br><span class="line">###可测试性</span><br><span class="line">抛开这些不说，如果你喜欢测试你的代码，AsyncTask并不能给你带来什么帮助。如果我们不做额外的工作，测试AsyncTask非常困难，它很脆弱并且难以维持。这是一篇有关如何成功测试AsyncTask的[帖子](http:<span class="comment">//www.making-software.com/2012/10/31/testable-android-asynctask/)。</span></span><br><span class="line"></span><br><span class="line">##更好的解决方案：RxJava’s Observable</span><br><span class="line"></span><br><span class="line">幸运的是，一旦我们决定使用RxJava依赖库的时候，我们讨论的这些问题就都迎刃而解了。下面我们看看它能为我们做什么。</span><br><span class="line"></span><br><span class="line">下面我们将会使用Observables写一个请求代码来替代上面的AsyncTask方式。(如果你使用Retrofit，那么你应该很容易使用，其次它还支持Observable 返回值，并且它工作在一个后台的线程池，无需你额外的工作)</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">	webService.doSomething(someData)</span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    .subscribe(</span><br><span class="line">        result -&gt; resultText.setText(<span class="string">"It worked!"</span>)),</span><br><span class="line">        e -&gt; handleError(e)</span><br><span class="line">    );</span><br></pre></td></tr></table></figure>
-<h3 id="错误处理">错误处理</h3><p>你可能会注意到，没有做额外的工作，我们已经处理了AsyncTask不会处理的成功和错误的情况，并且我们写了很少的代码。你看到的额外的组件是我们想要Observer 在UI主线程中处理的结果。这样可以让我们前进一点点。并且如果你的webService对象不想在后台线程中运行，你也可以在这里通过使用.subscribeOn(…) 声明。(注意：这些例子是使用Java 8的lambda语法，使用<a href="https://github.com/orfjackal/retrolambda" target="_blank" rel="external">Retrolambda</a>就可以在Android项目中进行使用了，但在我看来，这样做的回报是高于风险的，和写这篇文章相比，我们更喜欢在我们的项目中使用。)</p>
-<h3 id="Activity和Fragment的生命周期">Activity和Fragment的生命周期</h3><p>现在，我们想在这里利用RxAndroid解决上面提到的生命周期的问题，我们不需要指定mainThread() scheduler(顺便说一句，你只需要导入RxAndroid)。就像下面这样</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">CallWebServiceTask</span> <span class="keyword">extends</span> <span class="title">AsyncTask</span>&lt;<span class="title">String</span>, <span class="title">Result</span>, <span class="title">Void</span>&gt; </span>&#123;</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Result <span class="title">doInBackground</span><span class="params">(String... someData)</span> </span>&#123;</span><br><span class="line">        Result result = webService.doSomething(someData);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onPostExecute</span><span class="params">(Result result)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (result.isSuccess() &#123;</span><br><span class="line">            resultText.setText(<span class="string">"It worked!"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用AsyncTask的最大的问题是在细节的处理上，让我们谈谈这个问题。</p>
+<h3 id="错误处理">错误处理</h3><p>这种简单用法的第一个问题就是：“如果出现了错误怎么办？”不幸的是，暂时没有非常好的解决方案。所以很多的开发者最终要继承AsyncTask，然后在doInBackground()中包裹一个try/catch，返回一个<tresult, exception="">，然后根据发生的情况，分发到新定义的例如onSuccess()或者是onError()中。(我也曾经见过仅捕获异常的引用，然后在 onPostExcecute()中进行检查的写法) </tresult,></p>
+<p>这最终是有点帮助的，但是你必须为你的每个项目写上额外的代码，随着时间的推移，这些自定义的代码在开发者之间和项目之间，可能不会保持很好的一致性和可预见性。</p>
+<h3 id="Activity和Fragment的生命周期">Activity和Fragment的生命周期</h3><p>另外一个你必须面对的问题是：“当AsyncTask正在运行的时候，如果我退出Activity或者是旋转设备的话会发生什么？”嗯，如果你只是发送一些数据，之后就不再关心发送结果，那可能是没有问题的，但是如果你需要根据Task的返回结果更新UI呢？如果你不做一些事情阻止的话，那么当你试图去调用Activity或者是view的话，你将得到一个空指针异常导致程序崩溃，因为他们现在是不可见或者是null的。</p>
+<p>同样，在这个问题上AsyncTask没有做很多工作去帮助你。作为一个开发者，你需要确保保持一个Task的引用，并且要么当Activity正在被销毁的时候取消Task，要么当你试图在onPostExecute()里面更新UI的时候，确保Activity是在一个可达状态。当你只想明确的做一些工作，并且让项目容易维护的时候，这将会继续提高维护项目的难度。</p>
+<h3 id="旋转时的缓存(或是其他情况)">旋转时的缓存(或是其他情况)</h3><p>当你的用户还是待在当前Activity，仅仅是旋转屏幕会发生什么？在这种情况下，取消Task没有任何意义，因为在旋转之后，你最终还是需要重新启动Task。或者是你不想重启Task，因为状况在一些地方以非幕等的方式发生了突变(because it mutates some state somewhere in a non-idempotent way),但是你确实想要得到结果，因为这样你就可以更新UI来反映这种情况。</p>
+<p>如果你专门的做一个只读的加载操作，你可以使用AsyncTaskLoader去解决这个问题。但是对于标准的Android方式来说，它还是很沉重，因为缺少错误处理，在Activity中没有缓存，还有很多独有的其他怪癖。</p>
+<h3 id="组合的多个Web_Server调用">组合的多个Web Server调用</h3><p>现在，假如说我们已经想办法把上面的问题都解决了，但是我们现在需要做一些连续的网络请求，每一个请求都需要基于前一个请求的结果。或者是，我们想做一些并发的网络请求，然后把结果合并在一起发送到UI线程，但是，再次抱歉，AsyncTask在这里帮不到你。</p>
+<p>一旦你开始做这样的事情，随着更多的复杂线程模型的增长，之前的问题会导致处理这样的事情非常的痛苦和苍白无力。如果想要这些线程一起运行，要么你就让它们单独运行，然后回调，要么让它们在一个后台线程中同步运行，最后复制组成不同。(To chain calls together, you either keep them separate and end up in callback hell, or run them synchronously together in one background task end up duplicating work to compose them differently in other situations.)</p>
+<p>如果要并行运行，你必须创建一个自定义的executor然后传递给AsyncTaskTask，因为默认的AsyncTask不支持并行。并且为了协调并行线程，你需要使用像是CountDownLatchs, Threads, Executors 和 Futures去降低更复杂的同步模式。</p>
+<h3 id="可测试性">可测试性</h3><p>抛开这些不说，如果你喜欢测试你的代码，AsyncTask并不能给你带来什么帮助。如果我们不做额外的工作，测试AsyncTask非常困难，它很脆弱并且难以维持。这是一篇有关如何成功测试AsyncTask的<a href="http://www.making-software.com/2012/10/31/testable-android-asynctask/" target="_blank" rel="external">帖子</a>。</p>
+<h2 id="更好的解决方案：RxJava’s_Observable">更好的解决方案：RxJava’s Observable</h2><p>幸运的是，一旦我们决定使用RxJava依赖库的时候，我们讨论的这些问题就都迎刃而解了。下面我们看看它能为我们做什么。</p>
+<p>下面我们将会使用Observables写一个请求代码来替代上面的AsyncTask方式。(如果你使用Retrofit，那么你应该很容易使用，其次它还支持Observable 返回值，并且它工作在一个后台的线程池，无需你额外的工作)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">webService.doSomething(someData)</span><br><span class="line">   .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">   .subscribe(</span><br><span class="line">       result -&gt; resultText.setText(<span class="string">"It worked!"</span>)),</span><br><span class="line">       e -&gt; handleError(e)</span><br><span class="line">   );</span><br></pre></td></tr></table></figure>
+<h3 id="错误处理-1">错误处理</h3><p>你可能会注意到，没有做额外的工作，我们已经处理了AsyncTask不会处理的成功和错误的情况，并且我们写了很少的代码。你看到的额外的组件是我们想要Observer 在UI主线程中处理的结果。这样可以让我们前进一点点。并且如果你的webService对象不想在后台线程中运行，你也可以在这里通过使用.subscribeOn(…) 声明。(注意：这些例子是使用Java 8的lambda语法，使用<a href="https://github.com/orfjackal/retrolambda" target="_blank" rel="external">Retrolambda</a>就可以在Android项目中进行使用了，但在我看来，这样做的回报是高于风险的，和写这篇文章相比，我们更喜欢在我们的项目中使用。)</p>
+<h3 id="Activity和Fragment的生命周期-1">Activity和Fragment的生命周期</h3><p>现在，我们想在这里利用RxAndroid解决上面提到的生命周期的问题，我们不需要指定mainThread() scheduler(顺便说一句，你只需要导入RxAndroid)。就像下面这样</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AppObservable.bindFragment(<span class="keyword">this</span>, webService.doSomething(someData))</span><br><span class="line">   .subscribe(</span><br><span class="line">       result -&gt; resultText.setText(<span class="string">"It worked!"</span>)),</span><br><span class="line">       e -&gt; handleError(e)</span><br><span class="line">   );</span><br></pre></td></tr></table></figure>
 <p>我通常的做法是在应用的Base Fragment里面创建一个帮助方法来简化这一点，你可以参考我维护的一个<a href="https://github.com/rosshambrick/standardlib/blob/master/src/main/java/com/rosshambrick/standardlib/RxFragment.java" target="_blank" rel="external">Base RxFragment</a> 获得一些指导。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bind(webService.doSomething(someData))</span><br><span class="line">   .subscribe(</span><br><span class="line">       result -&gt; resultText.setText(<span class="string">"It worked!"</span>)),</span><br><span class="line">       e -&gt; handleError(e)</span><br><span class="line">   );</span><br></pre></td></tr></table></figure>
 <p>如果我们的Activity或者是Fragment不再是可见状态，那么AppObservable.bindFragment()可以在调用链中插入一个垫片，来阻止onNext()运行。如果当Task试图运行的时候，Activity、Fragment是不可达状态，subscription 将会取消订阅并且停止运行，所以不会存在空指针的风险，程序也不会崩溃。一个需要注意的是，当我们离开Activity和Fragment时，我们会暂时或者是永久的泄露，这取决于问题中的Observable 的行为。所以在bind()方法中，我也会调用LifeCycleObservable机制，当Fragment销毁的时候自动取消。这样做的好处是一劳永逸。</p>
 <p>所以，这解决了首要的两个问题，但是下面这一个才是RxJava大发神威的地方。</p>
-<h3 id="组合的多个Web_Server调用">组合的多个Web Server调用</h3><p>在这里我不会详细的说明，因为这是一个<a href="http://reactivex.io/documentation/observable.html" target="_blank" rel="external">复杂的问题</a>，但是通过使用Observables，你可以用非常简单和易于理解的方式完成复杂的事情。这里是一个链式Web Service调用的例子，这些请求互相依赖，在线程池中运行第二批并行调用，然后在将结果返回给Observer之前，对数据进行合并和排序。为了更好的测量，我甚至在里面放置了一个过滤器。所有的业务逻辑都在下面这短短五行代码里面…</p>
+<h3 id="组合的多个Web_Server调用-1">组合的多个Web Server调用</h3><p>在这里我不会详细的说明，因为这是一个<a href="http://reactivex.io/documentation/observable.html" target="_blank" rel="external">复杂的问题</a>，但是通过使用Observables，你可以用非常简单和易于理解的方式完成复杂的事情。这里是一个链式Web Service调用的例子，这些请求互相依赖，在线程池中运行第二批并行调用，然后在将结果返回给Observer之前，对数据进行合并和排序。为了更好的测量，我甚至在里面放置了一个过滤器。所有的业务逻辑都在下面这短短五行代码里面…</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Observable&lt;List&lt;CityWeather&gt;&gt; getWeatherForLargeUsCapitals() &#123;</span><br><span class="line">   <span class="keyword">return</span> cityDirectory.getUsCapitals() </span><br><span class="line">       .flatMap(cityList -&gt; Observable.from(cityList))</span><br><span class="line">       .filter(city -&gt; city.getPopulation() &gt; <span class="number">500</span>,<span class="number">000</span>)</span><br><span class="line">       .flatMap(city -&gt; weatherService.getCurrentWeather(city)) <span class="comment">//each runs in parallel</span></span><br><span class="line">       .toSortedList((cw1,cw2) -&gt; cw1.getCityName().compare(cw2.getCityName()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="旋转时的缓存(或是其他情况)">旋转时的缓存(或是其他情况)</h3><p>既然这是一个加载的数据，那么我们可能需要将数据进行缓存，这样当我们旋转设备的时候，就不会触发再次调用全部web service的事件。一种实现的方式是保留Fragment，并且保存一个对Observable 的缓存的引用，就像下面这样：</p>
+<h3 id="旋转时的缓存(或是其他情况)-1">旋转时的缓存(或是其他情况)</h3><p>既然这是一个加载的数据，那么我们可能需要将数据进行缓存，这样当我们旋转设备的时候，就不会触发再次调用全部web service的事件。一种实现的方式是保留Fragment，并且保存一个对Observable 的缓存的引用，就像下面这样：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line"></span><br><span class="line">    setRetainInstance(<span class="keyword">true</span>);</span><br><span class="line">    weatherObservable = weatherManager.getWeatherForLargeUsCapitals().cache();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onViewCreated</span><span class="params">(...)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onViewCreated(...)</span><br><span class="line">    bind(weatherObservable).subscribe(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在旋转之后，订阅者的缓存实例就会立即发出和第一次请求相同的请求，防止真实的Web Service请求发生。</p>
 <p>如果你想要避免缓存的Fragment(并且有很充足的理由去避免它)，我们可以通过使用AsyncSubject实现缓存。无论何时被订阅，AsyncSubject 都会重新发出最后的事件。或者我们可以使用BehaviorSubject获得最后的值和新值改变整个应用程序。</p>
@@ -120,7 +134,7 @@
 <p>因为“缓存”是由Manager单独管理的，它不会与Fragment/Activity的周期绑定，并且在Activity/Fragment中将持续存在。如果你想强迫刷新基于以类似的方式来保留Fragment缓存实例的生命周期事件，你可以这样做：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">super</span>.onCreate()</span><br><span class="line">   <span class="keyword">if</span> (savedInstanceState == <span class="keyword">null</span>) &#123;</span><br><span class="line">       weatherManager.invalidate(); <span class="comment">//invalidate cache on fresh start</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这件事情的伟大之处在于，它不像是Loaders，我们可以很灵活的缓则缓存很多Activity和Services中的结果。只需要去掉oncreate()中的invalidate()调用，并让你的Manager对象决定何时发出新的气象数据就可以了。可能是一个Timer，或者是用户定位改变，或者是其他任何时刻，这真的没关系。你现在可以控制什么时候如何去更新缓存和重新加载。并且当你的缓存策略发生改变的时候，Fragment和你的Manager对象之间的接口不需要进行改变。它只不过是一个 List<weatherdata>的Observer。</weatherdata></p>
-<h3 id="可测试性">可测试性</h3><p>测试是我们想要实现干净、简单的最后一个挑战。(让我们忽略一个事实，在测试期间,我们可能想要模拟出实际的Web服务。这样做很简单，下面通过一个接口注入到那些依赖你可能已经正在做的标准模式中。)</p>
+<h3 id="可测试性-1">可测试性</h3><p>测试是我们想要实现干净、简单的最后一个挑战。(让我们忽略一个事实，在测试期间,我们可能想要模拟出实际的Web服务。这样做很简单，下面通过一个接口注入到那些依赖你可能已经正在做的标准模式中。)</p>
 <p>幸运的是，Observables给我们一个简单的方式来将一个异步方法变成同步，你要做的就是使用toblocking()方法。我们看一个测试例子。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List results = getWeatherForLargeUsCapitals().toBlocking().first();</span><br><span class="line">assertEquals(<span class="number">12</span>, results.size());</span><br></pre></td></tr></table></figure>
 <p>就像这样，我们没有必要去使用Futures或者是CountDownLatchs让做一些脆弱的操作，比如线程睡眠或者是让我们的测试变得很复杂，我们的测试现在是简单、干净、可维护的。</p>
@@ -139,15 +153,15 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/" data-id="cibhzt7ef000k6c1ihz5wrupb" class="article-share-link" data-share="baidu">分享到</a>
+        <a data-url="http://localhost:8080/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/" data-id="cibinfrgr000szsflmdpoipvm" class="article-share-link" data-share="baidu">分享到</a>
       
 
       
-        <a href="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/#ds-thread" class="article-comment-link">评论</a>
+        <a href="http://localhost:8080/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/#ds-thread" class="article-comment-link">评论</a>
       
 
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://localhost:8080/AndroidBlog/tags/AsyncTask/">AsyncTask</a></li></ul>
 
     </footer>
   </div>
@@ -155,7 +169,7 @@
     
 <nav id="article-nav">
   
-    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="http://localhost:8080/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
       <div class="article-nav-title">
         
@@ -165,7 +179,7 @@
     </a>
   
   
-    <a href="http://likebamboo.com/AndroidBlog/2015/04/30/navigation-drawer-styling-according-material-design/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="http://localhost:8080/AndroidBlog/2015/04/30/navigation-drawer-styling-according-material-design/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">符合Material Design的抽屉导航效果：</div>
     </a>
@@ -177,7 +191,7 @@
 
 
   <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/" data-title="使用RxJava.Observable取代AsyncTask和AsyncTaskLoader" data-url="http://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/"></div>
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/" data-title="使用RxJava.Observable取代AsyncTask和AsyncTaskLoader" data-url="http://localhost:8080/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/"></div>
   </section>
 </section>
       
@@ -187,7 +201,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -196,7 +210,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
     </div>
   </div>
 
@@ -205,7 +219,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://localhost:8080/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://localhost:8080/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
     </div>
   </div>
 
@@ -217,23 +231,23 @@
       <ul>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
+            <a href="http://localhost:8080/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
+            <a href="http://localhost:8080/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
+            <a href="http://localhost:8080/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
+            <a href="http://localhost:8080/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
+            <a href="http://localhost:8080/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
           </li>
         
       </ul>
@@ -258,14 +272,14 @@
   </div>
   <nav id="mobile-nav">
   
-    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+    <a href="http://localhost:8080/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
   
-    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+    <a href="http://localhost:8080/AndroidBlog/archives" class="mobile-nav-link">归档</a>
   
 </nav>
   <!-- totop start -->
 <div id="totop">
-<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+<a title="返回顶部"><img src="http://localhost:8080/AndroidBlog/img/scrollup.png"/></a>
 </div>
 
 <!-- totop end -->
@@ -296,7 +310,7 @@ var duoshuoQuery = {short_name:"likebamboo"};
     <a class="article-share-more" data-cmd="more" title="更多"></a>
   </div>
 </div>
-<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://localhost:8080/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
 
 <!-- 百度分享 end -->
 
@@ -305,7 +319,7 @@ var duoshuoQuery = {short_name:"likebamboo"};
 
 
 
-<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+<script src="http://localhost:8080/AndroidBlog/js/script.js" type="text/javascript"></script>
 
 </div>
 </body>

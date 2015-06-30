@@ -10,11 +10,11 @@
 在理想的情况下，如果我们把主题的设置看作是一项配置，那么我们应该能够在类似 “the">
 <meta property="og:type" content="article">
 <meta property="og:title" content="让你的Android应用能使用多种主题 ( Part 2 )">
-<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/index.html">
+<meta property="og:url" content="http://localhost:8080/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/index.html">
 <meta property="og:site_name" content="Android博客">
 <meta property="og:description" content="在 上一篇博文 中，我们创建了一个明亮风格的主题，并且为实现使用多种主题作了一些前期的准备，而今天呢，我打算在这篇博文中接着上一篇博文继续为大家讲解，而我今天要讲的内容大概是以下三个部分：使 Android 应用能够使用多种主题，创建一个灰暗风格的主题，以及允许 Android 应用在运行时自由地切换不同的主题。
 在理想的情况下，如果我们把主题的设置看作是一项配置，那么我们应该能够在类似 “the">
-<meta property="og:updated_time" content="2015-06-26T03:03:12.000Z">
+<meta property="og:updated_time" content="2015-06-30T01:19:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="让你的Android应用能使用多种主题 ( Part 2 )">
 <meta name="twitter:description" content="在 上一篇博文 中，我们创建了一个明亮风格的主题，并且为实现使用多种主题作了一些前期的准备，而今天呢，我打算在这篇博文中接着上一篇博文继续为大家讲解，而我今天要讲的内容大概是以下三个部分：使 Android 应用能够使用多种主题，创建一个灰暗风格的主题，以及允许 Android 应用在运行时自由地切换不同的主题。
@@ -25,7 +25,7 @@
   
     <link rel="icon" href="/favicon.png">
   
-  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link rel="stylesheet" href="http://localhost:8080/AndroidBlog/css/style.css" type="text/css">
   <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
   <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
   
@@ -38,11 +38,11 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+        <a href="http://localhost:8080/AndroidBlog/" id="logo">Android博客</a>
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+          <a href="http://localhost:8080/AndroidBlog/" id="subtitle">读万卷书</a>
         </h2>
       
     </div>
@@ -50,9 +50,9 @@
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"></a>
         
-          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+          <a class="main-nav-link" href="http://localhost:8080/AndroidBlog/index.html">首页</a>
         
-          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+          <a class="main-nav-link" href="http://localhost:8080/AndroidBlog/archives">归档</a>
         
       </nav>
       <nav id="sub-nav">
@@ -68,7 +68,7 @@
           <input name=tn type=hidden value="bds">
           <input name=cl type=hidden value="3">
           <input name=ct type=hidden value="2097152">
-          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+          <input type="hidden" name="si" value="localhost:8080/AndroidBlog">
         </form>
       </div>
     </div>
@@ -77,12 +77,12 @@
     <div class="outer">
       <section id="main"><article id="post-support-multiple-themes-android-app-part-2" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/" class="article-date">
+    <a href="http://localhost:8080/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/" class="article-date">
   <time datetime="2015-04-28T16:00:00.000Z" itemprop="datePublished">2015-04-29</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a>
+    <a class="article-category-link" href="http://localhost:8080/AndroidBlog/categories/翻译/">翻译</a>►<a class="article-category-link" href="http://localhost:8080/AndroidBlog/categories/翻译/连载/">连载</a>
   </div>
 
   </div>
@@ -104,7 +104,9 @@
         <p>在 <a href="http://www.likebamboo.com/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/" target="_blank" rel="external">上一篇博文</a> 中，我们创建了一个明亮风格的主题，并且为实现使用多种主题作了一些前期的准备，而今天呢，我打算在这篇博文中接着上一篇博文继续为大家讲解，而我今天要讲的内容大概是以下三个部分：使 Android 应用能够使用多种主题，创建一个灰暗风格的主题，以及允许 Android 应用在运行时自由地切换不同的主题。</p>
 <p>在理想的情况下，如果我们把主题的设置看作是一项配置，那么我们应该能够在类似 “theme-qualifier” 的目录下指定我们想要的特定主题，例如：values-dark 就是我们想要的灰暗风格主题；而values-light 则是明亮风格的主题。但很遗憾，在这篇博文所要讲述的实现方法里，这种方法并没有成为实现方式之一。<br><a id="more"></a><br>那么我们要怎么为不同的主题指定相应的资源文件呢？如果我们有了解过 appcompat 是怎么使用资源文件的话，对 Android 系统是如何管理和使用资源文件会有一个粗略的认识。毫无疑问，<a href="https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic" target="_blank" rel="external">Materialistic</a> 中使用的方法就是类似于 Android 系统使用的方法。</p>
 <h2 id="主题设置">主题设置</h2><p><strong>values/styles.xml</strong></p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"AppTheme"</span> <span class="attribute">parent</span>=<span class="value">"Theme.AppCompat.Light"</span>&gt;</span><span class="css"></span><br><span class="line">    &lt;!<span class="tag">--</span> <span class="tag">original</span> <span class="tag">theme</span> <span class="tag">attributes</span> <span class="tag">--</span>&gt;</span><br><span class="line">    ...</span><br><span class="line">    </span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"AppTheme.Dark"</span> <span class="attribute">parent</span>=<span class="value">"Theme.AppCompat"</span>&gt;</span><span class="css"></span><br><span class="line">   		 &lt;<span class="tag">item</span> <span class="tag">name</span>="<span class="tag">colorPrimary</span>"&gt;<span class="at_rule">@<span class="keyword">color/colorPrimaryInverse&lt;/item&gt;</span></span><br><span class="line">   		 &lt;item name=<span class="string">"colorPrimaryDark"</span>&gt;@color/colorPrimaryDarkInverse&lt;/item&gt;</span><br><span class="line">   		 &lt;item name=<span class="string">"colorAccent"</span>&gt;@color/colorAccentInverse&lt;/item&gt;</span><br><span class="line">   		 &lt;item name=<span class="string">"android:textColorPrimary"</span>&gt;@color/textColorPrimaryInverse&lt;/item&gt;</span><br><span class="line">   		 &lt;item name=<span class="string">"android:textColorSecondary"</span>&gt;@color/textColorSecondaryInverse&lt;/item&gt;</span><br><span class="line">   		 &lt;item name=<span class="string">"android:textColorPrimaryInverse"</span>&gt;@color/textColorPrimary&lt;/item&gt;</span><br><span class="line">   		 &lt;item name=<span class="string">"android:textColorSecondaryInverse"</span>&gt;@color/textColorSecondary&lt;/item&gt;</span><br><span class="line">    ...</span><br><span class="line">    </span></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br><span class="line">```    </span><br><span class="line"></span><br><span class="line">**values/color.xml**</span><br><span class="line"></span><br><span class="line">```xml</span><br><span class="line">    <span class="comment">&lt;!-- original color palette --&gt;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">&lt;!-- alternative color palette --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimaryInverse"</span>&gt;</span>...<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimaryDarkInverse"</span>&gt;</span>...<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorAccentInverse"</span>&gt;</span>...<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"AppTheme"</span> <span class="attribute">parent</span>=<span class="value">"Theme.AppCompat.Light"</span>&gt;</span><span class="css"></span><br><span class="line">&lt;!<span class="tag">--</span> <span class="tag">original</span> <span class="tag">theme</span> <span class="tag">attributes</span> <span class="tag">--</span>&gt;</span><br><span class="line">...</span><br><span class="line"></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"AppTheme.Dark"</span> <span class="attribute">parent</span>=<span class="value">"Theme.AppCompat"</span>&gt;</span><span class="css"></span><br><span class="line">	 &lt;<span class="tag">item</span> <span class="tag">name</span>="<span class="tag">colorPrimary</span>"&gt;<span class="at_rule">@<span class="keyword">color/colorPrimaryInverse&lt;/item&gt;</span></span><br><span class="line">	 &lt;item name=<span class="string">"colorPrimaryDark"</span>&gt;@color/colorPrimaryDarkInverse&lt;/item&gt;</span><br><span class="line">	 &lt;item name=<span class="string">"colorAccent"</span>&gt;@color/colorAccentInverse&lt;/item&gt;</span><br><span class="line">	 &lt;item name=<span class="string">"android:textColorPrimary"</span>&gt;@color/textColorPrimaryInverse&lt;/item&gt;</span><br><span class="line">	 &lt;item name=<span class="string">"android:textColorSecondary"</span>&gt;@color/textColorSecondaryInverse&lt;/item&gt;</span><br><span class="line">	 &lt;item name=<span class="string">"android:textColorPrimaryInverse"</span>&gt;@color/textColorPrimary&lt;/item&gt;</span><br><span class="line">	 &lt;item name=<span class="string">"android:textColorSecondaryInverse"</span>&gt;@color/textColorSecondary&lt;/item&gt;</span><br><span class="line">...</span><br><span class="line"></span></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>values/color.xml</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- original color palette --&gt;</span></span><br><span class="line">...</span><br><span class="line"><span class="comment">&lt;!-- alternative color palette --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimaryInverse"</span>&gt;</span>...<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimaryDarkInverse"</span>&gt;</span>...<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorAccentInverse"</span>&gt;</span>...<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>在上面的操作中我们创建了一个名叫 AppTheme.Dark 的灰暗风格主题，此外，为了保持 style 和 color 的一致性，我们的 AppTheme.Dark 主题衍生于 appcompat 的 Theme.AppCompat 主题（一个 Android 自带的灰暗风格主题）。然而，由于我们的两个主题（明亮风格和灰暗风格）衍生于不同的基础主题，因此这两个主题之间并不能够进行属性的共享（在JAVA中，类只能进行单继承）。</p>
 <p>这两个主题理应有一些恰当的属性值，能同时用于设置基本的 Android 和 appcompat的主题属性，例如：在灰暗风格中，android:textColorPrimary 应该被设置为明亮的，而在明亮风格中，android:textColorPrimary则应该是灰暗的。按照常用的命名习惯，我们在这里将用相反的后缀来区分可替代的主题颜色。</p>
 <h2 id="温馨小提示">温馨小提示</h2><blockquote>
@@ -139,15 +141,15 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/" data-id="cibhyg9z2000evw1islkrrpif" class="article-share-link" data-share="baidu">分享到</a>
+        <a data-url="http://localhost:8080/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/" data-id="cibd5w1wu000gswfl8n86vxyi" class="article-share-link" data-share="baidu">分享到</a>
       
 
       
-        <a href="http://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/#ds-thread" class="article-comment-link">评论</a>
+        <a href="http://localhost:8080/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/#ds-thread" class="article-comment-link">评论</a>
       
 
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://localhost:8080/AndroidBlog/tags/主题/">主题</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://localhost:8080/AndroidBlog/tags/翻译/">翻译</a></li></ul>
 
     </footer>
   </div>
@@ -155,19 +157,19 @@
     
 <nav id="article-nav">
   
-    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/How-to-hideshow-Toolbar-when-list-is-scroling-part-1/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="http://localhost:8080/AndroidBlog/2015/04/29/the-clean-architecture/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
       <div class="article-nav-title">
         
-          ListView或者RecycleView滚动时隐藏Toolbar (1)
+          The Clean Architecture
         
       </div>
     </a>
   
   
-    <a href="http://likebamboo.com/AndroidBlog/2015/04/29/how-google-team-tests-mobile-apps/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="http://localhost:8080/AndroidBlog/2015/04/28/support-multiple-themes-android-app-part-1/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">Google+ 团队的 Android UI 测试</div>
+      <div class="article-nav-title">在你的Android App中支持多主题</div>
     </a>
   
 </nav>
@@ -177,7 +179,7 @@
 
 
   <section id="comments">
-    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/29/support-multiple-themes-android-app-part-2/" data-title="让你的Android应用能使用多种主题 ( Part 2 )" data-url="http://likebamboo.com/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/"></div>
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/04/29/support-multiple-themes-android-app-part-2/" data-title="让你的Android应用能使用多种主题 ( Part 2 )" data-url="http://localhost:8080/AndroidBlog/2015/04/29/support-multiple-themes-android-app-part-2/"></div>
   </section>
 </section>
       
@@ -187,7 +189,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">38</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://localhost:8080/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -196,7 +198,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://localhost:8080/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li></ul>
     </div>
   </div>
 
@@ -205,7 +207,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://localhost:8080/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://localhost:8080/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
     </div>
   </div>
 
@@ -217,23 +219,23 @@
       <ul>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
+            <a href="http://localhost:8080/AndroidBlog/2015/05/01/android-getting-started-with-material-design/">开始学习Material Design</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
+            <a href="http://localhost:8080/AndroidBlog/2015/05/01/android-performance-patterns/">Android 应用性能优化系列</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
+            <a href="http://localhost:8080/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/">深入理解 Shared Element Transition (part 3a)</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
+            <a href="http://localhost:8080/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/">延迟共享元素的过渡动画 (part 3b)</a>
           </li>
         
           <li>
-            <a href="http://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
+            <a href="http://localhost:8080/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/">在Activity中使用Thread导致的内存泄漏</a>
           </li>
         
       </ul>
@@ -258,14 +260,14 @@
   </div>
   <nav id="mobile-nav">
   
-    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+    <a href="http://localhost:8080/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
   
-    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+    <a href="http://localhost:8080/AndroidBlog/archives" class="mobile-nav-link">归档</a>
   
 </nav>
   <!-- totop start -->
 <div id="totop">
-<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+<a title="返回顶部"><img src="http://localhost:8080/AndroidBlog/img/scrollup.png"/></a>
 </div>
 
 <!-- totop end -->
@@ -296,7 +298,7 @@ var duoshuoQuery = {short_name:"likebamboo"};
     <a class="article-share-more" data-cmd="more" title="更多"></a>
   </div>
 </div>
-<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://localhost:8080/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
 
 <!-- 百度分享 end -->
 
@@ -305,7 +307,7 @@ var duoshuoQuery = {short_name:"likebamboo"};
 
 
 
-<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+<script src="http://localhost:8080/AndroidBlog/js/script.js" type="text/javascript"></script>
 
 </div>
 </body>

@@ -3,10 +3,10 @@
   
   <title><![CDATA[Android博客]]></title>
   <subtitle><![CDATA[读万卷书]]></subtitle>
-  <link href="http://likebamboo.com/AndroidBlog/atom.xml" rel="self"/>
-  <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog//"/>
-  <updated>2015-06-29T14:12:22.000Z</updated>
-  <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog//</id>
+  <link href="http://localhost:8080/AndroidBlog/atom.xml" rel="self"/>
+  <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog//"/>
+  <updated>2015-06-30T01:20:28.000Z</updated>
+  <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog//</id>
   
   <author>
     <name><![CDATA[likebamboo]]></name>
@@ -17,10 +17,10 @@
   
   <entry>
     <title><![CDATA[开始学习Material Design]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/android-getting-started-with-material-design/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/android-getting-started-with-material-design/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/android-getting-started-with-material-design/</id>
     <published>2015-04-30T16:00:00.000Z</published>
-    <updated>2015-06-29T14:12:22.000Z</updated>
+    <updated>2015-06-30T01:20:28.000Z</updated>
     <content type="html"><![CDATA[<p>你可能已经听说过Android Lollipop中引入的Material Design.Material Design引入了很多新的东西，如Material 主题, 新的控件, 自定义阴影, 矢量绘制 and 自定义动画.如果你还没用过Material Design，那么本文很适合你。<br><a id="more"></a><br>我们将在本文中学习Material Design开发的基本步骤:编写自定义主题和用RecyclerView实现navigation drawer.</p>
 <p>在下面的链接中，你能够学到更多有关Material Design的知识  </p>
 <p><a href="http://www.google.com/design/spec/material-design/introduction.html#" target="_blank" rel="external">Material Design Specifications</a>  </p>
@@ -38,7 +38,13 @@
 <p>你能选择适合你APP风格的颜色</p>
 <h3 id="3-创建Material_Design_主题">3.创建Material Design 主题</h3><p>1.在as中，创建新项目,选择BlankActivity.</p>
 <p>2.打开res-&gt;values-&gt;strings.xml 添加以下字符值</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">strings.xml</span><br><span class="line"><span class="tag">&lt;<span class="title">resources</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"app_name"</span>&gt;</span>Material Design<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"action_settings"</span>&gt;</span>Settings<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"action_search"</span>&gt;</span>Search<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"drawer_open"</span>&gt;</span>Open<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"drawer_close"</span>&gt;</span>Close<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"nav_item_home"</span>&gt;</span>Home<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"nav_item_friends"</span>&gt;</span>Friends<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"nav_item_notifications"</span>&gt;</span>Messages<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment">&lt;!-- navigation drawer item labels  --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string-array</span> <span class="attribute">name</span>=<span class="value">"nav_drawer_labels"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="title">item</span>&gt;</span>@string/nav_item_home<span class="tag">&lt;/<span class="title">item</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="title">item</span>&gt;</span>@string/nav_item_friends<span class="tag">&lt;/<span class="title">item</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="title">item</span>&gt;</span>@string/nav_item_notifications<span class="tag">&lt;/<span class="title">item</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">string-array</span>&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"title_messages"</span>&gt;</span>Messages<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"title_friends"</span>&gt;</span>Friends<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"title_home"</span>&gt;</span>Home<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">resources</span>&gt;</span>  </span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">3.打开res-&gt;values-&gt;colors 添加以下颜色,如果你没有找到colors.xml文件，那么新建一个.</span><br><span class="line">   </span><br><span class="line">```xml </span><br><span class="line">colors.xml  </span><br><span class="line"><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">resources</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimary"</span>&gt;</span>#F50057<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimaryDark"</span>&gt;</span>#C51162<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"textColorPrimary"</span>&gt;</span>#FFFFFF<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"windowBackground"</span>&gt;</span>#FFFFFF<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"navigationBarColor"</span>&gt;</span>#000000<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorAccent"</span>&gt;</span>#FF80AB<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="title">resources</span>&gt;</span>  </span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">4. 打开 dimens.xml文件，加入以下代码</span><br><span class="line"> </span><br><span class="line">  </span><br><span class="line">```xml  </span><br><span class="line">dimens.xml</span><br><span class="line"><span class="tag">&lt;<span class="title">resources</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Default screen margins, per the Android Design guidelines. --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">dimen</span> <span class="attribute">name</span>=<span class="value">"activity_horizontal_margin"</span>&gt;</span>16dp<span class="tag">&lt;/<span class="title">dimen</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">dimen</span> <span class="attribute">name</span>=<span class="value">"activity_vertical_margin"</span>&gt;</span>16dp<span class="tag">&lt;/<span class="title">dimen</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">dimen</span> <span class="attribute">name</span>=<span class="value">"nav_drawer_width"</span>&gt;</span>260dp<span class="tag">&lt;/<span class="title">dimen</span>&gt;</span> </span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="title">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">strings.xml</span><br><span class="line"><span class="tag">&lt;<span class="title">resources</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"app_name"</span>&gt;</span>Material Design<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"action_settings"</span>&gt;</span>Settings<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"action_search"</span>&gt;</span>Search<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"drawer_open"</span>&gt;</span>Open<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"drawer_close"</span>&gt;</span>Close<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"nav_item_home"</span>&gt;</span>Home<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"nav_item_friends"</span>&gt;</span>Friends<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"nav_item_notifications"</span>&gt;</span>Messages<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment">&lt;!-- navigation drawer item labels  --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string-array</span> <span class="attribute">name</span>=<span class="value">"nav_drawer_labels"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="title">item</span>&gt;</span>@string/nav_item_home<span class="tag">&lt;/<span class="title">item</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="title">item</span>&gt;</span>@string/nav_item_friends<span class="tag">&lt;/<span class="title">item</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="title">item</span>&gt;</span>@string/nav_item_notifications<span class="tag">&lt;/<span class="title">item</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">string-array</span>&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"title_messages"</span>&gt;</span>Messages<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"title_friends"</span>&gt;</span>Friends<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">string</span> <span class="attribute">name</span>=<span class="value">"title_home"</span>&gt;</span>Home<span class="tag">&lt;/<span class="title">string</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>3.打开res-&gt;values-&gt;colors 添加以下颜色,如果你没有找到colors.xml文件，那么新建一个.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">colors.xml  </span><br><span class="line"><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">resources</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimary"</span>&gt;</span>#F50057<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorPrimaryDark"</span>&gt;</span>#C51162<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"textColorPrimary"</span>&gt;</span>#FFFFFF<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"windowBackground"</span>&gt;</span>#FFFFFF<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"navigationBarColor"</span>&gt;</span>#000000<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">color</span> <span class="attribute">name</span>=<span class="value">"colorAccent"</span>&gt;</span>#FF80AB<span class="tag">&lt;/<span class="title">color</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="title">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>打开 dimens.xml文件，加入以下代码</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dimens.xml</span><br><span class="line"><span class="tag">&lt;<span class="title">resources</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Default screen margins, per the Android Design guidelines. --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">dimen</span> <span class="attribute">name</span>=<span class="value">"activity_horizontal_margin"</span>&gt;</span>16dp<span class="tag">&lt;/<span class="title">dimen</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">dimen</span> <span class="attribute">name</span>=<span class="value">"activity_vertical_margin"</span>&gt;</span>16dp<span class="tag">&lt;/<span class="title">dimen</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">dimen</span> <span class="attribute">name</span>=<span class="value">"nav_drawer_width"</span>&gt;</span>260dp<span class="tag">&lt;/<span class="title">dimen</span>&gt;</span> </span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="title">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>5.打开styles.xml文件加入以下代码，在这里定义的style对于所有的androidbanben都是通用的。  </p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">styles.xml</span><br><span class="line"><span class="tag">&lt;<span class="title">resources</span>&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"MyMaterialTheme"</span> <span class="attribute">parent</span>=<span class="value">"MyMaterialTheme.Base"</span>&gt;</span><span class="css"></span><br><span class="line"> </span><br><span class="line">    </span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">style</span> <span class="attribute">name</span>=<span class="value">"MyMaterialTheme.Base"</span> 				<span class="attribute">parent</span>=<span class="value">"Theme.AppCompat.Light.DarkActionBar"</span>&gt;</span><span class="css"></span><br><span class="line">        &lt;<span class="tag">item</span> <span class="tag">name</span>="<span class="rule"><span class="attribute">android</span>:<span class="value">windowNoTitle<span class="string">"&gt;true&lt;/item&gt;</span><br><span class="line">        &lt;item name="</span>windowActionBar<span class="string">"&gt;false&lt;/item&gt;</span><br><span class="line">        &lt;item name="</span>colorPrimary<span class="string">"&gt;@color/colorPrimary&lt;/item&gt;</span><br><span class="line">        &lt;item name="</span>colorPrimaryDark<span class="string">"&gt;@color/colorPrimaryDark&lt;/item&gt;</span><br><span class="line">        &lt;item name="</span>colorAccent<span class="string">"&gt;@color/colorAccent&lt;/item&gt;</span><br><span class="line">    </span></span></span></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br><span class="line">     </span><br><span class="line"><span class="tag">&lt;/<span class="title">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>6.在res目录下，创建一个values-v21目录,并styles.xml<br>文件夹,这些style仅仅用于Android Lollipop</p>
@@ -69,7 +75,9 @@
 <h3 id="3-2添加Navigation_Drawer">3.2添加Navigation Drawer</h3><p>添加Natigation Drawer的方式跟lollipop以前一样,但我们使用RecyclerView来实现Menu Items.  </p>
 <p>14.在java文件下创建三个包，分别命名为activity,adapter,model,把MainActivity移到activity包种，这样整个项目看起来就更有组织性。 </p>
 <p>15.在build.gradle中添加以下依赖库  </p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">build.gradle</span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    <span class="keyword">compile</span> <span class="keyword">fileTree</span>(dir: <span class="string">'libs'</span>, <span class="keyword">include</span>: [<span class="string">'*.jar'</span>])</span><br><span class="line">    <span class="keyword">compile</span> <span class="string">'com.android.support:appcompat-v7:22.0.0'</span></span><br><span class="line">    <span class="keyword">compile</span> <span class="string">'com.android.support:recyclerview-v7:21.0.+'</span></span><br><span class="line">&#125;  </span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line"><span class="number">16</span>.在model包下添加NavDrawerItem.java文件作为menuItem,代码如下：   </span><br><span class="line">  </span><br><span class="line">```java  </span><br><span class="line">NavDrawerItem.java</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> NavDrawerItem &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> showNotify;</span><br><span class="line">    <span class="keyword">private</span> String title;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> NavDrawerItem() &#123;</span><br><span class="line"> </span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> NavDrawerItem(<span class="keyword">boolean</span> showNotify, String title) &#123;</span><br><span class="line">        <span class="keyword">this</span>.showNotify = showNotify;</span><br><span class="line">        <span class="keyword">this</span>.title = title;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> isShowNotify() &#123;</span><br><span class="line">        <span class="keyword">return</span> showNotify;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> setShowNotify(<span class="keyword">boolean</span> showNotify) &#123;</span><br><span class="line">        <span class="keyword">this</span>.showNotify = showNotify;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> String getTitle() &#123;</span><br><span class="line">        <span class="keyword">return</span> title;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> setTitle(String title) &#123;</span><br><span class="line">        <span class="keyword">this</span>.title = title;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">build.gradle</span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    <span class="keyword">compile</span> <span class="keyword">fileTree</span>(dir: <span class="string">'libs'</span>, <span class="keyword">include</span>: [<span class="string">'*.jar'</span>])</span><br><span class="line">    <span class="keyword">compile</span> <span class="string">'com.android.support:appcompat-v7:22.0.0'</span></span><br><span class="line">    <span class="keyword">compile</span> <span class="string">'com.android.support:recyclerview-v7:21.0.+'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>16.在model包下添加NavDrawerItem.java文件作为menuItem,代码如下：   </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">NavDrawerItem.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NavDrawerItem</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> showNotify;</span><br><span class="line">    <span class="keyword">private</span> String title;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NavDrawerItem</span><span class="params">()</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NavDrawerItem</span><span class="params">(<span class="keyword">boolean</span> showNotify, String title)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.showNotify = showNotify;</span><br><span class="line">        <span class="keyword">this</span>.title = title;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isShowNotify</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> showNotify;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setShowNotify</span><span class="params">(<span class="keyword">boolean</span> showNotify)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.showNotify = showNotify;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getTitle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> title;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTitle</span><span class="params">(String title)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.title = title;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>17.添加nav_drawer_row.xml布局文件,代码如下：  </p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">RelativeLayout</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span></span><br><span class="line">    <span class="attribute">android:clickable</span>=<span class="value">"true"</span>&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">TextView</span></span><br><span class="line">        <span class="attribute">android:id</span>=<span class="value">"@+id/title"</span></span><br><span class="line">        <span class="attribute">android:layout_width</span>=<span class="value">"fill_parent"</span></span><br><span class="line">        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span></span><br><span class="line">        <span class="attribute">android:paddingLeft</span>=<span class="value">"30dp"</span></span><br><span class="line">        <span class="attribute">android:paddingTop</span>=<span class="value">"10dp"</span></span><br><span class="line">        <span class="attribute">android:paddingBottom</span>=<span class="value">"10dp"</span></span><br><span class="line">        <span class="attribute">android:textSize</span>=<span class="value">"15dp"</span></span><br><span class="line">        <span class="attribute">android:textStyle</span>=<span class="value">"bold"</span> /&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="tag">&lt;/<span class="title">RelativeLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>18.下载这个图片,这图片用在导航栏的头部  </p>
@@ -92,101 +100,13 @@
 <h3 id="3-3实现Navigation_Drawer的选择">3.3实现Navigation Drawer的选择</h3><p>虽然navigation drawer已经能够工作了，但是MENU的子选项无法工作，这是因为我们还没有处理RecyclerView item是的点击监听。   </p>
 <p>由于我们有三子菜单(Home,Friends&amp;Mesages), 因此我们需要创建三个独立的Fragment  </p>
 <p>24.创建fragment_home布局文件,代码如下：  </p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">fragment_home.xml</span><br><span class="line"><span class="tag">&lt;<span class="title">RelativeLayout</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">xmlns:tools</span>=<span class="value">"http://schemas.android.com/tools"</span></span><br><span class="line">    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:orientation</span>=<span class="value">"vertical"</span></span><br><span class="line">    <span class="attribute">tools:context</span>=<span class="value">"androidhive.info.materialdesign.activity.HomeFragment"</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">TextView</span></span><br><span class="line">        <span class="attribute">android:id</span>=<span class="value">"@+id/label"</span></span><br><span class="line">        <span class="attribute">android:layout_alignParentTop</span>=<span class="value">"true"</span></span><br><span class="line">        <span class="attribute">android:layout_marginTop</span>=<span class="value">"100dp"</span></span><br><span class="line">        <span class="attribute">android:layout_width</span>=<span class="value">"fill_parent"</span></span><br><span class="line">        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span></span><br><span class="line">        <span class="attribute">android:gravity</span>=<span class="value">"center_horizontal"</span></span><br><span class="line">        <span class="attribute">android:textSize</span>=<span class="value">"45dp"</span></span><br><span class="line">        <span class="attribute">android:text</span>=<span class="value">"HOME"</span></span><br><span class="line">        <span class="attribute">android:textStyle</span>=<span class="value">"bold"</span>/&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">TextView</span></span><br><span class="line">        <span class="attribute">android:layout_below</span>=<span class="value">"@id/label"</span></span><br><span class="line">        <span class="attribute">android:layout_centerInParent</span>=<span class="value">"true"</span></span><br><span class="line">        <span class="attribute">android:layout_width</span>=<span class="value">"fill_parent"</span></span><br><span class="line">        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span></span><br><span class="line">        <span class="attribute">android:textSize</span>=<span class="value">"12dp"</span></span><br><span class="line">        <span class="attribute">android:layout_marginTop</span>=<span class="value">"10dp"</span></span><br><span class="line">        <span class="attribute">android:gravity</span>=<span class="value">"center_horizontal"</span></span><br><span class="line">        <span class="attribute">android:text</span>=<span class="value">"Edit fragment_home.xml to change the appearance"</span> /&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="tag">&lt;/<span class="title">RelativeLayout</span>&gt;</span></span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">25.在activity包下，创建HomeFragment.java文件，代码如下: </span><br><span class="line">  </span><br><span class="line">```java  </span><br><span class="line">public class HomeFragment extends Fragment &#123;</span><br><span class="line"> </span><br><span class="line">    public HomeFragment() &#123;</span><br><span class="line">        // Required empty public constructor</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    @Override</span><br><span class="line">    public void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line"> </span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    @Override</span><br><span class="line">    public View onCreateView(LayoutInflater inflater, ViewGroup container,</span><br><span class="line">                             Bundle savedInstanceState) &#123;</span><br><span class="line">        View rootView = inflater.inflate(R.layout.fragment_home, container, false);</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">        // Inflate the layout for this fragment</span><br><span class="line">        return rootView;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    @Override</span><br><span class="line">    public void onAttach(Activity activity) &#123;</span><br><span class="line">        super.onAttach(activity);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    @Override</span><br><span class="line">    public void onDetach() &#123;</span><br><span class="line">        super.onDetach();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">fragment_home.xml</span><br><span class="line"><span class="tag">&lt;<span class="title">RelativeLayout</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">xmlns:tools</span>=<span class="value">"http://schemas.android.com/tools"</span></span><br><span class="line">    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:orientation</span>=<span class="value">"vertical"</span></span><br><span class="line">    <span class="attribute">tools:context</span>=<span class="value">"androidhive.info.materialdesign.activity.HomeFragment"</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">TextView</span></span><br><span class="line">        <span class="attribute">android:id</span>=<span class="value">"@+id/label"</span></span><br><span class="line">        <span class="attribute">android:layout_alignParentTop</span>=<span class="value">"true"</span></span><br><span class="line">        <span class="attribute">android:layout_marginTop</span>=<span class="value">"100dp"</span></span><br><span class="line">        <span class="attribute">android:layout_width</span>=<span class="value">"fill_parent"</span></span><br><span class="line">        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span></span><br><span class="line">        <span class="attribute">android:gravity</span>=<span class="value">"center_horizontal"</span></span><br><span class="line">        <span class="attribute">android:textSize</span>=<span class="value">"45dp"</span></span><br><span class="line">        <span class="attribute">android:text</span>=<span class="value">"HOME"</span></span><br><span class="line">        <span class="attribute">android:textStyle</span>=<span class="value">"bold"</span>/&gt;</span></span><br><span class="line"> </span><br><span class="line">    <span class="tag">&lt;<span class="title">TextView</span></span><br><span class="line">        <span class="attribute">android:layout_below</span>=<span class="value">"@id/label"</span></span><br><span class="line">        <span class="attribute">android:layout_centerInParent</span>=<span class="value">"true"</span></span><br><span class="line">        <span class="attribute">android:layout_width</span>=<span class="value">"fill_parent"</span></span><br><span class="line">        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span></span><br><span class="line">        <span class="attribute">android:textSize</span>=<span class="value">"12dp"</span></span><br><span class="line">        <span class="attribute">android:layout_marginTop</span>=<span class="value">"10dp"</span></span><br><span class="line">        <span class="attribute">android:gravity</span>=<span class="value">"center_horizontal"</span></span><br><span class="line">        <span class="attribute">android:text</span>=<span class="value">"Edit fragment_home.xml to change the appearance"</span> /&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="tag">&lt;/<span class="title">RelativeLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>25.在activity包下，创建HomeFragment.java文件，代码如下: </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HomeFragment</span> <span class="keyword">extends</span> <span class="title">Fragment</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HomeFragment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Required empty public constructor</span></span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line"> </span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> View <span class="title">onCreateView</span><span class="params">(LayoutInflater inflater, ViewGroup container,</span><br><span class="line">                             Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        View rootView = inflater.inflate(R.layout.fragment_home, container, <span class="keyword">false</span>);</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">        <span class="comment">// Inflate the layout for this fragment</span></span><br><span class="line">        <span class="keyword">return</span> rootView;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAttach</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onAttach(activity);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDetach</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDetach();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>26.创建另外两个FRAGMENT，跟上面一样  </p>
 <p>27.做如下修改.代码如下：</p>
 <p>displayView方法用来显示menu item选中的页面.这个方法被onDrawerItemSelected()调用.  </p>
-<pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">ActionBarActivity</span> <span class="keyword">implements</span> <span class="title">FragmentDrawer</span>.<span class="title">FragmentDrawerListener</span> </span>{
-
-    <span class="keyword">private</span> <span class="keyword">static</span> String TAG = MainActivity.class.getSimpleName();
-
-    <span class="keyword">private</span> Toolbar mToolbar;
-    <span class="keyword">private</span> FragmentDrawer drawerFragment;
-
-    <span class="annotation">@Override</span>
-    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>{
-        <span class="keyword">super</span>.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(<span class="keyword">true</span>);
-
-        drawerFragment = (FragmentDrawer)
-                getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
-        drawerFragment.setDrawerListener(<span class="keyword">this</span>);
-
-        <span class="comment">// display the first navigation drawer view on app launch</span>
-        displayView(<span class="number">0</span>);
-    }
-
-
-    <span class="annotation">@Override</span>
-    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreateOptionsMenu</span><span class="params">(Menu menu)</span> </span>{
-        <span class="comment">// Inflate the menu; this adds items to the action bar if it is present.</span>
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        <span class="keyword">return</span> <span class="keyword">true</span>;
-    }
-
-    <span class="annotation">@Override</span>
-    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onOptionsItemSelected</span><span class="params">(MenuItem item)</span> </span>{
-        <span class="comment">// Handle action bar item clicks here. The action bar will</span>
-        <span class="comment">// automatically handle clicks on the Home/Up button, so long</span>
-        <span class="comment">// as you specify a parent activity in AndroidManifest.xml.</span>
-        <span class="keyword">int</span> id = item.getItemId();
-
-        <span class="comment">//noinspection SimplifiableIfStatement</span>
-        <span class="keyword">if</span> (id == R.id.action_settings) {
-            <span class="keyword">return</span> <span class="keyword">true</span>;
-        }
-
-        <span class="keyword">if</span>(id == R.id.action_search){
-            Toast.makeText(getApplicationContext(), <span class="string">"Search action is selected!"</span>, Toast.LENGTH_SHORT).show();
-            <span class="keyword">return</span> <span class="keyword">true</span>;
-        }
-
-        <span class="keyword">return</span> <span class="keyword">super</span>.onOptionsItemSelected(item);
-    }
-
-    <span class="annotation">@Override</span>
-    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDrawerItemSelected</span><span class="params">(View view, <span class="keyword">int</span> position)</span> </span>{
-            displayView(position);
-    }
-
-    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">displayView</span><span class="params">(<span class="keyword">int</span> position)</span> </span>{
-        Fragment fragment = <span class="keyword">null</span>;
-        String title = getString(R.string.app_name);
-        <span class="keyword">switch</span> (position) {
-            <span class="keyword">case</span> <span class="number">0</span>:
-                fragment = <span class="keyword">new</span> HomeFragment();
-                title = getString(R.string.title_home);
-                <span class="keyword">break</span>;
-            <span class="keyword">case</span> <span class="number">1</span>:
-                fragment = <span class="keyword">new</span> FriendsFragment();
-                title = getString(R.string.title_friends);
-                <span class="keyword">break</span>;
-            <span class="keyword">case</span> <span class="number">2</span>:
-                fragment = <span class="keyword">new</span> MessagesFragment();
-                title = getString(R.string.title_messages);
-                <span class="keyword">break</span>;
-            <span class="keyword">default</span>:
-                <span class="keyword">break</span>;
-        }
-
-        <span class="keyword">if</span> (fragment != <span class="keyword">null</span>) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_body, fragment);
-            fragmentTransaction.commit();
-
-            <span class="comment">// set the toolbar title</span>
-            getSupportActionBar().setTitle(title);
-        }
-    }
-}
-</code></pre>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">ActionBarActivity</span> <span class="keyword">implements</span> <span class="title">FragmentDrawer</span>.<span class="title">FragmentDrawerListener</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String TAG = MainActivity.class.getSimpleName();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">private</span> Toolbar mToolbar;</span><br><span class="line">    <span class="keyword">private</span> FragmentDrawer drawerFragment;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line"> </span><br><span class="line">        mToolbar = (Toolbar) findViewById(R.id.toolbar);</span><br><span class="line"> </span><br><span class="line">        setSupportActionBar(mToolbar);</span><br><span class="line">        getSupportActionBar().setDisplayShowHomeEnabled(<span class="keyword">true</span>);</span><br><span class="line"> </span><br><span class="line">        drawerFragment = (FragmentDrawer)</span><br><span class="line">                getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);</span><br><span class="line">        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);</span><br><span class="line">        drawerFragment.setDrawerListener(<span class="keyword">this</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// display the first navigation drawer view on app launch</span></span><br><span class="line">        displayView(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onCreateOptionsMenu</span><span class="params">(Menu menu)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Inflate the menu; this adds items to the action bar if it is present.</span></span><br><span class="line">        getMenuInflater().inflate(R.menu.menu_main, menu);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onOptionsItemSelected</span><span class="params">(MenuItem item)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Handle action bar item clicks here. The action bar will</span></span><br><span class="line">        <span class="comment">// automatically handle clicks on the Home/Up button, so long</span></span><br><span class="line">        <span class="comment">// as you specify a parent activity in AndroidManifest.xml.</span></span><br><span class="line">        <span class="keyword">int</span> id = item.getItemId();</span><br><span class="line"> </span><br><span class="line">        <span class="comment">//noinspection SimplifiableIfStatement</span></span><br><span class="line">        <span class="keyword">if</span> (id == R.id.action_settings) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span>(id == R.id.action_search)&#123;</span><br><span class="line">            Toast.makeText(getApplicationContext(), <span class="string">"Search action is selected!"</span>, Toast.LENGTH_SHORT).show();</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onOptionsItemSelected(item);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDrawerItemSelected</span><span class="params">(View view, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">            displayView(position);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">displayView</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        Fragment fragment = <span class="keyword">null</span>;</span><br><span class="line">        String title = getString(R.string.app_name);</span><br><span class="line">        <span class="keyword">switch</span> (position) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">                fragment = <span class="keyword">new</span> HomeFragment();</span><br><span class="line">                title = getString(R.string.title_home);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">                fragment = <span class="keyword">new</span> FriendsFragment();</span><br><span class="line">                title = getString(R.string.title_friends);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                fragment = <span class="keyword">new</span> MessagesFragment();</span><br><span class="line">                title = getString(R.string.title_messages);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (fragment != <span class="keyword">null</span>) &#123;</span><br><span class="line">            FragmentManager fragmentManager = getSupportFragmentManager();</span><br><span class="line">            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();</span><br><span class="line">            fragmentTransaction.replace(R.id.container_body, fragment);</span><br><span class="line">            fragmentTransaction.commit();</span><br><span class="line"> </span><br><span class="line">            <span class="comment">// set the toolbar title</span></span><br><span class="line">            getSupportActionBar().setTitle(title);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>现在运行app,你能够选择menu的子菜单了。如下效果。</p>
 <p><img src="http://cdn1.androidhive.info/wp-content/uploads/2015/04/android-material-design-navigation-drawer-1.png" alt=""></p>
 <p><img src="http://cdn1.androidhive.info/wp-content/uploads/2015/04/android-material-design-navigation-drawer-2.png" alt=""></p>
@@ -207,16 +127,16 @@
     
     </summary>
     
-      <category term="材料设计" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E6%9D%90%E6%96%99%E8%AE%BE%E8%AE%A1/"/>
+      <category term="材料设计" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E6%9D%90%E6%96%99%E8%AE%BE%E8%AE%A1/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Android 应用性能优化系列]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/android-performance-patterns/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/android-performance-patterns/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/android-performance-patterns/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:10:48.000Z</updated>
     <content type="html"><![CDATA[<h2 id="Android_应用性能优化系列">Android 应用性能优化系列</h2><blockquote>
@@ -242,16 +162,16 @@
 <li><a href="https://www.youtube.com/playlist?list=PLWz]]>
     </summary>
     
-      <category term="性能优化" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
+      <category term="性能优化" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
     
-      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E8%BF%9E%E8%BD%BD/"/>
+      <category term="连载" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E8%BF%9E%E8%BD%BD/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[深入理解 Shared Element Transition (part 3a)]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/activity-fragment-shared-element-transitions-in-depth-part3a/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:07:22.000Z</updated>
     <content type="html"><![CDATA[<h2 id="深入理解共享元素_Transition">深入理解共享元素 Transition</h2><p>这篇文章会深度分析共享元素 transitions 和它在 Activity &amp; Fragment Transitions API 中的作用。这篇文章是下面这个系列中的第三篇：</p>
@@ -343,18 +263,18 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="动画" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%8A%A8%E7%94%BB/"/>
+      <category term="动画" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%8A%A8%E7%94%BB/"/>
     
-      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
+      <category term="连载" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[延迟共享元素的过渡动画 (part 3b)]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/activity-postponed-shared-element-transitions-part3b/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:05:20.000Z</updated>
     <content type="html"><![CDATA[<p>通过讨论 Lollipop Transition API 的一个重要的特性：延迟共享元素的过渡动画，这篇博文将继续我们关于共享元素 Transition 的深度解析。这也是我关于 Transition 这个专栏的第四篇文章。</p>
@@ -421,18 +341,18 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="动画" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%8A%A8%E7%94%BB/"/>
+      <category term="动画" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%8A%A8%E7%94%BB/"/>
     
-      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
+      <category term="连载" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[在Activity中使用Thread导致的内存泄漏]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/activitys-threads-memory-leaks/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:06:30.000Z</updated>
     <content type="html"><![CDATA[<blockquote>
@@ -481,18 +401,18 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="内存泄露" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/"/>
+      <category term="内存泄露" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E7%BF%BB%E8%AF%91/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Android 进行单元测试难在哪-序]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/against-android-unit-tests/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/against-android-unit-tests/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/against-android-unit-tests/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/against-android-unit-tests/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:13:49.000Z</updated>
     <content type="html"><![CDATA[<p>其实不仅仅只有普通 Android 开发工程师觉得测试 Android 应用很恼火，大牛们也受此困扰已久。例如 Jake Wharton 曾经明确地表示：Android 平台自诞生之初就与应用测试势如水火。Don Felker 和 Kaushik Gopal 也在他们的<a href="http://fragmentedpodcast.com/episodes/1/" target="_blank" rel="external">博文</a>里也提出了相同的观点。当然了，他们还提到 Google 的 <a href="https://github.com/google/iosched" target="_blank" rel="external">IOSched 应用</a>，根本就没有进行过测试，据说 IOSched 还是 Android 开发环境中应用开发的最优集合体呢。<a id="more"></a> IOSched 没有进行测试让我们这些开发者很困扰：1、Google 所谓的“测试是高效地进行 Android 开发中的关键一环”真的不是来唬小孩的吗；2、还是 Google 官方的工程师觉得测试 Android 应用简直就是浪费时间？不管怎样，如果这个世界上最优秀的 Android 开发工程师都觉得在 Android 中进行测试很麻烦，那我们这些小菜鸡玩不好测试也是理所当然的了。</p>
@@ -524,20 +444,20 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="测试" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E6%B5%8B%E8%AF%95/"/>
+      <category term="测试" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E6%B5%8B%E8%AF%95/"/>
     
-      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
+      <category term="连载" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
-      <category term="单元测试" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/"/>
+      <category term="单元测试" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[检测Android应用的启动与关闭]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/android-determine-when-app-is-opened-or-closed/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/android-determine-when-app-is-opened-or-closed/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/android-determine-when-app-is-opened-or-closed/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/android-determine-when-app-is-opened-or-closed/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:12:48.000Z</updated>
     <content type="html"><![CDATA[<h2 id="问题">问题</h2><p>当开发安卓程序的时候，我们不免需要去检测应用什么时候在前台运行，用户什么时候离开。不幸的是，没有一个简单的方法可以做到这点。当用户第一次启动的时候去检测还是不难，但如果是重新打开或关闭就不简单了。<br><a id="more"></a></p>
@@ -587,16 +507,16 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="小技巧" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/"/>
+      <category term="小技巧" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%B0%8F%E6%8A%80%E5%B7%A7/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[深入理解Content Transition  (part 2)]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-content-transitions-in-depth-part2/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/activity-fragment-content-transitions-in-depth-part2/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/activity-fragment-content-transitions-in-depth-part2/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/activity-fragment-content-transitions-in-depth-part2/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:07:40.000Z</updated>
     <content type="html"><![CDATA[<h1 id="深入理解Content_Transition">深入理解Content Transition</h1><p>这篇文章会深度分析 Content Transitions 和它在 Activity &amp; Fragment Transitions API 中的作用。这篇文章是下面这个系列中的第二篇：</p>
@@ -699,18 +619,18 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="动画" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%8A%A8%E7%94%BB/"/>
+      <category term="动画" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%8A%A8%E7%94%BB/"/>
     
-      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
+      <category term="连载" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[功能测试框架 espresso]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/the-hitchhikers-guide-to-android-testing-part-2-espresso/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/the-hitchhikers-guide-to-android-testing-part-2-espresso/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/the-hitchhikers-guide-to-android-testing-part-2-espresso/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/the-hitchhikers-guide-to-android-testing-part-2-espresso/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:08:14.000Z</updated>
     <content type="html"><![CDATA[<p><img src="http://7xi8kj.com1.z0.glb.clouddn.com/VtFd68Pr19fYk.gif" alt="VtFd68Pr19fYk."></p>
@@ -779,18 +699,18 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="测试" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E6%B5%8B%E8%AF%95/"/>
+      <category term="测试" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E6%B5%8B%E8%AF%95/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
-      <category term="自动化测试" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/"/>
+      <category term="自动化测试" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Retrofit指南]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/retrofit-android-tutorial/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/retrofit-android-tutorial/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/retrofit-android-tutorial/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/retrofit-android-tutorial/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:08:42.000Z</updated>
     <content type="html"><![CDATA[<p>这是一篇关于如何使用Retrofit写一个Android的REST客户端的小教程。<br><a id="more"></a><br><img src="http://img.my.csdn.net/uploads/201504/13/1428932650_8819.jpg" alt="Retrofit+Android"></p>
@@ -868,18 +788,18 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="工具" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%B7%A5%E5%85%B7/"/>
+      <category term="工具" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%B7%A5%E5%85%B7/"/>
     
-      <category term="网络请求" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/"/>
+      <category term="网络请求" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Android测试框架--Dagger 2 + Espresso 2 + Mockito]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/dagger-2-espresso-2-mockito/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/dagger-2-espresso-2-mockito/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/dagger-2-espresso-2-mockito/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/dagger-2-espresso-2-mockito/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:16:06.000Z</updated>
     <content type="html"><![CDATA[<p>我一直在用Dagger, Espresso和Mockito做Android测试，爱死这个组合了！为了庆祝<a href="http://google.github.io/dagger/" target="_blank" rel="external">Dagger 2</a>的推出，我分享了一个用Dagger 2, Espresso 2和Mockito做Android测试的<a href="https://github.com/chiuki/android-test-demo" target="_blank" rel="external">Demo</a><br><a id="more"></a></p>
@@ -921,20 +841,20 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="测试" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E6%B5%8B%E8%AF%95/"/>
+      <category term="测试" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E6%B5%8B%E8%AF%95/"/>
     
-      <category term="自动化" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
+      <category term="自动化" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
-      <category term="自动化测试" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/"/>
+      <category term="自动化测试" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[自定义Drawables]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/custom-drawables/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/custom-drawables/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/custom-drawables/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/custom-drawables/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:09:30.000Z</updated>
     <content type="html"><![CDATA[<p>我们都看过关于为什么你应该适当的使<a href="http://www.ryanharter.com/blog/2014/05/14/using-custom-compound-views-in-android/" target="_blank" rel="external">自定义Views</a>和如何能帮助你正确的封装你的应用程序代码的帖子。但非视图相关的部分如何转化为我们apps的其他部分的这种思考方式，我们对此并不非常了解。<br><a id="more"></a><br>在我的应用<a href="https://play.google.com/store/apps/details?id=com.pixite.fragment&amp;referrer=utm_source%3Dryanharter.com%26utm_medium%3Dpost%26utm_content%3Dcustom_drawables" target="_blank" rel="external">Fragment</a>中,有些地方我使用自定义Drawables来封装我的逻辑，就像你在customView中做的一样。</p>
@@ -966,16 +886,16 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="Drawables" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/Drawables/"/>
+      <category term="Drawables" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/Drawables/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[开始使用 Transitions（过渡动画） (part 1)]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/code-coverage-reports-using-robolectric/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/code-coverage-reports-using-robolectric/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/code-coverage-reports-using-robolectric/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/code-coverage-reports-using-robolectric/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:05:46.000Z</updated>
     <content type="html"><![CDATA[<h2 id="使用_Robolectric_和_Android_生成代码覆盖率（测试）报告">使用 Robolectric 和 Android 生成代码覆盖率（测试）报告</h2><h1 id="介绍">介绍</h1><p>我写过许多测试驱动开发与陷阱方面的文章。我认为，其中对测试驱动开发中遇到的陷阱的描述让整个介绍更加完整。测试驱动开发或者通常的测试中，最重要的是你清楚代码中哪些部分经过了测试，而哪些部分需要继续测试。<br><a id="more"></a><br>你可以使用<a href="http://www.eclemma.org/jacoco/" target="_blank" rel="external">JaCoCo</a>搞定上述的问题，它对Grandle和Robolectric有较好的集成。</p>
@@ -1036,18 +956,18 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="动画" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%8A%A8%E7%94%BB/"/>
+      <category term="动画" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%8A%A8%E7%94%BB/"/>
     
-      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
+      <category term="连载" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Android Support库 22.1]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/android-support-library-221/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/05/01/android-support-library-221/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/android-support-library-221/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/05/01/android-support-library-221/</id>
     <published>2015-04-30T16:00:00.000Z</published>
     <updated>2015-06-29T14:10:15.000Z</updated>
     <content type="html"><![CDATA[<p>你可能听过这么一句话 “最好的代码就是没有代码。” 然而我想对你说的是：你写下的每一行代码应该能为应用增加独特的价值，而不是为应用添加一行又一行繁复、无趣的模板代码。Android提供支持库的初衷正是如此：让 Android 开发工程师把精力更多地放在逻辑实现上，而不是写业务代码。<br><a id="more"></a><br>最新发布的Android支持库一如既往地添加了许多实用的组件，并对Support V4、AppCompat、Leanback、RecyclerView、Palette和Renderscript库的内部实现逻辑作出改变。从新的 <a href="http://developer.android.com/reference/android/support/v7/app/AppCompatActivity.html?utm_campaign=ASL221-415&amp;utm_source=dac&amp;utm_medium=blog" target="_blank" rel="external">AppCompatActivity</a>和<a href="http://developer.android.com/reference/android/support/v7/app/AppCompatDialog.html?utm_campaign=ASL221-415&amp;utm_source=dac&amp;utm_medium=blog" target="_blank" rel="external">AppCompatDialog</a> 到Android TV全新的引导流程我们可以发现，新的库确实带来许多让我们耳目一新的惊喜。</p>
@@ -1104,18 +1024,18 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="AppCompat" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/AppCompat/"/>
+      <category term="AppCompat" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/AppCompat/"/>
     
-      <category term="Support Library" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/Support-Library/"/>
+      <category term="Support Library" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/Support-Library/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[FaceBook推出的Android图片加载库-Fresco]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/introducing-fresco-a-new-image-library-for-android/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/introducing-fresco-a-new-image-library-for-android/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/introducing-fresco-a-new-image-library-for-android/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/introducing-fresco-a-new-image-library-for-android/</id>
     <published>2015-04-29T16:00:00.000Z</published>
     <updated>2015-06-29T13:28:14.000Z</updated>
     <content type="html"><![CDATA[<p>在Android设备上面，快速高效的显示图片是极为重要的。过去的几年里，我们在如何高效的存储图像这方面遇到了很多问题。图片太大，但是手机的内存却很小。每一个像素的R、G、B和alpha通道总共要占用4byte的空间。如果手机的屏幕是480*800,那么一张屏幕大小的图片就要占用1.5M的内存。手机的内存通常很小，特别是Android设备还要给各个应用分配内存。在某些设备上，分给Facebook App的内存仅仅有16MB。一张图片就要占据其内存的十分之一。<br><a id="more"></a></p>
@@ -1177,16 +1097,16 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="图片缓存" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%9B%BE%E7%89%87%E7%BC%93%E5%AD%98/"/>
+      <category term="图片缓存" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%9B%BE%E7%89%87%E7%BC%93%E5%AD%98/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Square开源库Flow和Mortar介绍]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/an-investigation-into-flow-and-mortar/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/an-investigation-into-flow-and-mortar/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/an-investigation-into-flow-and-mortar/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/an-investigation-into-flow-and-mortar/</id>
     <published>2015-04-29T16:00:00.000Z</published>
     <updated>2015-06-29T13:40:49.000Z</updated>
     <content type="html"><![CDATA[<p>“在 App 开发过程中尽可能使用 Fragment 替代 Activity”，Google 官方的这个建议无疑让万千 Android 开发者开始关注、使用 Fragment。但随着使用 Fragment 的人数增多，Fragment 存在的各种问题也开始暴露，在各种 Android 社区中，已经开始有人质疑用 Fragment 替代 Activity 在应用开发中是否真的像 Google 说的那样有益。质疑 Fragment 的理由大体如下：<br><a id="more"></a></p>
@@ -1273,16 +1193,16 @@ Part 3 会分成三个部分: part3a 介绍 共享元素 transitions 的底层�
     
     </summary>
     
-      <category term="开源库介绍" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%BC%80%E6%BA%90%E5%BA%93%E4%BB%8B%E7%BB%8D/"/>
+      <category term="开源库介绍" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%BC%80%E6%BA%90%E5%BA%93%E4%BB%8B%E7%BB%8D/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[在Android调试模式中使用Stetho]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/stetho-for-android-debug-builds-only/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/stetho-for-android-debug-builds-only/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/stetho-for-android-debug-builds-only/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/stetho-for-android-debug-builds-only/</id>
     <published>2015-04-29T16:00:00.000Z</published>
     <updated>2015-06-29T13:46:50.000Z</updated>
     <content type="html"><![CDATA[<p>最近FaceBook发布了一个叫做<a href="https://github.com/facebook/stetho" target="_blank" rel="external">Stetho</a>的工具.这个工具是一个谷歌浏览器的开发者工具扩展 ，它可以用来检测你的应用。我发现这东西挺好用的，因为它还提供了访问应用中SQLite数据库的接口。很明显，这种类型的工具只应该在应用的调试模式中使用。接下来我们来看看怎么用这个工具。<br><a id="more"></a></p>
@@ -1311,16 +1231,16 @@ debugCompile <span class="string">'com.facebook.stetho:stetho:1.0.0'</span>
     
     </summary>
     
-      <category term="工具" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%B7%A5%E5%85%B7/"/>
+      <category term="工具" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%B7%A5%E5%85%B7/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[自动化截图－应用分发时的自动截图方案]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/screenshot_automation/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/screenshot_automation/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/screenshot_automation/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/screenshot_automation/</id>
     <published>2015-04-29T16:00:00.000Z</published>
     <updated>2015-06-29T13:40:31.000Z</updated>
     <content type="html"><![CDATA[<p>在发布 App 到应用商店时有一件的事情不得不做，就是上传最新的高清无码截图到应用商店上。可是如果你的 App 有许多页面，那你每次发布更新都可能是一场梦魇，因为你需要一页一页地去截图。为了解决众多 App 开发者的这个痛点，我将在这篇博文中介绍一个实现自动化截图的方法：<br><a id="more"></a><br>刚到 <a href="https://www.capitainetrain.com/" target="_blank" rel="external">Capitaine Train</a> 公司里，就有人让我造个能自动截图的轮子，因为我们公司的 App 每次版本更新都让人很头疼：问题在于我们的 App 对应有3种设备，4种语言，也就是有 12 种版本。此外，我们有6个需要截图的页面，也就是说，我们每次版本更新都需要72张截图。我们无法忍受这种低效并浪费时间的工作，于是我们经过不懈的努力，找到了一个自动化截图的方案，在这个方案中，要实现自动化截图有三个关键点：uiautomator 自动化测试, accessibility 和 bash脚本。</p>
@@ -1493,16 +1413,16 @@ debugCompile <span class="string">'com.facebook.stetho:stetho:1.0.0'</span>
     
     </summary>
     
-      <category term="自动化" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
+      <category term="自动化" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[开始使用 Transitions（过渡动画） (part 1)]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/activity-fragment-transitions-in-android-lollipop-part1/</id>
     <published>2015-04-29T16:00:00.000Z</published>
     <updated>2015-06-29T13:53:21.000Z</updated>
     <content type="html"><![CDATA[<h2 id="首先">首先</h2><p>这篇文章主要介绍 Android 5.0 新加入的 Transition (过渡动画) API，这是这个系列的第一篇文章。主要介绍下面几个话题:</p>
@@ -1633,35 +1553,49 @@ debugCompile <span class="string">'com.facebook.stetho:stetho:1.0.0'</span>
     
     </summary>
     
-      <category term="动画" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E5%8A%A8%E7%94%BB/"/>
+      <category term="动画" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E5%8A%A8%E7%94%BB/"/>
     
-      <category term="连载" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
+      <category term="连载" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/%E8%BF%9E%E8%BD%BD/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[使用RxJava.Observable取代AsyncTask和AsyncTaskLoader]]></title>
-    <link href="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/"/>
-    <id>http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/</id>
+    <link href="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/"/>
+    <id>http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/2015/04/30/replace-asynctask-asynctaskloader-rx-observable-rxjava-android-patterns/</id>
     <published>2015-04-29T16:00:00.000Z</published>
-    <updated>2015-06-29T13:40:34.000Z</updated>
+    <updated>2015-06-30T01:20:05.000Z</updated>
     <content type="html"><![CDATA[<p>在网上有很多关于RxJava入门指南的帖子，其中一些是基于Android环境的。但是，我想到目前为止，很多人只是喜欢他们所看到的这些，当要解决在他们的Android项目中出现的具体问题时，他们并不知道如何或者是为什么要使用RxJava。在这一系列的文章中，我想要探索在我工作过的一些依赖于RxJava架构的Android项目中的模式。<br><a id="more"></a><br>在文章的开始，我想要处理一些Android开发者在使用RxJava的时候，很容易遇到的状况。从这个角度，我将提供更高级和更合适的解决方案。在这一系列的文章中，我希望可以听到其他开发者在使用RxJava的过程中解决类似的问题，或许他们和我发现的一样呢。</p>
 <h1 id="问题一：后台任务">问题一：后台任务</h1><p>Android开发者首先遇到的挑战就是如何有效的在后台线程中工作，然后在UI线程中更新UI。这经常是因为需要从web service中获取数据。对于已经有相关经验的你可能会说：“这有什么挑战性？你只需要启动一个AsyncTask，然后所有的工作它就都给你做了。”如果你是这样想的，那么你有一个机会去改善这种状况。这是因为你已经习惯了这种复杂的方式并且忘记这本应该是很简洁的，或者是说你没有处理所有应该处理的边界情况。让我们来谈谈这个。</p>
 <h2 id="默认的解决方案：AsyncTask">默认的解决方案：AsyncTask</h2><p>AsyncTask是在Android里面默认的处理工具，开发者可以做里面一些长时间的处理工作，而不会阻塞用户界面。(注意：最近，AsyncTaskLoader用来处理一些更加具体的数据加载任务，我们以后会再谈谈这个)</p>
 <p>表面上，这似乎很简单，你定义一些代码在后台线程中运行，然后定义一些代码运行在UI线程中，在后台任务处理完之后，它在UI线程会处理从后台任务传递过来的执行结果。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">	<span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">CallWebServiceTask</span> <span class="keyword">extends</span> <span class="title">AsyncTask</span>&lt;<span class="title">String</span>, <span class="title">Result</span>, <span class="title">Void</span>&gt; </span>&#123;</span><br><span class="line">    </span><br><span class="line">	    <span class="function"><span class="keyword">protected</span> Result <span class="title">doInBackground</span><span class="params">(String... someData)</span> </span>&#123;</span><br><span class="line">	        Result result = webService.doSomething(someData);</span><br><span class="line">	        <span class="keyword">return</span> result;</span><br><span class="line">	    &#125;</span><br><span class="line">    </span><br><span class="line">	    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onPostExecute</span><span class="params">(Result result)</span> </span>&#123;</span><br><span class="line">	        <span class="keyword">if</span> (result.isSuccess() &#123;</span><br><span class="line">	            resultText.setText(<span class="string">"It worked!"</span>);</span><br><span class="line">	        &#125;</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">使用AsyncTask的最大的问题是在细节的处理上，让我们谈谈这个问题。</span><br><span class="line"></span><br><span class="line">###错误处理</span><br><span class="line">这种简单用法的第一个问题就是：“如果出现了错误怎么办？”不幸的是，暂时没有非常好的解决方案。所以很多的开发者最终要继承AsyncTask，然后在doInBackground()中包裹一个<span class="keyword">try</span>/<span class="keyword">catch</span>，返回一个&lt;TResult, Exception&gt;，然后根据发生的情况，分发到新定义的例如onSuccess()或者是onError()中。(我也曾经见过仅捕获异常的引用，然后在 onPostExcecute()中进行检查的写法) </span><br><span class="line"></span><br><span class="line">这最终是有点帮助的，但是你必须为你的每个项目写上额外的代码，随着时间的推移，这些自定义的代码在开发者之间和项目之间，可能不会保持很好的一致性和可预见性。</span><br><span class="line"></span><br><span class="line">###Activity和Fragment的生命周期</span><br><span class="line">另外一个你必须面对的问题是：“当AsyncTask正在运行的时候，如果我退出Activity或者是旋转设备的话会发生什么？”嗯，如果你只是发送一些数据，之后就不再关心发送结果，那可能是没有问题的，但是如果你需要根据Task的返回结果更新UI呢？如果你不做一些事情阻止的话，那么当你试图去调用Activity或者是view的话，你将得到一个空指针异常导致程序崩溃，因为他们现在是不可见或者是<span class="keyword">null</span>的。</span><br><span class="line"></span><br><span class="line">同样，在这个问题上AsyncTask没有做很多工作去帮助你。作为一个开发者，你需要确保保持一个Task的引用，并且要么当Activity正在被销毁的时候取消Task，要么当你试图在onPostExecute()里面更新UI的时候，确保Activity是在一个可达状态。当你只想明确的做一些工作，并且让项目容易维护的时候，这将会继续提高维护项目的难度。</span><br><span class="line"></span><br><span class="line">###旋转时的缓存(或是其他情况)</span><br><span class="line">当你的用户还是待在当前Activity，仅仅是旋转屏幕会发生什么？在这种情况下，取消Task没有任何意义，因为在旋转之后，你最终还是需要重新启动Task。或者是你不想重启Task，因为状况在一些地方以非幕等的方式发生了突变(because it mutates some state somewhere in a non-idempotent way),但是你确实想要得到结果，因为这样你就可以更新UI来反映这种情况。</span><br><span class="line"></span><br><span class="line">如果你专门的做一个只读的加载操作，你可以使用AsyncTaskLoader去解决这个问题。但是对于标准的Android方式来说，它还是很沉重，因为缺少错误处理，在Activity中没有缓存，还有很多独有的其他怪癖。</span><br><span class="line"></span><br><span class="line">###组合的多个Web Server调用</span><br><span class="line">现在，假如说我们已经想办法把上面的问题都解决了，但是我们现在需要做一些连续的网络请求，每一个请求都需要基于前一个请求的结果。或者是，我们想做一些并发的网络请求，然后把结果合并在一起发送到UI线程，但是，再次抱歉，AsyncTask在这里帮不到你。</span><br><span class="line"></span><br><span class="line">一旦你开始做这样的事情，随着更多的复杂线程模型的增长，之前的问题会导致处理这样的事情非常的痛苦和苍白无力。如果想要这些线程一起运行，要么你就让它们单独运行，然后回调，要么让它们在一个后台线程中同步运行，最后复制组成不同。(To chain calls together, you either keep them separate and end up in callback hell, or run them synchronously together in one background task end up duplicating work to compose them differently in other situations.)</span><br><span class="line"></span><br><span class="line">如果要并行运行，你必须创建一个自定义的executor然后传递给AsyncTaskTask，因为默认的AsyncTask不支持并行。并且为了协调并行线程，你需要使用像是CountDownLatchs, Threads, Executors 和 Futures去降低更复杂的同步模式。</span><br><span class="line"></span><br><span class="line">###可测试性</span><br><span class="line">抛开这些不说，如果你喜欢测试你的代码，AsyncTask并不能给你带来什么帮助。如果我们不做额外的工作，测试AsyncTask非常困难，它很脆弱并且难以维持。这是一篇有关如何成功测试AsyncTask的[帖子](http:<span class="comment">//www.making-software.com/2012/10/31/testable-android-asynctask/)。</span></span><br><span class="line"></span><br><span class="line">##更好的解决方案：RxJava’s Observable</span><br><span class="line"></span><br><span class="line">幸运的是，一旦我们决定使用RxJava依赖库的时候，我们讨论的这些问题就都迎刃而解了。下面我们看看它能为我们做什么。</span><br><span class="line"></span><br><span class="line">下面我们将会使用Observables写一个请求代码来替代上面的AsyncTask方式。(如果你使用Retrofit，那么你应该很容易使用，其次它还支持Observable 返回值，并且它工作在一个后台的线程池，无需你额外的工作)</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">	webService.doSomething(someData)</span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    .subscribe(</span><br><span class="line">        result -&gt; resultText.setText(<span class="string">"It worked!"</span>)),</span><br><span class="line">        e -&gt; handleError(e)</span><br><span class="line">    );</span><br></pre></td></tr></table></figure>
-<h3 id="错误处理">错误处理</h3><p>你可能会注意到，没有做额外的工作，我们已经处理了AsyncTask不会处理的成功和错误的情况，并且我们写了很少的代码。你看到的额外的组件是我们想要Observer 在UI主线程中处理的结果。这样可以让我们前进一点点。并且如果你的webService对象不想在后台线程中运行，你也可以在这里通过使用.subscribeOn(…) 声明。(注意：这些例子是使用Java 8的lambda语法，使用<a href="https://github.com/orfjackal/retrolambda" target="_blank" rel="external">Retrolambda</a>就可以在Android项目中进行使用了，但在我看来，这样做的回报是高于风险的，和写这篇文章相比，我们更喜欢在我们的项目中使用。)</p>
-<h3 id="Activity和Fragment的生命周期">Activity和Fragment的生命周期</h3><p>现在，我们想在这里利用RxAndroid解决上面提到的生命周期的问题，我们不需要指定mainThread() scheduler(顺便说一句，你只需要导入RxAndroid)。就像下面这样</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">CallWebServiceTask</span> <span class="keyword">extends</span> <span class="title">AsyncTask</span>&lt;<span class="title">String</span>, <span class="title">Result</span>, <span class="title">Void</span>&gt; </span>&#123;</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Result <span class="title">doInBackground</span><span class="params">(String... someData)</span> </span>&#123;</span><br><span class="line">        Result result = webService.doSomething(someData);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onPostExecute</span><span class="params">(Result result)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (result.isSuccess() &#123;</span><br><span class="line">            resultText.setText(<span class="string">"It worked!"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用AsyncTask的最大的问题是在细节的处理上，让我们谈谈这个问题。</p>
+<h3 id="错误处理">错误处理</h3><p>这种简单用法的第一个问题就是：“如果出现了错误怎么办？”不幸的是，暂时没有非常好的解决方案。所以很多的开发者最终要继承AsyncTask，然后在doInBackground()中包裹一个try/catch，返回一个<tresult, exception="">，然后根据发生的情况，分发到新定义的例如onSuccess()或者是onError()中。(我也曾经见过仅捕获异常的引用，然后在 onPostExcecute()中进行检查的写法) </tresult,></p>
+<p>这最终是有点帮助的，但是你必须为你的每个项目写上额外的代码，随着时间的推移，这些自定义的代码在开发者之间和项目之间，可能不会保持很好的一致性和可预见性。</p>
+<h3 id="Activity和Fragment的生命周期">Activity和Fragment的生命周期</h3><p>另外一个你必须面对的问题是：“当AsyncTask正在运行的时候，如果我退出Activity或者是旋转设备的话会发生什么？”嗯，如果你只是发送一些数据，之后就不再关心发送结果，那可能是没有问题的，但是如果你需要根据Task的返回结果更新UI呢？如果你不做一些事情阻止的话，那么当你试图去调用Activity或者是view的话，你将得到一个空指针异常导致程序崩溃，因为他们现在是不可见或者是null的。</p>
+<p>同样，在这个问题上AsyncTask没有做很多工作去帮助你。作为一个开发者，你需要确保保持一个Task的引用，并且要么当Activity正在被销毁的时候取消Task，要么当你试图在onPostExecute()里面更新UI的时候，确保Activity是在一个可达状态。当你只想明确的做一些工作，并且让项目容易维护的时候，这将会继续提高维护项目的难度。</p>
+<h3 id="旋转时的缓存(或是其他情况)">旋转时的缓存(或是其他情况)</h3><p>当你的用户还是待在当前Activity，仅仅是旋转屏幕会发生什么？在这种情况下，取消Task没有任何意义，因为在旋转之后，你最终还是需要重新启动Task。或者是你不想重启Task，因为状况在一些地方以非幕等的方式发生了突变(because it mutates some state somewhere in a non-idempotent way),但是你确实想要得到结果，因为这样你就可以更新UI来反映这种情况。</p>
+<p>如果你专门的做一个只读的加载操作，你可以使用AsyncTaskLoader去解决这个问题。但是对于标准的Android方式来说，它还是很沉重，因为缺少错误处理，在Activity中没有缓存，还有很多独有的其他怪癖。</p>
+<h3 id="组合的多个Web_Server调用">组合的多个Web Server调用</h3><p>现在，假如说我们已经想办法把上面的问题都解决了，但是我们现在需要做一些连续的网络请求，每一个请求都需要基于前一个请求的结果。或者是，我们想做一些并发的网络请求，然后把结果合并在一起发送到UI线程，但是，再次抱歉，AsyncTask在这里帮不到你。</p>
+<p>一旦你开始做这样的事情，随着更多的复杂线程模型的增长，之前的问题会导致处理这样的事情非常的痛苦和苍白无力。如果想要这些线程一起运行，要么你就让它们单独运行，然后回调，要么让它们在一个后台线程中同步运行，最后复制组成不同。(To chain calls together, you either keep them separate and end up in callback hell, or run them synchronously together in one background task end up duplicating work to compose them differently in other situations.)</p>
+<p>如果要并行运行，你必须创建一个自定义的executor然后传递给AsyncTaskTask，因为默认的AsyncTask不支持并行。并且为了协调并行线程，你需要使用像是CountDownLatchs, Threads, Executors 和 Futures去降低更复杂的同步模式。</p>
+<h3 id="可测试性">可测试性</h3><p>抛开这些不说，如果你喜欢测试你的代码，AsyncTask并不能给你带来什么帮助。如果我们不做额外的工作，测试AsyncTask非常困难，它很脆弱并且难以维持。这是一篇有关如何成功测试AsyncTask的<a href="http://www.making-software.com/2012/10/31/testable-android-asynctask/" target="_blank" rel="external">帖子</a>。</p>
+<h2 id="更好的解决方案：RxJava’s_Observable">更好的解决方案：RxJava’s Observable</h2><p>幸运的是，一旦我们决定使用RxJava依赖库的时候，我们讨论的这些问题就都迎刃而解了。下面我们看看它能为我们做什么。</p>
+<p>下面我们将会使用Observables写一个请求代码来替代上面的AsyncTask方式。(如果你使用Retrofit，那么你应该很容易使用，其次它还支持Observable 返回值，并且它工作在一个后台的线程池，无需你额外的工作)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">webService.doSomething(someData)</span><br><span class="line">   .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">   .subscribe(</span><br><span class="line">       result -&gt; resultText.setText(<span class="string">"It worked!"</span>)),</span><br><span class="line">       e -&gt; handleError(e)</span><br><span class="line">   );</span><br></pre></td></tr></table></figure>
+<h3 id="错误处理-1">错误处理</h3><p>你可能会注意到，没有做额外的工作，我们已经处理了AsyncTask不会处理的成功和错误的情况，并且我们写了很少的代码。你看到的额外的组件是我们想要Observer 在UI主线程中处理的结果。这样可以让我们前进一点点。并且如果你的webService对象不想在后台线程中运行，你也可以在这里通过使用.subscribeOn(…) 声明。(注意：这些例子是使用Java 8的lambda语法，使用<a href="https://github.com/orfjackal/retrolambda" target="_blank" rel="external">Retrolambda</a>就可以在Android项目中进行使用了，但在我看来，这样做的回报是高于风险的，和写这篇文章相比，我们更喜欢在我们的项目中使用。)</p>
+<h3 id="Activity和Fragment的生命周期-1">Activity和Fragment的生命周期</h3><p>现在，我们想在这里利用RxAndroid解决上面提到的生命周期的问题，我们不需要指定mainThread() scheduler(顺便说一句，你只需要导入RxAndroid)。就像下面这样</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AppObservable.bindFragment(<span class="keyword">this</span>, webService.doSomething(someData))</span><br><span class="line">   .subscribe(</span><br><span class="line">       result -&gt; resultText.setText(<span class="string">"It worked!"</span>)),</span><br><span class="line">       e -&gt; handleError(e)</span><br><span class="line">   );</span><br></pre></td></tr></table></figure>
 <p>我通常的做法是在应用的Base Fragment里面创建一个帮助方法来简化这一点，你可以参考我维护的一个<a href="https://github.com/rosshambrick/standardlib/blob/master/src/main/java/com/rosshambrick/standardlib/RxFragment.java" target="_blank" rel="external">Base RxFragment</a> 获得一些指导。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bind(webService.doSomething(someData))</span><br><span class="line">   .subscribe(</span><br><span class="line">       result -&gt; resultText.setText(<span class="string">"It worked!"</span>)),</span><br><span class="line">       e -&gt; handleError(e)</span><br><span class="line">   );</span><br></pre></td></tr></table></figure>
 <p>如果我们的Activity或者是Fragment不再是可见状态，那么AppObservable.bindFragment()可以在调用链中插入一个垫片，来阻止onNext()运行。如果当Task试图运行的时候，Activity、Fragment是不可达状态，subscription 将会取消订阅并且停止运行，所以不会存在空指针的风险，程序也不会崩溃。一个需要注意的是，当我们离开Activity和Fragment时，我们会暂时或者是永久的泄露，这取决于问题中的Observable 的行为。所以在bind()方法中，我也会调用LifeCycleObservable机制，当Fragment销毁的时候自动取消。这样做的好处是一劳永逸。</p>
 <p>所以，这解决了首要的两个问题，但是下面这一个才是RxJava大发神威的地方。</p>
-<h3 id="组合的多个Web_Server调用">组合的多个Web Server调用</h3><p>在这里我不会详细的说明，因为这是一个<a href="http://reactivex.io/documentation/observable.html" target="_blank" rel="external">复杂的问题</a>，但是通过使用Observables，你可以用非常简单和易于理解的方式完成复杂的事情。这里是一个链式Web Service调用的例子，这些请求互相依赖，在线程池中运行第二批并行调用，然后在将结果返回给Observer之前，对数据进行合并和排序。为了更好的测量，我甚至在里面放置了一个过滤器。所有的业务逻辑都在下面这短短五行代码里面…</p>
+<h3 id="组合的多个Web_Server调用-1">组合的多个Web Server调用</h3><p>在这里我不会详细的说明，因为这是一个<a href="http://reactivex.io/documentation/observable.html" target="_blank" rel="external">复杂的问题</a>，但是通过使用Observables，你可以用非常简单和易于理解的方式完成复杂的事情。这里是一个链式Web Service调用的例子，这些请求互相依赖，在线程池中运行第二批并行调用，然后在将结果返回给Observer之前，对数据进行合并和排序。为了更好的测量，我甚至在里面放置了一个过滤器。所有的业务逻辑都在下面这短短五行代码里面…</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Observable&lt;List&lt;CityWeather&gt;&gt; getWeatherForLargeUsCapitals() &#123;</span><br><span class="line">   <span class="keyword">return</span> cityDirectory.getUsCapitals() </span><br><span class="line">       .flatMap(cityList -&gt; Observable.from(cityList))</span><br><span class="line">       .filter(city -&gt; city.getPopulation() &gt; <span class="number">500</span>,<span class="number">000</span>)</span><br><span class="line">       .flatMap(city -&gt; weatherService.getCurrentWeather(city)) <span class="comment">//each runs in parallel</span></span><br><span class="line">       .toSortedList((cw1,cw2) -&gt; cw1.getCityName().compare(cw2.getCityName()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="旋转时的缓存(或是其他情况)">旋转时的缓存(或是其他情况)</h3><p>既然这是一个加载的数据，那么我们可能需要将数据进行缓存，这样当我们旋转设备的时候，就不会触发再次调用全部web service的事件。一种实现的方式是保留Fragment，并且保存一个对Observable 的缓存的引用，就像下面这样：</p>
+<h3 id="旋转时的缓存(或是其他情况)-1">旋转时的缓存(或是其他情况)</h3><p>既然这是一个加载的数据，那么我们可能需要将数据进行缓存，这样当我们旋转设备的时候，就不会触发再次调用全部web service的事件。一种实现的方式是保留Fragment，并且保存一个对Observable 的缓存的引用，就像下面这样：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line"></span><br><span class="line">    setRetainInstance(<span class="keyword">true</span>);</span><br><span class="line">    weatherObservable = weatherManager.getWeatherForLargeUsCapitals().cache();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onViewCreated</span><span class="params">(...)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onViewCreated(...)</span><br><span class="line">    bind(weatherObservable).subscribe(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在旋转之后，订阅者的缓存实例就会立即发出和第一次请求相同的请求，防止真实的Web Service请求发生。</p>
 <p>如果你想要避免缓存的Fragment(并且有很充足的理由去避免它)，我们可以通过使用AsyncSubject实现缓存。无论何时被订阅，AsyncSubject 都会重新发出最后的事件。或者我们可以使用BehaviorSubject获得最后的值和新值改变整个应用程序。</p>
@@ -1669,7 +1603,7 @@ debugCompile <span class="string">'com.facebook.stetho:stetho:1.0.0'</span>
 <p>因为“缓存”是由Manager单独管理的，它不会与Fragment/Activity的周期绑定，并且在Activity/Fragment中将持续存在。如果你想强迫刷新基于以类似的方式来保留Fragment缓存实例的生命周期事件，你可以这样做：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">super</span>.onCreate()</span><br><span class="line">   <span class="keyword">if</span> (savedInstanceState == <span class="keyword">null</span>) &#123;</span><br><span class="line">       weatherManager.invalidate(); <span class="comment">//invalidate cache on fresh start</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这件事情的伟大之处在于，它不像是Loaders，我们可以很灵活的缓则缓存很多Activity和Services中的结果。只需要去掉oncreate()中的invalidate()调用，并让你的Manager对象决定何时发出新的气象数据就可以了。可能是一个Timer，或者是用户定位改变，或者是其他任何时刻，这真的没关系。你现在可以控制什么时候如何去更新缓存和重新加载。并且当你的缓存策略发生改变的时候，Fragment和你的Manager对象之间的接口不需要进行改变。它只不过是一个 List<weatherdata>的Observer。</weatherdata></p>
-<h3 id="可测试性">可测试性</h3><p>测试是我们想要实现干净、简单的最后一个挑战。(让我们忽略一个事实，在测试期间,我们可能想要模拟出实际的Web服务。这样做很简单，下面通过一个接口注入到那些依赖你可能已经正在做的标准模式中。)</p>
+<h3 id="可测试性-1">可测试性</h3><p>测试是我们想要实现干净、简单的最后一个挑战。(让我们忽略一个事实，在测试期间,我们可能想要模拟出实际的Web服务。这样做很简单，下面通过一个接口注入到那些依赖你可能已经正在做的标准模式中。)</p>
 <p>幸运的是，Observables给我们一个简单的方式来将一个异步方法变成同步，你要做的就是使用toblocking()方法。我们看一个测试例子。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List results = getWeatherForLargeUsCapitals().toBlocking().first();</span><br><span class="line">assertEquals(<span class="number">12</span>, results.size());</span><br></pre></td></tr></table></figure>
 <p>就像这样，我们没有必要去使用Futures或者是CountDownLatchs让做一些脆弱的操作，比如线程睡眠或者是让我们的测试变得很复杂，我们的测试现在是简单、干净、可维护的。</p>
@@ -1689,9 +1623,9 @@ debugCompile <span class="string">'com.facebook.stetho:stetho:1.0.0'</span>
     
     </summary>
     
-      <category term="AsyncTask" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/tags/AsyncTask/"/>
+      <category term="AsyncTask" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/tags/AsyncTask/"/>
     
-      <category term="翻译" scheme="http://likebamboo.com/AndroidBloghttp://likebamboo.com/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
+      <category term="翻译" scheme="http://localhost:8080/AndroidBloghttp://localhost:8080/AndroidBlog/categories/%E7%BF%BB%E8%AF%91/"/>
     
   </entry>
   
