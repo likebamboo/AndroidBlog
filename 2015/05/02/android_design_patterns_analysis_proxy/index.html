@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android设计模式源码解析之Proxy模式 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Binder中的代理模式再说Binder中的代理模式之前，我们需要先看看代理模式的简单实现，这一部分内容采用了《JAVA与模式》之代理模式这篇文章中的代码示例和uml类图。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android设计模式源码解析之Proxy模式">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_proxy/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="Binder中的代理模式再说Binder中的代理模式之前，我们需要先看看代理模式的简单实现，这一部分内容采用了《JAVA与模式》之代理模式这篇文章中的代码示例和uml类图。">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/proxy/singwhatiwanna/images/proxy-uml.png">
+<meta property="og:updated_time" content="2015-06-30T13:16:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android设计模式源码解析之Proxy模式">
+<meta name="twitter:description" content="Binder中的代理模式再说Binder中的代理模式之前，我们需要先看看代理模式的简单实现，这一部分内容采用了《JAVA与模式》之代理模式这篇文章中的代码示例和uml类图。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-android_design_patterns_analysis_proxy" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_proxy/" class="article-date">
+  <time datetime="2015-05-01T16:00:00.000Z" itemprop="datePublished">2015-05-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android设计模式源码解析之Proxy模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Binder中的代理模式">Binder中的代理模式</h1><p>再说Binder中的代理模式之前，我们需要先看看代理模式的简单实现，这一部分内容采用了<a href="http://www.cnblogs.com/java-my-life/archive/2012/04/23/2466712.html" target="_blank" rel="external">《JAVA与模式》之代理模式</a>这篇文章中的代码示例和uml类图。<br><a id="more"></a></p>
+<h2 id="1-_模式介绍">1. 模式介绍</h2><p>代理模式是对象的结构模式。代理模式给某一个对象提供一个代理对象，并由代理对象控制对原对象的引用。</p>
+<h3 id="模式的使用场景">模式的使用场景</h3><p>就是一个人或者机构代表另一个人或者机构采取行动。在一些情况下，一个客户不想或者不能够直接引用一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。</p>
+<h2 id="2-_UML类图">2. UML类图</h2><p><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/proxy/singwhatiwanna/images/proxy-uml.png" alt="url"></p>
+<h3 id="角色介绍">角色介绍</h3><ul>
+<li><p>抽象对象角色：声明了目标对象和代理对象的共同接口，这样一来在任何可以使用目标对象的地方都可以使用代理对象。</p>
+</li>
+<li><p>目标对象角色：定义了代理对象所代表的目标对象。</p>
+</li>
+<li><p>代理对象角色：代理对象内部含有目标对象的引用，从而可以在任何时候操作目标对象；代理对象提供一个与目标对象相同的接口，以便可以在任何时候替代目标对象。代理对象通常在客户端调用传递给目标对象之前或之后，执行某个操作，而不是单纯地将调用传递给目标对象。</p>
+</li>
+</ul>
+<h2 id="3-_模式的简单实现">3. 模式的简单实现</h2><h3 id="简单实现的介绍">简单实现的介绍</h3><p>下面通过一种抽象的方式来实现下代理模式</p>
+<h3 id="实现源码">实现源码</h3><p>抽象对象角色</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractObject</span> </span>&#123;</span><br><span class="line">    <span class="comment">//操作</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>目标对象角色</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">RealObject</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">AbstractObject</span> &#123;</span></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    public void operation() &#123;</span><br><span class="line">        <span class="comment">//一些操作</span></span><br><span class="line">        <span class="type">System</span>.out.println(<span class="string">"一些操作"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代理对象角色</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyObject</span> <span class="keyword">extends</span> <span class="title">AbstractObject</span></span>&#123;</span><br><span class="line">    RealObject realObject = <span class="keyword">new</span> RealObject();</span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//调用目标对象之前可以做相关操作</span></span><br><span class="line">        System.out.println(<span class="string">"before"</span>);        </span><br><span class="line">        realObject.operation();        </span><br><span class="line">        <span class="comment">//调用目标对象之后可以做相关操作</span></span><br><span class="line">        System.out.println(<span class="string">"after"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        AbstractObject obj = <span class="keyword">new</span> ProxyObject();</span><br><span class="line">        obj.operation();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="4-_代理模式在Binder中的使用">4. 代理模式在Binder中的使用</h2><p>直观来说，Binder是Android中的一个类，它继承了IBinder接口。从IPC角度来说，Binder是Android中的一种跨进程通信方式，Binder还可以理解为一种虚拟的物理设备，它的设备驱动是/dev/binder，该通信方式在linux中没有；从Android Framework角度来说，Binder是ServiceManager连接各种Manager（ActivityManager、WindowManager，etc）和相应ManagerService的桥梁；从Android应用层来说，Binder是客户端和服务端进行通信的媒介，当你bindService的时候，服务端会返回一个包含了服务端业务调用的Binder对象，通过这个Binder对象，客户端就可以获取服务端提供的服务或者数据，这里的服务包括普通服务和基于AIDL的服务。</p>
+<p>Binder一个很重要的作用是：将客户端的请求参数通过Parcel包装后传到远程服务端，远程服务端解析数据并执行对应的操作，同时客户端线程挂起，当服务端方法执行完毕后，再将返回结果写入到另外一个Parcel中并将其通过Binder传回到客户端，客户端接收到返回数据的Parcel后，Binder会解析数据包中的内容并将原始结果返回给客户端，至此，整个Binder的工作过程就完成了。由此可见，Binder更像一个数据通道，Parcel对象就在这个通道中跨进程传输，至于双方如何通信，这并不负责，只需要双方按照约定好的规范去打包和解包数据即可。</p>
+<p>为了更好地说明Binder，这里我们先手动实现了一个Binder。为了使得逻辑更清晰，这里简化一下，我们来模拟一个银行系统，这个银行提供的功能只有一个：即查询余额，只有传递一个int的id过来，银行就会将你的余额设置为id*10，满足下大家的发财梦。</p>
+<ol>
+<li>先定义一个Binder接口</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ryg.design.manualbinder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.os.IBinder;</span><br><span class="line"><span class="keyword">import</span> android.os.IInterface;</span><br><span class="line"><span class="keyword">import</span> android.os.RemoteException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IBank</span> <span class="keyword">extends</span> <span class="title">IInterface</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String DESCRIPTOR = <span class="string">"com.ryg.design.manualbinder.IBank"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TRANSACTION_queryMoney = (IBinder.FIRST_CALL_TRANSACTION + <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">queryMoney</span><span class="params">(<span class="keyword">int</span> uid)</span> <span class="keyword">throws</span> RemoteException</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.创建一个Binder并实现这个上述接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ryg.design.manualbinder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.os.Binder;</span><br><span class="line"><span class="keyword">import</span> android.os.IBinder;</span><br><span class="line"><span class="keyword">import</span> android.os.Parcel;</span><br><span class="line"><span class="keyword">import</span> android.os.RemoteException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BankImpl</span> <span class="keyword">extends</span> <span class="title">Binder</span> <span class="keyword">implements</span> <span class="title">IBank</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BankImpl</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.attachInterface(<span class="keyword">this</span>, DESCRIPTOR);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IBank <span class="title">asInterface</span><span class="params">(IBinder obj)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ((obj == <span class="keyword">null</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);</span><br><span class="line">        <span class="keyword">if</span> (((iin != <span class="keyword">null</span>) &amp;&amp; (iin <span class="keyword">instanceof</span> IBank))) &#123;</span><br><span class="line">            <span class="keyword">return</span> ((IBank) iin);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> BankImpl.Proxy(obj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">asBinder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTransact</span><span class="params">(<span class="keyword">int</span> code, Parcel data, Parcel reply, <span class="keyword">int</span> flags)</span></span><br><span class="line">            <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (code) &#123;</span><br><span class="line">        <span class="keyword">case</span> INTERFACE_TRANSACTION: &#123;</span><br><span class="line">            reply.writeString(DESCRIPTOR);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> TRANSACTION_queryMoney: &#123;</span><br><span class="line">            data.enforceInterface(DESCRIPTOR);</span><br><span class="line">            <span class="keyword">int</span> uid = data.readInt();</span><br><span class="line">            <span class="keyword">long</span> result = <span class="keyword">this</span>.queryMoney(uid);</span><br><span class="line">            reply.writeNoException();</span><br><span class="line">            reply.writeLong(result);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.onTransact(code, data, reply, flags);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">queryMoney</span><span class="params">(<span class="keyword">int</span> uid)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> uid * <span class="number">10l</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">implements</span> <span class="title">IBank</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> IBinder mRemote;</span><br><span class="line"></span><br><span class="line">        Proxy(IBinder remote) &#123;</span><br><span class="line">            mRemote = remote;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> IBinder <span class="title">asBinder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> mRemote;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> java.lang.<span class="function">String <span class="title">getInterfaceDescriptor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> DESCRIPTOR;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">queryMoney</span><span class="params">(<span class="keyword">int</span> uid)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">            Parcel data = Parcel.obtain();</span><br><span class="line">            Parcel reply = Parcel.obtain();</span><br><span class="line">            <span class="keyword">long</span> result;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                data.writeInterfaceToken(DESCRIPTOR);</span><br><span class="line">                data.writeInt(uid);</span><br><span class="line">                mRemote.transact(TRANSACTION_queryMoney, data, reply, <span class="number">0</span>);</span><br><span class="line">                reply.readException();</span><br><span class="line">                result = reply.readLong();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                reply.recycle();</span><br><span class="line">                data.recycle();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ok，到此为止，我们的Binder就完成了，这里只要创建服务端和客户端，二者就能通过我们的Binder来通信了。这里就不做这个示例了，我们的目的是分析代理模式在Binder中的使用。</p>
+<p>我们看上述Binder的实现中，有一个叫做“Proxy”的类，它的构造方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Proxy(IBinder remote) &#123;</span><br><span class="line">    mRemote = remote;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Proxy类接收一个IBinder参数，这个参数实际上就是服务端Service中的onBind方法返回的Binder对象在客户端重新打包后的结果，因为客户端无法直接通过这个打包的Binder和服务端通信，因此客户端必须借助Proxy类来和服务端通信，这里Proxy的作用就是代理的作用，客户端所有的请求全部通过Proxy来代理，具体工作流程为：Proxy接收到客户端的请求后，会将客户端的请求参数打包到Parcel对象中，然后将Parcel对象通过它内部持有的Ibinder对象传送到服务端，服务端接收数据、执行方法后返回结果给客户端的Proxy，Proxy解析数据后返回给客户端的真正调用者。很显然，上述所分析的就是典型的代理模式。至于Binder如何传输数据，这涉及到很底层的知识，这个很难搞懂，但是数据传输的核心思想是共享内存。</p>
+<h2 id="5-_杂谈">5. 杂谈</h2><h3 id="优点与缺点">优点与缺点</h3><h4 id="优点">优点</h4><ul>
+<li>给对象增加了本地化的扩展性，增加了存取操作控制</li>
+</ul>
+<h4 id="缺点">缺点</h4><ul>
+<li>会产生多余的代理类</li>
+</ul>
+<blockquote>
+<p>本文为 <a href="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis" target="_blank" rel="external">Android 设计模式源码解析</a> 中 Proxy模式 分析<br>Android系统版本： 5.0<br>分析者：<a href="https://github.com/singwhatiwanna" target="_blank" rel="external">singwhatiwanna</a>，分析状态：完成，校对者：<a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a>，校对状态：未校对     </p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_proxy/" data-id="cibk39tll003g50floxn262il" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_proxy/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_singleton/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android设计模式源码解析之单例模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_prototype/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android设计模式源码解析之原型模式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/02/android_design_patterns_analysis_proxy/" data-title="Android设计模式源码解析之Proxy模式" data-url="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_proxy/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">39</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/">Android 开源项目源码解析之HoloGraphLibrary 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/">Android 开源项目源码解析之EventBus 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/">Instagram是如何提升TextView渲染性能的</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/">Android 开源项目源码解析之Dagger 源码解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

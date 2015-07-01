@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android 开源项目源码解析之CircularFloatingActionMenu 源码解析 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1. 功能介绍一个与著名应用 Path 菜单类似的圆形弹出菜单，可方便的定制菜单以及动画。菜单可能是非完整圆形，本文统称为圆形菜单。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 开源项目源码解析之CircularFloatingActionMenu 源码解析">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="1. 功能介绍一个与著名应用 Path 菜单类似的圆形弹出菜单，可方便的定制菜单以及动画。菜单可能是非完整圆形，本文统称为圆形菜单。">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/circular-floating-action-menu/image/menu-demo.jpeg">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/circular-floating-action-menu/image/circlemenu.jpg">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/circular-floating-action-menu/image/menu_uml.jpg">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/circular-floating-action-menu/image/menu.jpg">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/circular-floating-action-menu/image/%E6%B5%81%E7%A8%8B%E5%9B%BE.jpg">
+<meta property="og:updated_time" content="2015-06-30T13:57:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 开源项目源码解析之CircularFloatingActionMenu 源码解析">
+<meta name="twitter:description" content="1. 功能介绍一个与著名应用 Path 菜单类似的圆形弹出菜单，可方便的定制菜单以及动画。菜单可能是非完整圆形，本文统称为圆形菜单。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-android-open-project-analysis_circular-floating-action-menu" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/" class="article-date">
+  <time datetime="2015-05-02T16:00:00.000Z" itemprop="datePublished">2015-05-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 开源项目源码解析之CircularFloatingActionMenu 源码解析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1-_功能介绍">1. 功能介绍</h3><p>一个与著名应用 <a href="https://play.google.com/store/apps/details?id=com.path" target="_blank" rel="external">Path</a> 菜单类似的圆形弹出菜单，可方便的定制菜单以及动画。<br>菜单可能是非完整圆形，本文统称为<code>圆形菜单</code>。<br><a id="more"></a></p>
+<h4 id="1-1_特点">1.1 特点</h4><p>可自定义动画、菜单、角度范围、半径等。  </p>
+<h4 id="1-2_概念">1.2 概念</h4><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/circular-floating-action-menu/image/menu-demo.jpeg" alt="Menu Demo"><br>以上是简单的圆形弹出菜单示例，更详细的示例图见：<a href="https://github.com/android-cn/android-open-project-demo/blob/master/circular-floating-actionmenu-demo/README.md#2-screenshot" target="_blank" rel="external">Screenshot</a>。<br><strong>菜单按钮(Event)：</strong>点击会弹出圆形菜单的控件，如上图的 + 对应控件，对应代码中的<code>FloatingActionButton.java</code>。  </p>
+<p><strong>子菜单按钮(Event)：</strong>圆形菜单中的控件，如上图的定位、视频、相机、文本对应的控件，对应代码中的<code>SubActionButton.java</code>。  </p>
+<p><strong>菜单：</strong>整个菜单，包含上面的<code>菜单按钮</code>和<code>子菜单按钮</code>，对应代码中的<code>FloatingActionMenu.java</code>。  </p>
+<p><strong>菜单动画回调：</strong>点击<code>菜单按钮</code>弹出<code>子菜单按钮</code>的动画设置的抽象类，对应代码中的<code>MenuAnimationHandler.java</code>。  </p>
+<h3 id="2-_总体设计">2. 总体设计</h3><p>本项目较为简单，总体设计省略。  </p>
+<h3 id="3-_流程图">3. 流程图</h3><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/circular-floating-action-menu/image/circlemenu.jpg" alt="设计流程图" title="流程图"><br>流程图如上图所示，中间最复杂的可能是计算<code>子菜单按钮</code>位置的地方。</p>
+<h3 id="4-_详细设计">4. 详细设计</h3><h4 id="4-1_类关系图">4.1 类关系图</h4><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/circular-floating-action-menu/image/menu_uml.jpg" alt="uml" title="uml"><br>以上是<code>CircularFloatingActionMenu</code>主要类的关系图。  </p>
+<p><code>FloatingActionButton</code>、<code>SubActionButton</code>都是继承自<code>FrameLayout</code>的自定义控件，可支持以其他 View 为内容，如<code>ImageView</code>、<code>TextView</code>。  </p>
+<p><code>FloatingActionMenu</code>由<code>FloatingActionButton</code>、<code>SubActionButton</code>以及<code>MenuAnimationHandler</code>等构成。  </p>
+<h4 id="4-2_类功能介绍">4.2 类功能介绍</h4><p><code>CircularFloatingActionMenu</code>源码主要分成两部分，一部分是构成菜单的 View 部分，另一部分是动画的操作类。  </p>
+<p>View 部分包含我们上面提到的菜单按钮<code>FloatingActionButton.java</code>、子菜单按钮<code>SubActionButton.java</code>、菜单<code>FloatingActionMenu.java</code>。 </p>
+<p>动画部分包含菜单动画回调抽象类<code>MenuAnimationHandler.java</code>以及它默认的实现<code>DefaultAnimationHandler.java</code>。  </p>
+<h5 id="4-2-1_SubActionButton-java">4.2.1 SubActionButton.java</h5><p>子菜单按钮，即按菜单键弹出来的选项按钮。这个类继承自<code>FrameLayout</code>，实现一个自定义图标的功能。<br>可以根据构造函数传进来的参数来选择不同风格的图案底纹，然后将其传给<code>FloatingActionMenu</code>以便控制。<br>首先是构造函数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">SubActionButton</span><span class="params">(Activity activity, LayoutParams layoutParams, <span class="keyword">int</span> theme, Drawable backgroundDrawable, View contentView, LayoutParams contentParams)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(activity);</span><br><span class="line">        setLayoutParams(layoutParams);</span><br><span class="line">        <span class="comment">// If no custom backgroundDrawable is specified, use the background drawable of the theme.</span></span><br><span class="line">        <span class="keyword">if</span>(backgroundDrawable == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>(theme == THEME_LIGHT) &#123;</span><br><span class="line">                backgroundDrawable = activity.getResources().getDrawable(R.drawable.button_sub_action_selector);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(theme == THEME_DARK) &#123;</span><br><span class="line">                backgroundDrawable = activity.getResources().getDrawable(R.drawable.button_sub_action_dark_selector);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(theme == THEME_LIGHTER) &#123;</span><br><span class="line">                backgroundDrawable = activity.getResources().getDrawable(R.drawable.button_action_selector);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(theme == THEME_DARKER) &#123;</span><br><span class="line">                backgroundDrawable = activity.getResources().getDrawable(R.drawable.button_action_dark_selector);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Unknown SubActionButton theme: "</span> + theme);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//通过mutate()方法解决Drawable共用一个内存空间的问题</span></span><br><span class="line">            backgroundDrawable = backgroundDrawable.mutate().getConstantState().newDrawable();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//设置背景（考虑版本问题）</span></span><br><span class="line">        setBackgroundResource(backgroundDrawable);</span><br><span class="line">        <span class="keyword">if</span>(contentView != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">//添加view(即菜单的选项视图)</span></span><br><span class="line">            setContentView(contentView, contentParams);</span><br><span class="line">        &#125;</span><br><span class="line">        setClickable(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>从构造函数可以看的出来，选项按钮有四个主题可以选择，分别是下面的四种颜色<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THEME_LIGHT = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THEME_DARK = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THEME_LIGHTER = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THEME_DARKER = <span class="number">3</span>;</span><br></pre></td></tr></table></figure></p>
+<p>之后是设定 ImageView 到这个按钮上，并且设定与父 View 的距离。（通过 setMargins()）<br>这个我们在创建 subActionButton 时就要调用。核心函数是 addView(contentView, params)。这个方法能够在视图上再添加一个 view，作为子视图。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Sets a content view with custom LayoutParams that will be displayed inside this SubActionButton.</span><br><span class="line"> * <span class="doctag">@param</span> contentView</span><br><span class="line"> * <span class="doctag">@param</span> params</span><br><span class="line"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setContentView</span><span class="params">(View contentView, LayoutParams params)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(params == <span class="keyword">null</span>) &#123;</span><br><span class="line">        params = <span class="keyword">new</span> LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER);</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> margin = getResources().getDimensionPixelSize(R.dimen.sub_action_button_content_margin);</span><br><span class="line">        params.setMargins(margin, margin, margin, margin);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    contentView.setClickable(<span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">this</span>.addView(contentView, params);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最后就是一个建造器了，专门生成用于生成该类的建造器，静态全局<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * A builder for &#123;<span class="doctag">@link</span> com.cpacm.library.SubActionButton&#125; in conventional Java Builder format</span><br><span class="line"> * 菜单选项的建造器</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">   <span class="function"><span class="keyword">public</span> SubActionButton <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SubActionButton(activity,</span><br><span class="line">                layoutParams,</span><br><span class="line">                theme,</span><br><span class="line">                backgroundDrawable,</span><br><span class="line">                contentView,</span><br><span class="line">                contentParams);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>传入 activity，视图特性配置，主题的 id，背景图，imageview（子视图），imageview（子视图）的特性配置。用这些来配置选项按钮。</p>
+<h5 id="4-2-2_FloatingActionButton-java">4.2.2 FloatingActionButton.java</h5><p>菜单按钮，点击会弹出圆形菜单的控件。   </p>
+<p>这个类跟<code>SubActionButton</code>基本相似，同样可以通过内部自定义的<code>build</code>构造器来定制自己的按钮。<br>菜单按钮其实跟选项按钮的代码模式差不多，也是由设定子视图和一个建造器组成。<br>不过它多了几个方法：<br>设定位置，如左下，右下等方位<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Sets the position of the button by calculating its Gravity from the position parameter</span><br><span class="line"> * <span class="doctag">@param</span> position one of 8 specified positions.</span><br><span class="line"> * <span class="doctag">@param</span> layoutParams</span><br><span class="line"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPosition</span><span class="params">(<span class="keyword">int</span> position, FrameLayout.LayoutParams layoutParams)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> gravity;</span><br><span class="line">    <span class="keyword">switch</span>(position) &#123;</span><br><span class="line">        ...<span class="comment">//具体代码请自行查看源代码</span></span><br><span class="line">    &#125;</span><br><span class="line">    layoutParams.gravity = gravity;</span><br><span class="line">    setLayoutParams(layoutParams);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将视图绑定到 activity 的主视图中。这样我们就能在 activity 的主视图中操作这个 view 了。<br>FloatingActionButton的建造器<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * A builder for &#123;<span class="doctag">@link</span> com.cpacm.library.FloatingActionButton&#125; in conventional Java Builder format</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">...</span><br><span class="line">    <span class="function"><span class="keyword">public</span> FloatingActionButton <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> FloatingActionButton(activity,</span><br><span class="line">                                           layoutParams,</span><br><span class="line">                                           theme,</span><br><span class="line">                                           backgroundDrawable,</span><br><span class="line">                                           position,</span><br><span class="line">                                           contentView,</span><br><span class="line">                                           contentParams);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>比 SubActionButton 多了一个位置的属性。</p>
+<h5 id="4-2-3_FloatingActionMenu-java">4.2.3 FloatingActionMenu.java</h5><p>那么最重要的类来了，<code>FloatingActionMenu</code>表示整个菜单，它存放着所有的按钮以及动画操作。  </p>
+<p>基本结构图如下：<br><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/circular-floating-action-menu/image/menu.jpg" alt="Alt text" title="menu"><br>这个类也是由一个建造器生成，那么我们从建造器开始说起<br>我们先看看生成 Menu 的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">FloatingActionMenu rightLowerMenu = <span class="keyword">new</span> FloatingActionMenu.Builder(<span class="keyword">this</span>)</span><br><span class="line">                .addSubActionView(rLSubBuilder.setContentView(rlIcon1).build())</span><br><span class="line">                .addSubActionView(rLSubBuilder.setContentView(rlIcon2).build())</span><br><span class="line">                .addSubActionView(rLSubBuilder.setContentView(rlIcon3).build())</span><br><span class="line">                .addSubActionView(rLSubBuilder.setContentView(rlIcon4).build())</span><br><span class="line">                .setAnimationHandler(<span class="keyword">new</span> SliderAnimationHandler())</span><br><span class="line">                .attachTo(rightLowerButton)</span><br><span class="line">                .build();</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>Builder(this) 将 activity 传入 menu 中</li>
+<li>addSubActionView 添加选项按钮到 activity 的视图中。在 FloatingActionMenu中管理 SubActionView 是一个 Item 的 list 集合，每次加一个按钮就往里面添加。Item 是一个辅助类，里面包括一个视图，x 坐标，y 坐标，长度，宽度。</li>
+<li>setAnimationHandler 则是设定动画。</li>
+<li>attachTo 是将 menu 与 activity 的视图绑定。（即把菜单按钮的视图添加到 activity 的视图中）  </li>
+</ul>
+<p>FloatingActionMenu 类主要是管理菜单按钮和选项按钮的位置和状态（开和关）<br>（1）首先是通过 view 的 onClick 监听器来控制状态  </p>
+<p>（2）开关主要是两种状态，开的时候会获得菜单按钮的中心位置 center（getActionViewCenter()）和计算 item 的位置（calculateItemPositions()）。然后发送动画的请求到 AnimationHandler 中（animationHandler.animateMenuOpening(center)）。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Simply opens the menu by doing necessary calculations.</span><br><span class="line"> * <span class="doctag">@param</span> animated if true, this action is executed by the current &#123;<span class="doctag">@link</span> MenuAnimationHandler&#125;</span><br><span class="line"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">(<span class="keyword">boolean</span> animated)</span> </span>&#123;</span><br><span class="line">    ...<span class="comment">//具体代码请自行查看源代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中 item 的 x，y 是记录视图的终点位置，然后经过动画把 view 移到 x，y 的位置上。  </p>
+<p>stateChangeListener 为状态变化的监听器，开关都会响应相应的方法。主要在 AnimationHandler 中添加具体方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * A listener to listen open/closed state changes of the Menu</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">interface</span> <span class="title">MenuStateChangeListener</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMenuOpened</span><span class="params">(FloatingActionMenu menu)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMenuClosed</span><span class="params">(FloatingActionMenu menu)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>（3）计算位置<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Calculates the desired positions of all items.</span><br><span class="line"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">calculateItemPositions</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ...<span class="comment">//具体代码请自行查看源代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="4-2-4_MenuAnimationHandler-java">4.2.4 MenuAnimationHandler.java</h5><p>这是是所有动画类的父类，它主要定义了菜单打开，关闭，以及运行结束后状态的保存的方法。  </p>
+<pre><code><span class="function"><span class="title">animateMenuOpening</span><span class="params">(Point center)</span></span>
+<span class="function"><span class="title">animateMenuClosing</span><span class="params">(Point center)</span></span>   
+<span class="function"><span class="title">restoreSubActionViewAfterAnimation</span><span class="params">(FloatingActionMenu.Item subActionItem, ActionType actionType)</span></span>
+</code></pre><h5 id="4-2-5_DefaultAnimationHandler-java">4.2.5 DefaultAnimationHandler.java</h5><p>这一个默认的动画类，当我们不对动画做修改时就会默认使用这个类里面的动画效果。我们也可以参考这个类来进行设计新的动画效果。<br>动画效果主要是通过<code>ObjectAnimator.ofPropertyValuesHolder(menu.getSubActionItems().get(i).view, pvhX, pvhY, pvhR, pvhsX, pvhsY, pvhA)</code>来实现。<br>动画实现的主要类，继承自 MenuAnimationHandler<br>主要通过 Animator 来实现属性动画。<br>里面有一个 restoreSubActionViewAfterAnimation 的方法，它主要是恢复选项按钮到未打开的状态。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Restores the specified sub action view to its final state, accoding to the current actionType</span><br><span class="line"> * Should be called after an animation finishes.</span><br><span class="line"> * <span class="doctag">@param</span> subActionItem</span><br><span class="line"> * <span class="doctag">@param</span> actionType</span><br><span class="line"> */</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">restoreSubActionViewAfterAnimation</span><span class="params">(FloatingActionMenu.Item subActionItem, ActionType actionType)</span> </span>&#123;</span><br><span class="line">    ...<span class="comment">//具体代码请自行查看源代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Animator属性动画以及其他动画的实现请参考我写的博客<br><a href="http://www.cnblogs.com/cpacm/p/4067283.html" target="_blank" rel="external">Android的动画效果</a></p>
+<h4 id="4-3_如何使用">4.3 如何使用</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Set up the white button on the lower right corner</span></span><br><span class="line"><span class="comment">// more or less with default parameter</span></span><br><span class="line">ImageView fabIconNew = <span class="keyword">new</span> ImageView(<span class="keyword">this</span>);</span><br><span class="line">fabIconNew.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_new_light));</span><br><span class="line">FloatingActionButton rightLowerButton = <span class="keyword">new</span> FloatingActionButton.Builder(<span class="keyword">this</span>)</span><br><span class="line">        .setContentView(fabIconNew)</span><br><span class="line">        .build();</span><br><span class="line"></span><br><span class="line">SubActionButton.Builder rLSubBuilder = <span class="keyword">new</span> SubActionButton.Builder(<span class="keyword">this</span>);</span><br><span class="line">ImageView rlIcon1 = <span class="keyword">new</span> ImageView(<span class="keyword">this</span>);</span><br><span class="line">ImageView rlIcon2 = <span class="keyword">new</span> ImageView(<span class="keyword">this</span>);</span><br><span class="line">ImageView rlIcon3 = <span class="keyword">new</span> ImageView(<span class="keyword">this</span>);</span><br><span class="line">ImageView rlIcon4 = <span class="keyword">new</span> ImageView(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">rlIcon1.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_chat_light));</span><br><span class="line">rlIcon2.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_camera_light));</span><br><span class="line">rlIcon3.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_video_light));</span><br><span class="line">rlIcon4.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_place_light));</span><br><span class="line"></span><br><span class="line"><span class="comment">// Build the menu with default options: light theme, 90 degrees, 72dp radius.</span></span><br><span class="line"><span class="comment">// Set 4 default SubActionButtons</span></span><br><span class="line">FloatingActionMenu rightLowerMenu = <span class="keyword">new</span> FloatingActionMenu.Builder(<span class="keyword">this</span>)</span><br><span class="line">        .addSubActionView(rLSubBuilder.setContentView(rlIcon1).build())</span><br><span class="line">        .addSubActionView(rLSubBuilder.setContentView(rlIcon2).build())</span><br><span class="line">        .addSubActionView(rLSubBuilder.setContentView(rlIcon3).build())</span><br><span class="line">        .addSubActionView(rLSubBuilder.setContentView(rlIcon4).build())</span><br><span class="line">        .setAnimationHandler(<span class="keyword">new</span> SliderAnimationHandler())</span><br><span class="line">        .attachTo(rightLowerButton)</span><br><span class="line">        .build();</span><br></pre></td></tr></table></figure>
+<p>如以上代码所示  </p>
+<p>（1）先建立一个 view 来作为一个总容器，设置好图片，然后作为菜单的按钮  </p>
+<p>（2）建立好选项菜单的视图，添加属性后，添加到 FloatingActionMenu 中的 ArrayList<item> 数组中，并同时绑定上面的菜单按钮。  </item></p>
+<p>（3）如果使用自己定义的动画，setAnimationHandler(new SliderAnimationHandler())。  </p>
+<p>这样子，一个简单的案例就做好了</p>
+<p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/circular-floating-action-menu/image/%E6%B5%81%E7%A8%8B%E5%9B%BE.jpg" alt="流程图" title="流程图"></p>
+<h3 id="5-_杂谈">5. 杂谈</h3><p>动画的类型有点少，以及在屏幕尺寸异常的机子上测试时（如 mx3 的 1800x1080）会出现子选项偏离中心菜单键的问题，原因出在 view 的位置计算上，它没有考虑到一些特殊机型的机子。</p>
+<blockquote>
+<p>本文为 <a href="https://github.com/android-cn/android-open-project-analysis" target="_blank" rel="external">Android 开源项目源码解析</a> 中 circular-foating-action-menu 部分<br>项目地址：<a href="https://github.com/oguzbilgener/CircularFloatingActionMenu" target="_blank" rel="external">CircularFloatingActionMenu</a>，分析的版本：<a href="https://github.com/oguzbilgener/CircularFloatingActionMenu/commit/8efb1aab2b361ed9019fa4af6e5d43e77777bcb6" target="_blank" rel="external">8efb1aa</a>，Demo 地址：<a href="https://github.com/android-cn/android-open-project-demo/tree/master/circular-floating-actionmenu-demo" target="_blank" rel="external">CFAMenu-demo</a><br>分析者：<a href="https://github.com/cpacm" target="_blank" rel="external">cpacm</a>，校对者：<a href="https://github.com/dkmeteor" target="_blank" rel="external">dkmeteor</a>、<a href="https://github.com/trinea" target="_blank" rel="external">Trinea</a>，校对状态：进行中   </p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/" data-id="cibk39tna006550fl9rdenjtl" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Instagram是如何提升TextView渲染性能的
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 开源项目源码解析之Dagger 源码解析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/03/android-open-project-analysis_circular-floating-action-menu/" data-title="Android 开源项目源码解析之CircularFloatingActionMenu 源码解析" data-url="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">39</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/">Android 开源项目源码解析之HoloGraphLibrary 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/">Android 开源项目源码解析之EventBus 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/">Instagram是如何提升TextView渲染性能的</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/">Android 开源项目源码解析之Dagger 源码解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

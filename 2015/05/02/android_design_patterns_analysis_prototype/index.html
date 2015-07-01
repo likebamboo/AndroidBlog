@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android设计模式源码解析之原型模式 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1. 模式介绍模式的定义用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android设计模式源码解析之原型模式">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_prototype/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="1. 模式介绍模式的定义用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/prototype/mr.simple/images/prototype-uml.png">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/prototype/mr.simple/images/result.png">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/prototype/mr.simple/images/result-2.png">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/prototype/mr.simple/images/result-3.png">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/prototype/mr.simple/images/sms.png">
+<meta property="og:updated_time" content="2015-06-30T13:57:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android设计模式源码解析之原型模式">
+<meta name="twitter:description" content="1. 模式介绍模式的定义用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-android_design_patterns_analysis_prototype" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_prototype/" class="article-date">
+  <time datetime="2015-05-01T16:00:00.000Z" itemprop="datePublished">2015-05-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android设计模式源码解析之原型模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-_模式介绍">1. 模式介绍</h2><h3 id="模式的定义">模式的定义</h3><p>用原型实例指定创建对象的种类，并通过拷贝这些原型创建新的对象。<br><a id="more"></a></p>
+<h3 id="模式的使用场景">模式的使用场景</h3><ol>
+<li>类初始化需要消化非常多的资源，这个资源包括数据、硬件资源等，通过原型拷贝避免这些消耗；</li>
+<li>通过 new 产生一个对象需要非常繁琐的数据准备或访问权限，则可以使用原型模式；</li>
+<li>一个对象需要提供给其他对象访问，而且各个调用者可能都需要修改其值时，可以考虑使用原型模式拷贝多个对象供调用者使用，即保护性拷贝。 </li>
+</ol>
+<h2 id="2-_UML类图">2. UML类图</h2><p><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/prototype/mr.simple/images/prototype-uml.png" alt="uml"></p>
+<h3 id="角色介绍">角色介绍</h3><ul>
+<li>Client  :  客户端用户。</li>
+<li>Prototype : 抽象类或者接口，声明具备clone能力。</li>
+<li>ConcretePrototype : 具体的原型类.</li>
+</ul>
+<h2 id="3-_模式的简单实现">3. 模式的简单实现</h2><h3 id="简单实现的介绍">简单实现的介绍</h3><p>下面我们以简单的文档拷贝为例来演示一下简单的原型模式模式。     </p>
+<h3 id="实现源码">实现源码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.dp.example.builder;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.dp.example.prototype;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * 文档类型, 扮演的是ConcretePrototype角色，而cloneable是代表prototype角色</span><br><span class="line"> * </span><br><span class="line"> * <span class="doctag">@author</span> mrsimple</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WordDocument</span> <span class="keyword">implements</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 文本</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">private</span> String mText;</span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 图片名列表</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">private</span> ArrayList&lt;String&gt;&lt;string&gt; mImages = <span class="keyword">new</span> ArrayList&lt;String&gt;&lt;string&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WordDocument</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"----------- WordDocument构造函数 -----------"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 克隆对象</span><br><span class="line">     */</span></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> WordDocument <span class="title">clone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            WordDocument doc = (WordDocument) <span class="keyword">super</span>.clone();</span><br><span class="line">            doc.mText = <span class="keyword">this</span>.mText;</span><br><span class="line">            doc.mImages = <span class="keyword">this</span>.mImages;</span><br><span class="line">            <span class="keyword">return</span> doc;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getText</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mText;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setText</span><span class="params">(String mText)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mText = mText;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;string&gt; <span class="title">getImages</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mImages;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * <span class="doctag">@param</span> img</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addImage</span><span class="params">(String img)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mImages.add(img);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 打印文档内容</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showDocument</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"----------- Word Content Start -----------"</span>);</span><br><span class="line">        System.out.println(<span class="string">"Text : "</span> + mText);</span><br><span class="line">        System.out.println(<span class="string">"Images List: "</span>);</span><br><span class="line">        <span class="keyword">for</span> (String imgName : mImages) &#123;</span><br><span class="line">            System.out.println(<span class="string">"image name : "</span> + imgName);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"----------- Word Content End -----------"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过WordDocument类模拟了word文档中的基本元素，即文字和图片。WordDocument的在该原型模式示例中扮演的角色为ConcretePrototype， 而Cloneable的角色则为Prototype。WordDocument实现了clone方法以实现对象克隆。下面我们看看Client端的使用 :       </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        WordDocument originDoc = <span class="keyword">new</span> WordDocument();</span><br><span class="line">        originDoc.setText(<span class="string">"这是一篇文档"</span>);</span><br><span class="line">        originDoc.addImage(<span class="string">"图片1"</span>);</span><br><span class="line">        originDoc.addImage(<span class="string">"图片2"</span>);</span><br><span class="line">        originDoc.addImage(<span class="string">"图片3"</span>);</span><br><span class="line">        originDoc.showDocument();</span><br><span class="line"></span><br><span class="line">        WordDocument doc2 = originDoc.clone();</span><br><span class="line">        doc2.showDocument();</span><br><span class="line">        </span><br><span class="line">        doc2.setText(<span class="string">"这是修改过的Doc2文本"</span>);</span><br><span class="line">        doc2.showDocument();</span><br><span class="line">         </span><br><span class="line">        originDoc.showDocument();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果如下 :<br><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/prototype/mr.simple/images/result.png" alt="result"></p>
+<p>可以看到，doc2是通过originDoc.clone()创建的，并且doc2第一次输出的时候和originDoc输出是一样的。即doc2是originDoc的一份拷贝，他们的内容是一样的，而doc2修改了文本内容以后并不会影响originDoc的文本内容。需要注意的是通过clone拷贝对象的时候并不会执行构造函数！</p>
+<h3 id="浅拷贝和深拷贝">浅拷贝和深拷贝</h3><p>将main函数的内容修改为如下 :    </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    WordDocument originDoc = <span class="keyword">new</span> WordDocument();</span><br><span class="line">    originDoc.setText(<span class="string">"这是一篇文档"</span>);</span><br><span class="line">    originDoc.addImage(<span class="string">"图片1"</span>);</span><br><span class="line">    originDoc.addImage(<span class="string">"图片2"</span>);</span><br><span class="line">    originDoc.addImage(<span class="string">"图片3"</span>);</span><br><span class="line">    originDoc.showDocument();</span><br><span class="line"></span><br><span class="line">    WordDocument doc2 = originDoc.clone();</span><br><span class="line">    </span><br><span class="line">    doc2.showDocument();</span><br><span class="line">    </span><br><span class="line">    doc2.setText(<span class="string">"这是修改过的Doc2文本"</span>);</span><br><span class="line">    doc2.addImage(<span class="string">"哈哈.jpg"</span>);</span><br><span class="line">    doc2.showDocument();</span><br><span class="line">    </span><br><span class="line">    originDoc.showDocument();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果如下 :<br><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/prototype/mr.simple/images/result-2.png" alt="result"><br>细心的朋友可能发现了，在doc2添加了一张名为”哈哈.jpg”的照片，但是却也显示在originDoc中？这是怎么回事呢？  其实学习过C++的朋友都知道，这是因为上文中WordDocument的clone方法中只是简单的进行浅拷贝，引用类型的新对象doc2的mImages只是单纯的指向了this.mImages引用，而并没有进行拷贝。doc2的mImages添加了新的图片，实际上也就是往originDoc里添加了新的图片，所以originDoc里面也有”哈哈.jpg” 。那如何解决这个问题呢？  那就是采用深拷贝，即在拷贝对象时，对于引用型的字段也要采用拷贝的形式，而不是单纯引用的形式。示例如下 :       </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">/**</span><br><span class="line">     * 克隆对象</span><br><span class="line">     */</span></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> WordDocument <span class="title">clone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            WordDocument doc = (WordDocument) <span class="keyword">super</span>.clone();</span><br><span class="line">            doc.mText = <span class="keyword">this</span>.mText;</span><br><span class="line"><span class="comment">//            doc.mImages = this.mImages;</span></span><br><span class="line">            doc.mImages = (ArrayList&lt;String&gt;) <span class="keyword">this</span>.mImages.clone();</span><br><span class="line">            <span class="keyword">return</span> doc;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>如上代码所示，将doc.mImages指向this.mImages的一份拷贝， 而不是this.mImages本身，这样在doc2添加图片时并不会影响originDoc，如图所示 :<br><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/prototype/mr.simple/images/result-3.png" alt="result">        </p>
+<h2 id="Android源码中的模式实现">Android源码中的模式实现</h2><p>在Android源码中，我们以熟悉的Intent来分析源码中的原型模式。简单示例如下 :      </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Uri uri = Uri.parse(<span class="string">"smsto:0800000123"</span>);    </span><br><span class="line">Intent shareIntent = <span class="keyword">new</span> Intent(Intent.ACTION_SENDTO, uri);    </span><br><span class="line">shareIntent.putExtra(<span class="string">"sms_body"</span>, <span class="string">"The SMS text"</span>);    </span><br><span class="line"></span><br><span class="line">Intent intent = (Intent)shareIntent.clone() ;</span><br><span class="line">startActivity(intent);</span><br></pre></td></tr></table></figure>
+<p>结果如下 :</p>
+<p><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/prototype/mr.simple/images/sms.png" alt="result">        </p>
+<p>可以看到，我们通过shareIntent.clone方法拷贝了一个对象intent, 然后执行startActivity(intent)， 随即就进入了短信页面，号码为0800000123,文本内容为The SMS text，即这些内容都与shareIntent一致。   </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">clone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Intent(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * Copy constructor.</span><br><span class="line"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Intent</span><span class="params">(Intent o)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.mAction = o.mAction;</span><br><span class="line">    <span class="keyword">this</span>.mData = o.mData;</span><br><span class="line">    <span class="keyword">this</span>.mType = o.mType;</span><br><span class="line">    <span class="keyword">this</span>.mPackage = o.mPackage;</span><br><span class="line">    <span class="keyword">this</span>.mComponent = o.mComponent;</span><br><span class="line">    <span class="keyword">this</span>.mFlags = o.mFlags;</span><br><span class="line">    <span class="keyword">if</span> (o.mCategories != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mCategories = <span class="keyword">new</span> ArraySet&lt;String&gt;(o.mCategories);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (o.mExtras != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mExtras = <span class="keyword">new</span> Bundle(o.mExtras);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (o.mSourceBounds != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mSourceBounds = <span class="keyword">new</span> Rect(o.mSourceBounds);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (o.mSelector != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mSelector = <span class="keyword">new</span> Intent(o.mSelector);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (o.mClipData != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.mClipData = <span class="keyword">new</span> ClipData(o.mClipData);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 可以看到，clone方法实际上在内部调用了new Intent(this); 这就和C++中的拷贝构造函数完全一致了，而且是深拷贝。由于该模式比较简单，就不做太多说明。   </p>
+<h2 id="4-_杂谈">4. 杂谈</h2><h3 id="优点与缺点">优点与缺点</h3><ul>
+<li><p>优点<br>原型模式是在内存二进制流的拷贝，要比直接 new 一个对象性能好很多，特别是要在一个循环体内产生大量的对象时，原型模式可以更好地体现其优点。</p>
+</li>
+<li><p>缺点<br>这既是它的优点也是缺点，直接在内存中拷贝，构造函数是不会执行的，在实际开发当中应该注意这个潜在的问题。优点就是减少了约束，缺点也是减少了约束，需要大家在实际应用时考虑。</p>
+</li>
+</ul>
+<blockquote>
+<p>本文为 <a href="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis" target="_blank" rel="external">Android 设计模式源码解析</a> 中 原型模式 分析<br>Android系统版本： 2.3<br>分析者：<a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a>，分析状态：未完成，校对者：<a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a>，校对状态：完成    </p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_prototype/" data-id="cibk39tln003k50flwcqov4ni" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_prototype/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_proxy/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android设计模式源码解析之Proxy模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android-open-project-analysis_view-draw-flow/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 开源项目源码解析之View 绘制流程</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/02/android_design_patterns_analysis_prototype/" data-title="Android设计模式源码解析之原型模式" data-url="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_prototype/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">39</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/">Android 开源项目源码解析之HoloGraphLibrary 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/">Android 开源项目源码解析之EventBus 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/">Instagram是如何提升TextView渲染性能的</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/">Android 开源项目源码解析之Dagger 源码解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

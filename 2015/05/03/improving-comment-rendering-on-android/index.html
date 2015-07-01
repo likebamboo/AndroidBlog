@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Instagram是如何提升TextView渲染性能的 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="[译]Instagram是如何提升TextView渲染性能的
+原文链接: Improving Comment Rendering on Android
+
+上周，成千上万来自全世界的IG用户齐聚在社区组织的先下聚会 Worldwide InstaMeet11上。WWIM11 是历史上最大，最具地域多样性的Instagram聚会，从Muscat到Bushwick，成千上万用户分享了大约10万张照片。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Instagram是如何提升TextView渲染性能的">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="[译]Instagram是如何提升TextView渲染性能的
+原文链接: Improving Comment Rendering on Android
+
+上周，成千上万来自全世界的IG用户齐聚在社区组织的先下聚会 Worldwide InstaMeet11上。WWIM11 是历史上最大，最具地域多样性的Instagram聚会，从Muscat到Bushwick，成千上万用户分享了大约10万张照片。">
+<meta property="og:image" content="http://codethink.me/images/how-ig-impove-textview-rendering-1.png">
+<meta property="og:image" content="http://codethink.me/images/how-ig-impove-textview-rendering-2.png">
+<meta property="og:image" content="http://codethink.me/images/how-ig-impove-textview-rendering-3.png">
+<meta property="og:image" content="http://codethink.me/images/how-ig-impove-textview-rendering-4.png">
+<meta property="og:image" content="http://codethink.me/images/how-ig-impove-textview-rendering-5.png">
+<meta property="og:image" content="http://codethink.me/images/how-ig-impove-textview-rendering-6.png">
+<meta property="og:updated_time" content="2015-06-30T13:57:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Instagram是如何提升TextView渲染性能的">
+<meta name="twitter:description" content="[译]Instagram是如何提升TextView渲染性能的
+原文链接: Improving Comment Rendering on Android
+
+上周，成千上万来自全世界的IG用户齐聚在社区组织的先下聚会 Worldwide InstaMeet11上。WWIM11 是历史上最大，最具地域多样性的Instagram聚会，从Muscat到Bushwick，成千上万用户分享了大约10万张照片。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-improving-comment-rendering-on-android" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/" class="article-date">
+  <time datetime="2015-05-02T16:00:00.000Z" itemprop="datePublished">2015-05-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Instagram是如何提升TextView渲染性能的
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="[译]Instagram是如何提升TextView渲染性能的">[译]Instagram是如何提升TextView渲染性能的</h1><blockquote>
+<p>原文链接: <a href="http://instagram-engineering.tumblr.com/post/114508858967/improving-comment-rendering-on-android" target="_blank" rel="external">Improving Comment Rendering on Android</a></p>
+</blockquote>
+<p>上周，成千上万来自全世界的IG用户齐聚在社区组织的先下聚会 Worldwide InstaMeet11上。WWIM11 是历史上最大，最具地域多样性的Instagram聚会，从Muscat到Bushwick，成千上万用户分享了大约10万张照片。</p>
+<p>每月世界上有超过3亿用户每月使用IG，其中65%来自美国以外的国家，无论用户在哪，我们一致致力于让IG更快，更容易使用。自从去年夏天IG重新设计后，我们在继续努力提升性能。</p>
+<p>我们最近的一项改进是关于渲染庞大复杂的文本以及如何通过改进它优化IG的feed滚动。我们希望你可以从我们的经验中找到提升自己app速度的方法。<br><a id="more"></a></p>
+<h1 id="产品需求和性能问题">产品需求和性能问题</h1><p>在IG中，feed是由图片，视频和文字组成的。对于每个图片和视频，我们需要展示对应的图片说明和5条最近的评论。由于用户通常通过图片说明来讲书图片背后的故事，这些图片说明通常是大段复杂的文字，甚至可能包含链接和emoji表情。<br><img src="http://codethink.me/images/how-ig-impove-textview-rendering-1.png" alt=""><br>渲染这种复杂文本的主要问题在于它滚动时对性能的影响。在Android中，文本的渲染是很慢的。即使在一个像Nexus 5这样的新设备上，一段有十几行复杂文本的图片说明的初始绘制时间可能会达到50ms，而其文本的measure阶段就需要30ms。这些都发生在UI线程，在滚动时会导致app跳帧。</p>
+<h1 id="使用text-Layout，缓存text-Layout">使用text.Layout，缓存text.Layout</h1><p>Android有很多用于文字展示的控件，但实际上，他们都用text.Layout进行渲染。例如，TextView会将String转化为一个text.Layout对象，并通过canvas API将它绘制到屏幕上。</p>
+<p>由于text.Layout需要在构造函数中测量文本的高度，因此它的创建效率不高。缓存text.Layout和复用text.Layout实例可以节省这部分时间。Android的TextView控件并没有提供设置TextLayout的方法，但是添加一个这样的方法并不困难：</p>
+<p><img src="http://codethink.me/images/how-ig-impove-textview-rendering-2.png" alt=""></p>
+<p>使用自定义的view来手动绘制text.Layout会提升其性能：TextView是一个包含大量特性的通用控件。如果我们只需要在屏幕上渲染静态的，可点击的文本，事情就简单多了：</p>
+<ul>
+<li><p>我们可以不用从SpannableStringBuilder转化到String。根据你的文本中是否包含链接，底层的TextView可能会复制一份你的字符串，这需要分配一些内存。</p>
+</li>
+<li><p>我们可以一直使用StaticLayout，这比DynamicLayout要稍微快一些。</p>
+</li>
+<li><p>我们可以避免使用TexView中其他的逻辑： 监听文本修改的逻辑，展示嵌入drawable的逻辑，绘制编辑器的逻辑以及弹出下拉列表的逻辑。</p>
+</li>
+</ul>
+<p>通过使用TextLayoutView，我们可以缓存和复用text.Layout，从而避免了每次调用TextView的setText(CharSequence c)方法时都要花费20ms来创建它。</p>
+<h1 id="下载feed后准备好Layout缓存">下载feed后准备好Layout缓存</h1><p>由于我们确定会在下载评论后展示他们，一个简单的改进是在下载它们后就准备好text.Layout的缓存。<br><img src="http://codethink.me/images/how-ig-impove-textview-rendering-3.png" alt=""></p>
+<h1 id="停止滚动后准备好TextLayoutCache">停止滚动后准备好TextLayoutCache</h1><p>在可以设置text.Layout缓存后，我们的到来常数级的测量（measure）和绑定（binding）时间。但是初次绘制的时间仍然很长。50ms的绘制时间可能会导致明显的卡顿。</p>
+<p>这50ms中的大部分被用于测量文本高度以及产生文字符号。这些都是CPU操作。为了提升文本渲染速度，Android在ICS中引入了TextLayoutCache用于缓存这些中间结果。TextLayoutCache是一个LRU缓存，缓存的key是文本。如果查询缓存时命中，文本的绘制速度会有很大提升。</p>
+<p>在我们的测试中，这种缓存可以将绘制时间从30ms-50ms减少到2ms-6ms。<br><img src="http://codethink.me/images/how-ig-impove-textview-rendering-4.png" alt=""><br>为了更好的提升绘制性能，我们可以在绘制文本到屏幕前准备好这个缓存。我们的思路是在一块屏幕外的canvas上虚拟的绘制这些文本。这样在我们绘制文本到屏幕前，TextLayoutCache就已经在一个背景线程中被准备好了。<br><img src="http://codethink.me/images/how-ig-impove-textview-rendering-5.png" alt=""><br>默认情况下，TextLayoutCache的大小为0.5M，这足以缓存十几张图片的评论。我们决定在用户停止滑动时准备缓存，我们向用户滑动的方向提前缓存5个图片的评论。在任何时候，我们都至少在任何一个方向上缓存了5个图片的评论。<br><img src="http://codethink.me/images/how-ig-impove-textview-rendering-6.png" alt=""></p>
+<p>在应用了所有的这些优化后，掉帧情况减少了60%，而卡顿的情况减少了50%。我们希望这些能帮助你提升你app的速度和性能。告诉我们你的想法吧，我们期待听到你的经验。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/" data-id="cibk39tko001v50flgmu952ri" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android 开源项目源码解析之EventBus 源码解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/03/improving-comment-rendering-on-android/" data-title="Instagram是如何提升TextView渲染性能的" data-url="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">39</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/">Android 开源项目源码解析之HoloGraphLibrary 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/">Android 开源项目源码解析之EventBus 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/">Instagram是如何提升TextView渲染性能的</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/">Android 开源项目源码解析之Dagger 源码解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

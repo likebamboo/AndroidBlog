@@ -1,0 +1,465 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android 开源项目源码解析之Dagger 源码解析 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1. 功能介绍1.1 DaggerDagger 是一款 Java 平台的依赖注入库，关于依赖注入，详细见 依赖注入简介。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 开源项目源码解析之Dagger 源码解析">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="1. 功能介绍1.1 DaggerDagger 是一款 Java 平台的依赖注入库，关于依赖注入，详细见 依赖注入简介。">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/dagger/images/dag.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/dagger/images/dag-di.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/dagger/images/dagger_flow_chart_compile.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/dagger/images/dagger_flow_chart_runtime.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/dagger/images/uml_types.png">
+<meta property="og:updated_time" content="2015-06-30T13:57:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 开源项目源码解析之Dagger 源码解析">
+<meta name="twitter:description" content="1. 功能介绍1.1 DaggerDagger 是一款 Java 平台的依赖注入库，关于依赖注入，详细见 依赖注入简介。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-android-open-project-analysis_dagger" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/" class="article-date">
+  <time datetime="2015-05-02T16:00:00.000Z" itemprop="datePublished">2015-05-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 开源项目源码解析之Dagger 源码解析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1-_功能介绍">1. 功能介绍</h3><h4 id="1-1_Dagger">1.1 Dagger</h4><p>Dagger 是一款 Java 平台的依赖注入库，关于依赖注入，详细见 <a href="https://github.com/android-cn/blog/tree/master/java/dependency-injection" target="_blank" rel="external">依赖注入简介</a>。<br><a id="more"></a><br>Java 的依赖注入库中，最有名的应该属 Google 的 Guice，Spring 也很有名，不过是专注于 J2EE 开发。Guice 的功能非常强大，但它是通过在运行时读取注解来实现依赖注入的，依赖的生成和注入需要依靠 Java 的反射机制，这对于对性能非常敏感的 Android 来说是一个硬伤。基于此，Dagger 应运而生。  </p>
+<p>Dagger 同样使用注解来实现依赖注入，但它利用 APT(Annotation Process Tool) 在编译时生成辅助类，这些类继承特定父类或实现特定接口，程序在运行时 Dagger 加载这些辅助类，调用相应接口完成依赖生成和注入。Dagger 对于程序的性能影响非常小，因此更加适用于 Android 应用的开发。</p>
+<h4 id="1-2_依赖注入相关概念">1.2 依赖注入相关概念</h4><p><strong>依赖(Dependency)：</strong>如果在 Class A 中，有个属性是 Class B 的实例，则称 Class B 是 Class A 的依赖，本文中我们将 Class A 称为宿主(Host)，并且全文用 Host 表示；Class B 称为依赖(Dependency)，并且全文用 Dependency 表示。一个 Host 可能是另外一个类的 Dependency。  </p>
+<p><strong>宿主(Host)：</strong>如果 Class B 是 Class A 的 Dependency，则称 Class A 是 Class B 的宿主(Host)。  </p>
+<p><strong>依赖注入：</strong>如果 Class B 是 Class A 的 Dependency，B 的赋值不是写死在了类或构造函数中，而是通过构造函数或其他函数的参数传入，这种赋值方式我们称之为依赖注入。  </p>
+<p>更详细介绍可见 <a href="https://github.com/android-cn/blog/tree/master/java/dependency-injection" target="_blank" rel="external">依赖注入简介</a>。  </p>
+<h4 id="1-3_Dagger_基本使用">1.3 Dagger 基本使用</h4><p>本文将以一个简单的“老板和程序员” App 为例。  </p>
+<p>Activity 中有一个 Boss 类属性，现在你想把一个 Boss 对象注入到这个 Activity 中，那么有两个问题需要解决：Boss 对象应该怎样被生成 以及 Boss 对象怎样被设置到 Activity 中。  </p>
+<h5 id="(1)-_Boss_对象怎样生成">(1). Boss 对象怎样生成</h5><p>在 Boss 类的构造函数前添加一个 @Inject 注解，Dagger 就会在需要获取 Boss 对象时，调用这个被标记的构造函数，从而生成一个 Boss 对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Inject</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Boss</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><em>需要注意的是，如果构造函数含有参数，Dagger 会在调用构造对象的时候先去获取这些参数(不然谁来传参？)，所以你要保证它的参数也提供可被 Dagger 调用到的生成函数。Dagger 可调用的对象生成方式有两种：一种是用 @Inject 修饰的构造函数，上面就是这种方式。另外一种是用 @Provides 修饰的函数，下面会讲到。</em>  </p>
+<h5 id="(2)-_Boss_对象怎样被设置到_Activity_中">(2). Boss 对象怎样被设置到 Activity 中</h5><p>通过 @Inject 注解了构造函数之后，在 Activity 中的 Boss 属性声明之前也添加 @Inject 注解。像这种在属性前添加的 @Inject 注解的目的是告诉 Dagger 哪些属性需要被注入。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line">    <span class="annotation">@Inject</span> Boss boss;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，我们在合适的位置(例如 onCreate() 函数中)调用 ObjectGraph.inject() 函数，Dagger 就会自动调用上面 (1) 中的生成方法生成依赖的实例，并注入到当前对象(MainActivity)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line">    <span class="annotation">@Inject</span> Boss boss;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        ObjectGraph.create(AppModule.class).inject(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体怎么注入即设置的过程后面会详细介绍，这里简单透露下，APT 会在 MainActivity 所在 package 下生成一个辅助类 MainActivity$$InjectAdapter，这个类有个 injectMembers() 函数，代码类似：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">injectMembers</span><span class="params">(MainActivity paramMainActivity)</span> </span>&#123;</span><br><span class="line">    paramMainActivity.boss = ((Boss)boss.get());</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面我们已经通过 ObjectGraph.inject() 函数传入了 paramMainActivity，并且 boss 属性是 package 权限，所以 Dagger 只需要调用这个辅助类的 injectMembers() 函数即可完成依赖注入，这里的 boss.get() 会调用 Boss 的生成函数。<br>到此为止，使用 Dagger 的 @Inject 方式将一个 Boss 对象注入到 MainActivity 的流程就完成了。  </p>
+<h5 id="(3)-_ObjectGraph-create(AppModule-class)_函数简介">(3). ObjectGraph.create(AppModule.class) 函数简介</h5><p>上面 onCreate() 函数中出现了两个类：ObjectGraph 和 AppModule。其中 ObjectGraph 是由 Dagger 提供的类，可以简单理解为一个依赖管理类，它的 create() 函数的参数是一个数组，为所有需要用到的 Module(例如本例中的 AppModule)。AppModule 是一个自定义类，在 Dagger 中称为<code>Module</code>，通过 @Module 注解进行标记，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Module</span>(injects = MainActivity.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppModule</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，AppModule 是一个空类，除了一行注解外没有任何代码。<br>@Module 注解表示这个类是一个<code>Module</code>，Module 的作用是提供信息，让 ObjectGraph 知道哪些类对象需要被依赖注入，以及该怎么生成某些依赖(这在下面会具体介绍)。例如，上面这段代码中声明了需要依赖注入的类为 MainActivity。<br>需要在 Module 类中显式声明这些信息看起来很麻烦，多此一举的方式和 Dagger 的原理有关，下面会讲到。  </p>
+<h4 id="1-4_自定义依赖生成方式">1.4 自定义依赖生成方式</h4><h5 id="(1)-_@Provides_修饰的生成函数">(1). @Provides 修饰的生成函数</h5><p>对构造函数进行注解是很好用的依赖对象生成方式，然而它并不适用于所有情况。例如：  </p>
+<ul>
+<li>接口(Interface)是没有构造函数的，当然就不能对构造函数进行注解</li>
+<li>第三方库提供的类，我们无法修改源码，因此也不能注解它们的构造函数</li>
+<li>有些类需要提供统一的生成函数(一般会同时私有化构造函数)或需要动态选择初始化的配置，而不是使用一个单一的构造函数  </li>
+</ul>
+<p>对于以上三种情况，可以使用 @Provides 注解来标记自定义的生成函数，从而被 Dagger 调用。形式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Provides</span></span><br><span class="line"><span class="function">Coder <span class="title">provideCoder</span><span class="params">(Boss boss)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Coder(boss);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><em>和构造函数一样，@Provides 注解修饰的函数如果含有参数，它的所有参数也需要提供可被 Dagger 调用到的生成函数。</em><br>需要注意的是，所有 @Provides 注解的生成函数都需要在<code>Module</code>中定义实现，这就是上面提到的 Module 的作用之一——让 ObjectGraph 知道怎么生成某些依赖。  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Module</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppModule</span> </span>&#123;</span><br><span class="line">    <span class="annotation">@Provides</span></span><br><span class="line">    <span class="function">Coder <span class="title">provideCoder</span><span class="params">(Boss boss)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Coder(boss);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="(2)-_@Inject_和_@Provide_两种依赖生成方式区别">(2). @Inject 和 @Provide 两种依赖生成方式区别</h5><p>a. @Inject 用于注入可实例化的类，@Provides 可用于注入所有类<br>b. @Inject 可用于修饰属性和构造函数，可用于任何非 Module 类，@Provides 只可用于用于修饰非构造函数，并且该函数必须在某个<code>Module</code>内部<br>c. @Inject 修饰的函数只能是构造函数，@Provides 修饰的函数必须以 provide 开头  </p>
+<h4 id="1-5_单例">1.5 单例</h4><p>Dagger 支持单例(事实上单例也是依赖注入最常用的场景)，使用方式也很简单：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @Inject 注解构造函数的单例模式</span></span><br><span class="line"><span class="annotation">@Singleton</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Inject</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Boss</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @Provides 注解函数的单例模式</span></span><br><span class="line"><span class="annotation">@Provides</span></span><br><span class="line"><span class="annotation">@Singleton</span></span><br><span class="line"><span class="function">Coder <span class="title">provideCoder</span><span class="params">(Boss boss)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Coder(boss);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在相应函数添加 @Singleton 注解，依赖的对象就只会被初始化一次，之后的每次都会被直接注入相同的对象。</p>
+<h4 id="1-6_Qualifier(限定符)">1.6 Qualifier(限定符)</h4><p>如果有两类程序员，他们的能力值 power 分别是 5 和 1000，应该怎样让 Dagger 对他们做出区分呢？使用 @Qualifier 注解即可。</p>
+<p>(1). 创建一个 @Qualifier 注解，用于区分两类程序员：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Qualifier</span></span><br><span class="line"><span class="annotation">@Documented</span></span><br><span class="line"><span class="annotation">@Retention</span>(RUNTIME)</span><br><span class="line"><span class="keyword">public</span> <span class="annotation">@interface</span> Level &#123;</span><br><span class="line">  <span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(2). 为这两类程序员分别设置 @Provides 函数，并使用 @Qualifier 注解对他们做出不同的标记：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Provides</span> <span class="annotation">@Level</span>(<span class="string">"low"</span>) <span class="function">Coder <span class="title">provideLowLevelCoder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Coder coder = <span class="keyword">new</span> Coder();</span><br><span class="line">    coder.setName(<span class="string">"战五渣"</span>);</span><br><span class="line">    coder.setPower(<span class="number">5</span>);</span><br><span class="line">    <span class="keyword">return</span> coder;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="annotation">@Provides</span> <span class="annotation">@Level</span>(<span class="string">"high"</span>) <span class="function">Coder <span class="title">provideHighLevelCoder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Coder coder = <span class="keyword">new</span> Coder();</span><br><span class="line">    coder.setName(<span class="string">"大神"</span>);</span><br><span class="line">    coder.setPower(<span class="number">1000</span>);</span><br><span class="line">    <span class="keyword">return</span> coder;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(3). 在声明 @Inject 对象的时候，加上对应的 @Qualifier 注解。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Inject</span> <span class="annotation">@Level</span>(<span class="string">"low"</span>) Coder lowLevelCoder;</span><br><span class="line"><span class="annotation">@Inject</span> <span class="annotation">@Level</span>(<span class="string">"high"</span>) Coder highLevelCoder;</span><br></pre></td></tr></table></figure>
+<h4 id="1-7_编译时检查">1.7 编译时检查</h4><p>实质上，Dagger 会在编译时对代码进行检查，并在检查不通过的时候报编译错误，具体原因请看下面的详细原理介绍。检查内容主要有三点：<br><strong>(1)</strong>. 所有需要依赖注入的类，需要被显式声明在相应的<code>Module</code>中。<br><strong>(2)</strong>. 一个<code>Module</code>中所有 @Provides 函数的参数都必须在这个 Module 中提供相应的被 @Provides 修饰的函数，或者在 @Module 注解后添加 “complete = false” 注明这是一个不完整 Module，表示它依赖不属于这个 Module 的其他 Denpendency。<br><strong>(3)</strong>. 一个<code>Module</code>中所有的 @Provides 函数都要被它声明的注入对象所使用，或者在 @Module 注解后添加 “library = ture” 注明它含有对外的 Denpendency，可能被其他<code>Module</code>依赖。  </p>
+<h4 id="1-8_Dagger_相关概念">1.8 Dagger 相关概念</h4><p><strong>Module：</strong>也叫 ModuleClass，指被 @Module 注解修饰的类，为 Dagger 提供需要依赖注入的 Host 信息及一些 Dependency 的生成方式。  </p>
+<p><strong>ModuleAdapter：</strong>指由 APT 根据 @Module 注解自动生成的类，父类是 Dagger 的 ModuleAdapter.java，与 ModuleClass 对应，以 ModuleClass 的 ClassName 加上 $$ModuleAdapter 命名，在 ModuleClass 的同一个 package 下。  </p>
+<p><strong>Binding：</strong>指由 APT 根据 @Inject 注解和 @Provides 注解自动生成，最终继承自 Binding.java 的类。为下面介绍的 DAG 图中的一个节点，每个 Host 及依赖都是一个 Binding。  </p>
+<p><strong>InjectAdapter：</strong>每个属性或构造函数被 @Inject 修饰的类都会生成一个 继承自 Binding.java 的子类，生成类以修饰类的 ClassName 加上 $$InjectAdapter 命名，在该类的同一个 package 下。  </p>
+<p><strong>ProvidesAdapter：</strong>每个被 @Provides 修饰的生成函数都会生成一个继承自 ProvidesBinding.java 的子类，ProvidesBinding.java 继承自 Binding.java，生成类以 Provide 函数名首字母大写加上 ProvidesAdapter 命名，是 Provide 函数所在 Module 对应生成的<code>ModuleAdapter</code>中的静态内部类。<br>Binding 更具体信息在下面会介绍。  </p>
+<p><strong>Binding 安装：</strong>指将 Binding 添加到 Binding 库中。对 Dagger Linker.java 代码来说是将 Binding 添加到 Linker.bindings 属性中，Linker.bindings 属性表示某个 ObjectGraph 已安装的所有 Binding。对于下面的 DAG 图来说是将节点放到图中，但尚未跟其他任何节点连接起来。  </p>
+<p><strong>Binding 连接：</strong>把当前 Binding 和它内部依赖的 Binding 进行连接，即初始化这个 Binding 内部的所有 Binding，使它们可用。对 DAG 的角度说，就是把某个节点与其所依赖的各个节点连接起来。  </p>
+<h3 id="2-_总体设计">2. 总体设计</h3><h4 id="2-1_概述">2.1 概述</h4><p>事实上，Dagger 这个库的取名不仅仅来自它的本意“匕首”，同时也暗示了它的原理。Jake Wharton 在对 Dagger 的介绍中指出，Dagger 即 DAG-er，这里的 DAG 即数据结构中的 DAG——有向无环图(Directed Acyclic Graph)。也就是说，Dagger 是一个<strong>基于有向无环图结构的依赖注入库。</strong></p>
+<h4 id="2-2_DAG(有向无环图)">2.2 DAG(有向无环图)</h4><p>已经了解 DAG 的可以跳过这节。<br>DAG 是数据结构的一种。在一组节点中，每一个节点指向一个或多个节点，但不存在一条正向的链最终重新指向自己(即不存在环)，这样的结构称为有向无环图，即 DAG。</p>
+<p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/dagger/images/dag.png" alt="DAG"></p>
+<p>上图中的数据结构就是一个有向无环图。图中一共存在 6 个节点和 7 个箭头，但任何一个节点都无法从自己发射出的箭头通过某条回路重新指向自己。</p>
+<h4 id="2-3_Dagger_中依赖注入与_DAG_的关系">2.3 Dagger 中依赖注入与 DAG 的关系</h4><p>Dagger 的运作机制，是运用 <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/apt/" target="_blank" rel="external">APT(Annotation Process Tool)</a> 在编译时生成一些用于设定规则的代码，然后在运行时将这些规则进行动态组合 // TODO 不太理解意思，生成一个(或多个)DAG，然后由 DAG 来完成所有依赖的获取，实现依赖注入。关于 DAG 究竟是怎样一步步生成的，后面再讲，这里先说一下在 Dagger 中依赖注入与 DAG 的关系。</p>
+<p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/dagger/images/dag-di.png" alt="DAG-DI"></p>
+<p>我把前面那张图的每个节点重新命名，得到了上图。上图代表了某个应用程序内的一整套依赖关系，其中每个箭头都表示两个类之间依赖关系，Host 和 Dependency 都是其中的一个节点。  </p>
+<p>可以看出，一个程序中的整套依赖关系其实就是一个 DAG。而实际上，Dagger 也是这么做的：<strong>预先建立一个 DAG，然后在需要获取对象的时候通过这个依赖关系图来获取到对象并返回，若获取失败则进行查找，查找到后再补充到 DAG 中。</strong></p>
+<p>Dagger 是支持传递依赖的。例如在上图中，当需要获取一个 CustomView，会首先获取一个 DataHelper 作为获取 CustomView 的必要参数；此时如果 DataHelper 还未初始化，则还要分别拿到 HttpHelper 和 Database 用来初始化 DataHelper；以此类推。</p>
+<p>Dagger 不支持循环依赖，即依赖关系图中不能出现环。原因很简单，如果鸡依赖蛋，蛋依赖鸡，谁来创造世界？总有一个要先产生的。</p>
+<h4 id="2-4_工作流程">2.4 工作流程</h4><p><strong>(1)</strong>. 编译时，通过 APT 查看所有 java 文件，并根据注解生成一些新的 java 文件，即<code>InjectAdapter</code>、<code>ProvidesAdapter</code>、<code>ModuleAdapter</code>，这些文件用于运行时辅助 DAG 的创建和完善。然后，将这些新生成的 java 文件和项目原有的 java 文件一并编译成 class 文件。<br><strong>(2)</strong>. 运行时，在 Application 或某个具体模块的初始化处，使用<code>ObjectGraph</code>类来加载部分依赖(实质上是利用编译时生成的<code>ModuleAdapters</code>加载了所有的<code>ProvidesBinding</code>，后面会讲到)，形成一个不完整的依赖关系图。<br><strong>(3)</strong>. 这个不完整的依赖关系图生成之后，就可以调用<code>ObjectGraph</code>的相应函数来获取实例和注入依赖了。实现依赖注入的函数有两个：<code>ObjectGraph.get(Class&lt;T&gt; type)</code>函数，用于直接获取对象；<code>ObjectGraph.inject(T instance)</code>函数，用于对指定对象进行属性的注入。在这些获取实例和注入依赖的过程中，如果用到了还未加载的依赖，程序会自动对它们进行加载(实质上是加载的编译时生成的<code>InjectAdapter</code>)。在此过程中，内存中的 DAG 也被补充地越来越完整。</p>
+<h3 id="3-_流程图">3. 流程图</h3><h4 id="3-1_编译时：">3.1 编译时：</h4><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/dagger/images/dagger_flow_chart_compile.png" alt="dagger_flow_chart_compile">  </p>
+<h4 id="3-2_运行时(初始化后)：">3.2 运行时(初始化后)：</h4><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/dagger/images/dagger_flow_chart_runtime.png" alt="dagger_flow_chart_runtime">  </p>
+<h3 id="4-_详细设计">4. 详细设计</h3><h4 id="4-1_类关系图">4.1 类关系图</h4><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/dagger/images/uml_types.png" alt="uml_types">  </p>
+<p>上图是 Dagger 整体框架最简类关系图。大致原理可以描述为：<code>Linker</code>通过<code>Loader</code>加载需要的<code>Binding</code>并把它们拼装成合理的依赖关系图 ObjectGraph，由<code>ObjectGraph</code>(其子类<code>DaggerObjectGraph</code>)最终实现依赖注入的管理。<br>ObjectGraph 是个抽象类，DaggerObjectGraph 是它目前唯一的子类，对 Dagger 的调用实际都是对 DaggerObjectGraph 的调用。  </p>
+<h4 id="4-2_类功能详细介绍">4.2 类功能详细介绍</h4><h5 id="4-2-1_Binding-java_——_节点">4.2.1 Binding.java —— 节点</h5><p>Binding 是一个泛型抽象类，相当于依赖关系 DAG 图中的节点，依赖关系 DAG 图中得每一个节点都有一个由 APT 生成的继承自 Binding 的类与之对应，而依赖关系 DAG 图中的每一个节点与<code>Host</code>和<code>Dependency</code>一一对应，所以每个<code>Host</code>或<code>Dependency</code>必然有一个由 APT 生成的继承自 Binding 的子类与之对应，我们先简单的将这些生成类分为<code>HostBinding</code>和<code>DependencyBinding</code>。  </p>
+<h5 id="(1)-_Binding-java_实现的接口">(1). Binding.java 实现的接口</h5><p>Binding.java 实现了两个接口，第一个是 javax 的<code>Provider</code>接口，此接口提供了 get() 函数用于返回一个<code>Dependency</code>实例，当然也可以是<code>Host</code>实例。<br>第二个接口是 Dagger 中的<code>MembersInjector</code>接口，此接口提供了 injectMembers() 用来向<code>Host</code>对象中注入(即设置)<code>Dependency</code>。<br>单纯的<code>DependencyBinding</code>只要实现<code>Provider</code>接口，在 get() 函数中返回自己的实例即可。单纯的<code>HostBinding</code>只要实现<code>MembersInjector</code>，在 injectMembers() 函数中调用<code>DependencyBinding</code>的 get() 函数得到依赖，然后对自己的依赖进行注入即可。如果一个类既是<code>Host</code>又是<code>Dependency</code>，则与它对应的<code>Binding</code>这两个接口都需要实现。 </p>
+<h5 id="(2)-_生成的_Binding_代码示例">(2). 生成的 Binding 代码示例</h5><p>如下的 Host 和 Dependency 类  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Host</span> </span>&#123;</span><br><span class="line">    <span class="annotation">@Inject</span> Dependency dependency;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Dependency</span> </span>&#123;</span><br><span class="line">    <span class="annotation">@Inject</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Dependency</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ……</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由 APT 生成的 Binding 应该类似</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Host</span>$$<span class="title">InjectAdapter</span> <span class="keyword">extends</span> <span class="title">Binding</span>&lt;<span class="title">Host</span>&gt; <span class="keyword">implements</span> <span class="title">MembersInjector</span>&lt;<span class="title">Host</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Binding&lt;Dependency&gt; dependencyBinding;</span><br><span class="line"></span><br><span class="line">    ……</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">attach</span><span class="params">(Linker linker)</span> </span>&#123;</span><br><span class="line">        dependencyBinding = (Dependency$$InjectAdapter)linker.requestBinding(……);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">injectMembers</span><span class="params">(Host host)</span> </span>&#123;</span><br><span class="line">        host.dependency = (Dependency)dependencyBinding.get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Dependency</span>$$<span class="title">InjectAdapter</span> <span class="keyword">extends</span> <span class="title">Binding</span>&lt;<span class="title">Dependency</span>&gt; <span class="keyword">implements</span> <span class="title">Provider</span>&lt;<span class="title">Dependency</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    ……</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Dependency <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Dependency();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>HostBinding</code>指的是生成类 Host$$InjectAdapter，<code>DependencyBinding</code>指的是生成类 Dependency$$InjectAdapter，我们可以看到<code>HostBinding</code>的 attach 方法用于得到<code>DependencyBinding</code>的实例，然后在 injectMembers() 函数中通过调用这个实例的 get() 函数注入 Dependency，<code>DependencyBinding</code> 的 get() 函数就是调用<code>Dependency</code>的生成方法。  </p>
+<h5 id="(3)-_Binding_分类">(3). Binding 分类</h5><p>上面我们将生成的 Binding 子类简单分为了<code>HostBinding</code>和<code>DependencyBinding</code>，实际根据前面的注入方式我们知道依赖的生成方式有 @Inject 和 @Provides 两种，对这两种方式，Dagger 生成 Binding 子类的规则不同。  </p>
+<p>对于 @Inject 方式的注入，APT 会在<code>Dependency</code>同一个 package 下以<code>Dependency</code>的 ClassName 加上 $$InjectAdapter 为类名生成一个 Binding 子类。<br>对于 @Provides 方式的注入，@Provides 的生成函数必须写在某个<code>Module</code>内部，与此 Module 对应的<code>ModuleAdapter</code>(Module$$ModuleAdapter)内部会有一个此 @Provides 方式对应的 Binding 子类，继承自 Binding 的子类 ProvidesBinding，以 @Provides 函数名首字母大写加上 ProvidesAdapter 命名。  </p>
+<p>所以实际自动生成的 Binding 子类我们可以分为三种：<br>第一种是<code>Host</code>对应的 Binding，本文中我们统一称为<code>HostBinding</code>。这些<code>HostBinding</code>和被 @Module 修饰的<code>Module</code> injects 值中每个元素一一对应，他们提供 get()、injectMembers()、attach() 函数。  </p>
+<p>第二种是 Inject Dependecy 对应的 Binding 子类，本文中我们统一称为<code>InjectBinding</code>。这些<code>InjectBinding</code>和所有含有 @Inject 修饰的构造函数的类一一对应，他们提供 get() 函数，不提供 injectMembers() 函数。如果它同时是个<code>Host</code>，也会提供 injectMembers() 函数。  </p>
+<p>第三种是 Provide Dependecy 对应的 Binding 子类，本文中我们统一称为<code>ProvidesBinding</code>。<code>ProvidesBinding</code> 和 @Module 类中的被 @Provides 修饰的函数一一对应，他们只提供 get() 函数，不提供 injectMembers() 函数。<br>上面三种 Binding 中，第一、二种会在 ObjectGraph.create 时加载进来，第三种在用的时候才会被动态加载。<code>InjectBinding</code>和<code>ProvidesBinding</code>统称为<code>DependencyBinding</code>。  </p>
+<p><strong>Binding.java 的主要函数：</strong>  </p>
+<h5 id="(1)-_get()">(1). get()</h5><p>表示得到此 Binding 对应的<code>Dependency</code>。<code>InjectBinding</code>会在 get() 中调用被 @Inject 修饰的构造函数，<code>ProvidesBinding</code>会在 get() 函数中调用被 @Provides 修饰的生成函数。  </p>
+<h5 id="(2)-_injectMembers(T_t)">(2). injectMembers(T t)</h5><p>表示向此 Binding 对应<code>Host</code>对象中注入依赖，这个函数的实现一般就是对被 @Inject 修饰的属性进行赋值，值为<code>DependencyBinding</code>的 get() 函数返回值。  </p>
+<h5 id="(3)-_attach(Linker_linker)">(3). attach(Linker linker)</h5><p>表示<code>HostBinding</code>获取依赖的 Binding 即<code>DependencyBinding</code>对象，对于 DAG 图来说相当于把图中两个节点连接起来。对于<code>DependencyBinding</code>此函数为空。  </p>
+<h5 id="(4)-_getDependencies(…)">(4). getDependencies(…)</h5><p>表示<code>HostBinding</code>得到依赖的<code>DependencyBinding</code>)，这个函数在对 DAG 图进行问题检测，比如循环依赖检测时用到。  </p>
+<p><strong>Binding.java 的主要属性：</strong>  </p>
+<h5 id="(1)-_provideKey">(1). provideKey</h5><p>表示 Binding 所属 Host 或 Dependency 的类名，是 Binding 唯一的 key，在 Linker 管理 Binding 时会用到，作为存储所有 Binding 的 Map 的 key。对<code>HostBinding</code>值为 HostClassName.toString()，<code>DependencyBinding</code>值为 DependencyClassName.toString()。  </p>
+<h5 id="(2)-_membersKey">(2). membersKey</h5><p>// TODO。对<code>HostBinding</code>值为 members/ 加上 HostClassName.toString()，<code>InjectBinding</code>值为  members/ 加上 DependencyClassName.toString()，<code>ProvidesBinding</code>值为 null。<code>ProvidesBinding</code>值为 null，因为它默认就连接好了。  </p>
+<h5 id="(3)-_requiredBy">(3). requiredBy</h5><p>表示这个 Binding 属于谁，对<code>HostBinding</code>值为 HostClass.class，<code>InjectBinding</code>值为 DependencyClass.class，<code>ProvidesBinding</code>值为 ProvideMethodName.toString()。  </p>
+<h5 id="(4)-_bits">(4). bits</h5><p>表示 Binding 特性的标志位，如是是否是单例(SINGLETON)、是否已连接(LINKED)，是否被访问(VISITING)、是否是可被其他 Module 依赖的 Library(LIBRARY)、是否依赖其他 Module 的 Binding(DEPENDED_ON)、是否不存在循环依赖(CYCLE_FREE)。  </p>
+<h5 id="4-2-2_Linker-java_——_拼装者">4.2.2 Linker.java —— 拼装者</h5><p>Linker 是 Dagger 最核心的大脑部分，它负责调用 Loader 加载 Binding，存储并管理所有 Binding、调用 attach 方法初始化依赖的 DependencyBinding。对于 DAG 图来说，Linker 就相当于一个管家，负责调用加载器加载节点到图中、存储并管理图中所有的节点，连接图中有依赖关系的节点，也就是 DAG 图的拼装。<br>Dagger 在运行时维护一个或多个<code>Linker</code>，Linker 与 ObjectGraph 一一对应。  </p>
+<p><strong>Linker.java 的主要属性：</strong>  </p>
+<h5 id="(1)-_bindings">(1).  bindings</h5><p>本文称为 ObjectGraph 的 Binding 库，表示 ObjectGraph 已安装的所有 Binding，包括尚未连接的 Binding，对于 DAG 图来说就是所有在图中的节点，包括尚未跟其他任何节点连接起来的节点。<br>bindings 数据结构为 HashMap，value 就是具体的 Binding，key 是用来唯一确定 Binding 的字符串，为 Binding.java 中的 provideKey 和 membersKey，具体形式是类名加上一个用于区分同类型的前缀。这些 Binding 不仅包含已连接的，也包含未连接的。  </p>
+<h5 id="(2)-_toLink">(2). toLink</h5><p>表示待连接的 Binding 队列，包含了所有待连接的 Binding。对于 DAG 图来说就是所有在图中但未和任何节点连接的节点。  </p>
+<p>连接(Link)：从 DAG 的角度说，就是把某个节点与其所依赖的各个节点连接起来。而对于 Binding 来说，就是把当前 Binding 和它依赖的 Binding (<code>ProvidesBinding</code>)进行连接，即初始化这个 Binding 依赖的所有 Binding，使它们可用。  </p>
+<h5 id="(3)-_attachSuccess">(3). attachSuccess</h5><p>一个标志，对于某个 Binding，在获取它依赖的<code>DependencyBinding</code>时，如果他所有的<code>DependencyBinding</code>都已经添加到<code>Binding</code>库中，attachSuccess 则为 true，否则为 false。如果为 false ，表示该 Binding 尚未连接，添加到待连接队列中，否则标记为已连接。  </p>
+<h5 id="(4)-_linkedBindings">(4). linkedBindings</h5><p>默认为 null，只有在 linkAll() 函数被调用后才有效，用于存储所有已经连接的 Binding，同时也是一个标记，表示这个 ObjectGraph 已经不能被改变。  </p>
+<h5 id="(5)-_Loader_plugin">(5). Loader plugin</h5><p>Loader 负责加载类，主要是加载 APT 生成的辅助类(InjectAdapter、ModuleAdapter)。  </p>
+<h5 id="(6)-_errors">(6). errors</h5><p>Linker.linkRequested() 运行过程中积累的 errors。  </p>
+<p><strong>Linker.java 的主要函数：</strong>  </p>
+<h5 id="(1)-_requestBinding(String_key_……)">(1). requestBinding(String key ……)</h5><p>根据传入的 key 返回一个 Binding。首先，会尝试从 Bindings 变量(Binding 库)中查找这个 key，如果找到了，就将找到的 Binding 返回(如果找到后发现这个 Binding 还未连接，还需要它放进 toLink 中)；如果找不到，说明需要的 Binding 是一个<code>InjectBinding</code>(因为另一种 Binding——ProvidesBinding 在初始化时就已经加载完毕了)，就生成一个包含了这个 key 的<code>DeferredBinding</code>，并把它添加到 toLink(等待稍后载入)后返回 null。  </p>
+<h5 id="(2)-_linkRequested()">(2). linkRequested()</h5><p>循环取出 toLink 中的 Binding：<br>如果是个<code>DeferredBinding</code>载入相应的<code>InjectAdapter</code>后添加到<code>toLink</code>和<code>bindings</code>中，等待下次循环。<br>否则调用 attach 函数进行连接，对于<code>DependencyBinding</code>连接完成。对于<code>HostBinding</code>利用 attach() 函数获取依赖的 Binding 即<code>DependencyBinding</code>对象，在获取<code>DependencyBinding</code>的过程中调用 requestBinding() 函数查找 Binding，不存在或未连接会继续添加到 toLink 队列中，如此循环。<br>直到所有依赖<code>DependencyBinding</code>被初始化结束。<br>对 DAG 图来说就是一次广度优先遍历。  </p>
+<h5 id="(3)-_installBindings(BindingsGroup_toInstall)">(3). installBindings(BindingsGroup toInstall)</h5><p>安装 Bindings，表示将 Binding 添加到 ObjectGraph 中，但尚未连接。对 DAG 图来说就是就是将节点放到图中，但尚未和任何其他节点连接。  </p>
+<h5 id="(4)-_linkAll()">(4). linkAll()</h5><p>将 Binding 库中所有未连接的 Binding 添加到 toLink 中，调用 linkRequested() 进行连接。  </p>
+<h5 id="(5)-_fullyLinkedBindings()">(5). fullyLinkedBindings()</h5><p>返回已经全部连接的 Binding，如果没有调用过 linkAll() 则返回 null</p>
+<h5 id="4-2-3_Loader-java_——_类加载器及对象生成器">4.2.3 Loader.java —— 类加载器及对象生成器</h5><p>Loader 是一个纯工具类，它通过 ClassLoader 加载 APT 生成的<code>ModuleAdapter</code>类和<code>InjectAdapter</code>类，并初始化一个该类对象返回。另外，Loader 是一个抽象类，在运行时，Dagger 使用的是 Loader 的子类<code>FailoverLoader</code>。</p>
+<p><strong>Loader.java 的主要函数：</strong>  </p>
+<h5 id="(1)-_loadClass(ClassLoader_classLoader,_String_name)">(1). loadClass(ClassLoader classLoader, String name)</h5><p>用指定的 ClassLoader 根据类名得到类，并缓存起来。  </p>
+<h5 id="(2)-_instantiate(String_name,_ClassLoader_classLoader)">(2). instantiate(String name, ClassLoader classLoader)</h5><p>用指定的 ClassLoader 根据类名获取类的实例。  </p>
+<h5 id="(3)-_getModuleAdapter(Class_moduleClass)">(3). getModuleAdapter(Class<t> moduleClass)</t></h5><p>获取指定的 Module 类所对应的 ModuleAdapter 实例。  </p>
+<h5 id="(4)-_getAtInjectBinding(String_key……)">(4). getAtInjectBinding(String key……)</h5><p>根据 key 获取 Inject Dependecy 对应的 InjectAdapter 实例。  </p>
+<h5 id="(5)-_getStaticInjection(Class&lt;?&gt;_injectedClass)">(5). getStaticInjection(Class&lt;?&gt; injectedClass)</h5><p>根据被注入的 Class 获取对应的 StaticInjection 实例。  </p>
+<p><strong>Loader.java 的主要变量：</strong>  </p>
+<h5 id="(1)-_Memoizer&gt;&gt;_caches">(1). Memoizer<classloader, memoizer<string,="" class<?="">&gt;&gt; caches</classloader,></h5><p>用来缓存被初始化过的对象，是一个嵌套的 Memoizer 结构，<code>Memoizer</code>具体可看后面介绍，简单理解就是嵌套的 HashMap，第一层 Key 是 ClassLoader，第二层 Key 是 ClassName，Value 是 Class 对象。  </p>
+<h5 id="4-2-4_FailoverLoader-java">4.2.4 FailoverLoader.java</h5><p>FailoverLoader 是 Loader 的一个子类，它加载类的策略是首先查找 APT 生成的类，如果查找失败，则直接使用反射查找和初始化。<br><strong>FailoverLoader.java 的主要函数：</strong>  </p>
+<h5 id="(1)-_getModuleAdapter(Class_moduleClass)">(1). getModuleAdapter(Class<t> moduleClass)</t></h5><p>获取指定的 Module 类所对应的 ModuleAdapter 实例，如果在生成类中查找失败，则会调用 ReflectiveAtInjectBinding.create(type, mustHaveInjections) 通过反射直接初始化对象。  </p>
+<h5 id="(2)-_getAtInjectBinding(String_key……)">(2). getAtInjectBinding(String key……)</h5><p>根据 key 获取 Inject Dependecy 对应的 InjectAdapter 实例。如果在生成类中查找失败，则会调用 ReflectiveStaticInjection.create(injectedClass) 通过反射直接初始化对象。  </p>
+<h5 id="(3)-_getStaticInjection(Class&lt;?&gt;_injectedClass)">(3). getStaticInjection(Class&lt;?&gt; injectedClass)</h5><p>根据被注入的 Class 获取对应的 StaticInjection 实例。  </p>
+<p><strong>FailoverLoader.java 的主要变量：</strong>  </p>
+<h5 id="(1)-_Memoizer,_ModuleAdapter&lt;?&gt;&gt;_loadedAdapters">(1). Memoizer<class<?>, ModuleAdapter&lt;?&gt;&gt; loadedAdapters</class<?></h5><p>用来缓存初始化过的 ModuleAdapter 对象，是一个嵌套的 Memoizer 结构，具体可看下面介绍，简单理解就是嵌套的 HashMap，第一层 Key 是 ClassLoader，第二层 Key 是 ClassName，Value 是 Class 对象。  </p>
+<h5 id="4-2-5_ObjectGraph_——_管理者">4.2.5 ObjectGraph —— 管理者</h5><p>ObjectGraph 是个抽象类，负责 Dagger 所有的业务逻辑，Dagger 最关键流程都是从这个类发起的，包括依赖关系图创建、实例(依赖或宿主)获取、依赖注入。<br><strong>ObjectGraph 主要函数有：</strong>  </p>
+<h5 id="(1)-_create(Object…_modules)">(1). create(Object… modules)</h5><p>这是个静态的构造函数，用于返回一个 ObjectGraph 的实例，是使用 Dagger 调用的第一个函数。参数为 ModuleClass 对象，函数作用是根据 ModuleClass 构建一个依赖关系图。此函数实现会直接调用<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DaggerObjectGraph.makeGraph(<span class="keyword">null</span>, <span class="keyword">new</span> FailoverLoader(), modules)</span><br></pre></td></tr></table></figure></p>
+<p>返回一个<code>DaggerObjectGraph</code>对象，我们会在下面<code>DaggerObjectGraph</code>介绍中具体介绍实现过程。  </p>
+<h5 id="(2)-_inject(T_instance)">(2). inject(T instance)</h5><p>抽象函数，表示向某个 Host 对象中注入依赖。  </p>
+<h5 id="(3)-_injectStatics()">(3). injectStatics()</h5><p>抽象函数，表示向 ObjectGraph 中相关的 Host 注入静态属性。  </p>
+<h5 id="(4)-_get(Class_type)">(4). get(Class<t> type)</t></h5><p>抽象函数，表示得到某个对象的实例，多用于得到依赖的实例。  </p>
+<h5 id="(5)-_plus(Object…_modules)">(5). plus(Object… modules)</h5><p>抽象函数，表示返回一个新的包含当前 ObjectGraph 中所有 Binding 的 ObjectGraph。  </p>
+<h5 id="(6)-_validate()">(6). validate()</h5><p>抽象函数，表示对当前 ObjectGraph 做检查。  </p>
+<h5 id="4-2-6_DaggerObjectGraph">4.2.6 DaggerObjectGraph</h5><p>DaggerObjectGraph 是 ObjectGraph 的静态内部类，也是 ObjectGraph 目前唯一的子类。因为 ObjectGraph 的 create() 函数直接返回了 DaggerObjectGraph 对象，所以对 Dagger 的调用实际都是对 DaggerObjectGraph 的调用。<br><strong>DaggerObjectGraph 主要属性有：</strong>  </p>
+<h5 id="(1)-_Map_injectableTypes">(1). Map injectableTypes</h5><p>记录了所有需要被依赖注入的 Host 类型，以 Host 的 ClassName 加上一定规则前缀(// TODO)做为 key，以其所对应的 Module 为 value。</p>
+<h5 id="(2)-_Map_staticInjections">(2). Map staticInjections</h5><p>记录了所有需要被静态依赖注入的 Host 类型，以 Host 的 ClassName 加上一定规则前缀(// TODO)做为 key，以其所对应的 Module 为 value。</p>
+<h5 id="(3)-_Linker_linker">(3). Linker linker</h5><p>Linker 是 负责调用 Loader 加载 Binding，存储并管理所有 Binding、调用 attach 方法初始化依赖的 DependencyBinding。具体见上面<code>Linker.java</code>介绍。  </p>
+<h5 id="(4)-_Loader_plugin">(4). Loader plugin</h5><p>Loader 负责通过 ClassLoader 加载 APT 生成的ModuleAdapter类和InjectAdapter类。<br>PS：这个变量名叫 plugin，实际也说明了 Dagger 的一大优势，就是它是支持 ClassLoader，这样通过 Dagger 实现依赖注入的 Android 应用，插件化时 Dagger 不会对其产生影响，而截止这个分析文档完成时，轻量级的 ButterKnife 都不支持多个 ClassLoader。<br><strong>DaggerObjectGraph 主要函数有：</strong>  </p>
+<h5 id="(1)-_makeGraph_函数">(1). makeGraph 函数</h5><p>makeGraph 函数首先会通过 Modules.loadModules 函数得到所有的 ModuleAdapter；<br>然后遍历所有 ModuleAdapter，将其中需要依赖注入的 Host 类型(injectableTypes)、需要静态静态注入的 Host 类型(staticInjections)、所有的 Binding(这里是ProvidesBinding)都保存下来，做为新的 DaggerObjectGraph 对象构造入参。另一种 Binding —— InjectBinding 会在需要用到的时候进行动态载入；<br>第三步新建 Linker 保存上面的 Binding；<br>最后用这些变量一起构建新的 DaggerObjectGraph 对象。  </p>
+<h5 id="(2)-_inject(T_instance)-1">(2). inject(T instance)</h5><p>表示向某个 Host 对象中注入依赖。首先根据下面的 getInjectableTypeBinding() 函数查找到 Host 对应的 InjectBinding，然后调用 injectMembers() 函数注入依赖，将依赖注入结束的 Host 返回。  </p>
+<h5 id="(3)-_injectStatics()-1">(3). injectStatics()</h5><p>表示向 ObjectGraph 中相关的 Host 注入静态属性。  </p>
+<h5 id="(4)-_get(Class_type)-1">(4). get(Class<t> type)</t></h5><p>表示得到某个对象的实例，多用于得到 Denpendency 的实例。首先根据下面的 getInjectableTypeBinding() 函数查找到 Denpendency 对应的 Binding，然后调用 get() 返回该 Denpendency 实例。  </p>
+<h5 id="(5)-_plus(Object…_modules)-1">(5). plus(Object… modules)</h5><p>抽象函数，表示返回一个新的包含当前 ObjectGraph 中所有对象的 ObjectGraph。  </p>
+<h5 id="(6)-_validate()-1">(6). validate()</h5><p>表示对当前 ObjectGraph 做检查，首先会利用 Linker 查找到所有节点并连接起来，然后调用 ProblemDetector 进行检查。ProblemDetector 会在后面解释作用。  </p>
+<h5 id="(7)-_getInjectableTypeBinding(ClassLoader_classLoader,_String_injectableKey,_String_key)">(7). getInjectableTypeBinding(ClassLoader classLoader, String injectableKey, String key)</h5><p>表示根据 key 得到某个 Binding。首先会从 ObjectGraph.injectableTypes 中得到其对应的 Module，然后通过 linker.requestBinding 查找其对应的 Binding，若未查找到的 Binding 或是尚未连接，则调用 linker.linkRequested() 得到 InjectBindng 并将其添加到 ObjectGraph 中，此时再次通过 linker.requestBinding 即可查找到其对应的 Binding，返回即可。  </p>
+<h5 id="(8)-_linkInjectableTypes()">(8). linkInjectableTypes()</h5><p>查找 injectableTypes 记录的所有需要被依赖注入的 Host 类型对应的<code>HostBinding</code>。  </p>
+<h5 id="(9)-_linkStaticInjections()">(9). linkStaticInjections()</h5><p>查找 staticInjections 记录的所有需要被静态依赖注入的 Host 类型对应的<code>HostBinding</code>。  </p>
+<h5 id="(10)_linkEverything()">(10) linkEverything()</h5><p>首先检查是否连接过，没有的话，则先调用 linkInjectableTypes() 和 linkStaticInjections() 将所有 HostBinding 添加到 Linker 中，然后调用 linker.linkAll() 进行全部 Binding 的依赖关联。  </p>
+<h5 id="4-2-7_BindingsGroup-java">4.2.7 BindingsGroup.java</h5><p>内部主要一个 LinkedHashMap 变量，key 为需要需要依赖注入的类类全名，value 为其对应的 Binding 对象。  </p>
+<h5 id="4-2-8_DeferredBinding-java">4.2.8 DeferredBinding.java</h5><p>DeferredBinding 是 Binding 的一个子类，实际就是一个标记，在 linker.requestBinding 时候如果某个 Binding 不存在，则生成一个 DeferredBinding 添加到 toLink 队列中，在 linker.linkRequested 如果碰到 DeferredBinding 则根据 key 获得真正的 Binding 添加到 toLink 队列中。  </p>
+<h5 id="4-2-9_Keys-java">4.2.9 Keys.java</h5><p>这是个 Key 相关的工具类。<br><code>getMembersKey(Class&lt;?&gt; key)</code> 用于返回以 “members/“ + keyClassName 的字符串。  </p>
+<h5 id="(1)-_boxIfPrimitive(Type_type)_函数用于将原始类型转换为复杂类型">(1). boxIfPrimitive(Type type) 函数用于将原始类型转换为复杂类型</h5><p>// TODO 其他函数作用  </p>
+<h5 id="4-2-10_Memoizer-java">4.2.10 Memoizer.java</h5><p>一个小的缓存抽象类，内部主要是一个用于存储数据的 HashMap 属性和两个读写重入锁。<br><strong>Memoizer 主要函数有：</strong>  </p>
+<h5 id="(1)-_create(K_key)">(1). create(K key)</h5><p>需要子类实现的抽象函数，表示创建 Value 的方式。  </p>
+<h5 id="(2)-_get(K_key)">(2). get(K key)</h5><p>表示根据 key 从缓存中得到 value，value 如果已经存在则直接返回，否则调用 create(K key) 函数新建 value，存入缓存并返回。<br>Memoizer 主要用在 Loader 中，Loder 中包含一个嵌套的 Memoizer 变量，内外分别作为类和 ClassLoader 的缓存。  </p>
+<h5 id="4-2-11_ModuleAdapter-java">4.2.11 ModuleAdapter.java</h5><p>抽象类，APT 会为每一个被 @Module 修饰的类自动生成一个继承自这个 ModuleAdapter 的子类。该子类会以 ModuleClass 的 ClassName 加上 $$ModuleAdapter 命名，在 ModuleClass 的同一个 package 下。<br><strong>ModuleAdapter 主要属性有：</strong>  </p>
+<h5 id="(1)-_Class_moduleClass">(1). Class moduleClass</h5><p>表示 ModuleAdapter 对应的 ModuleClass。  </p>
+<h5 id="(2)-_injectableTypes">(2). injectableTypes</h5><p>String 数组，存储需要依赖注入的类类名。为 @Module 注解的 injects 属性值。  </p>
+<h5 id="(3)-_staticInjections">(3). staticInjections</h5><p>Class 数组，存储有静态属性依赖需要注入的类。  </p>
+<h5 id="(4)-_boolean_overrides">(4). boolean overrides</h5><p>表示某个 Module 的 @Provides 函数可以覆盖其他 Module，建议只在测试以及开发模式使用。  </p>
+<h5 id="(5)-_includes">(5). includes</h5><p>表示 Module 由哪些其他类组成。  </p>
+<h5 id="(6)-_boolean_complete">(6). boolean complete</h5><p>表示这个 Module 需要的所有 Binding 是否可以互相提供依赖，即是否能组成一个完整的 DAG。True 表示可以，False 表示不可以。如果一个 Module 有外部依赖的 Bindings 则为 False。  </p>
+<h5 id="(7)-_boolean_library">(7). boolean library</h5><p>表示这个 Module 是否提供对外的<code>DenpendencyBinding</code>，True 表示是，False 表示所有 Binding 仅被自己用到。  </p>
+<h5 id="4-2-12_Modules-java">4.2.12 Modules.java</h5><p>Modules.java 对外只有一个静态的 loadModules 函数，作用是返回一组 Module 类所对应的一组 ModuleAdapter 实例。<br>该函数入参为 Loader 和一个 ModuleClass 对象数组 seedModulesOrClasses，函数返回一个 HashMap，key 为 ModuleAdapter 对象，Value 为类似入参的 ModuleClass 对象，返回结果不仅包含入参 ModuleClass 及其对应的ModuleAdapter，也包含入参 ModuleClass 嵌套的 ModuleClass 及其对应的ModuleAdapter。  </p>
+<p>loadModules 的逻辑比较简单，先通过 Loader.getModuleAdapter() 函数依次得到入参 seedModulesOrClasses 对应的 ModuleAdapter，然后查找得到的 ModuleAdapter 嵌套的 ModuleClass 对应的 ModuleAdapter，ModuleAdapter 嵌套的 ModuleClass 都存放在 ModuleAdapter 的 includes 对象中，由 APT 在编译时解析生成。  </p>
+<h5 id="4-2-13_ProblemDetector-java">4.2.13 ProblemDetector.java</h5><p>Binding 问题检测。<br><strong>ProblemDetector 主要函数有：</strong>  </p>
+<h5 id="(1)-_detectCircularDependencies(Collection_bindings)">(1). detectCircularDependencies(Collection bindings)</h5><p>检测一组 Binding 是否存在循环依赖。  </p>
+<h5 id="(2)-_detectUnusedBinding(Collection_bindings)">(2). detectUnusedBinding(Collection bindings)</h5><p>检测一组 Binding 中是否存在无用的 Binding，即既不依赖其他 Binding 也不被其他 Binding 依赖，对于 DAG 图来说就是孤立的节点。  </p>
+<h5 id="(3)-_detectProblems(Collection_values)">(3). detectProblems(Collection values)</h5><p>检测一组 Binding 是否存在问题，直接调用上面两个函数检测。这个函数会被 DaggerObjectGraph.validate() 调用进行检测。  </p>
+<h5 id="4-2-14_BuiltInBinding-java">4.2.14 BuiltInBinding.java</h5><p>ProvidesBinding 是 Binding 的子类，它的作用是在 attach 时就已经得到了最终的 Binding，get() 调用时直接返回即可。</p>
+<h5 id="4-2-15_LazyBinding-java">4.2.15 LazyBinding.java</h5><p>LazyBinding 是 Binding 的子类，它的作用是延迟实例化 Binding，调用它的 get() 函数时只是返回一个 Lazy 匿名内部类对象，只有调用这个对象的 get() 函数时才会 返回真正的 Dependency。  </p>
+<p>这样做的一个好处就是如果，真正的 Binding 的生成很耗费性能，则可以在最开始时只生成轻量级的 LazyBinding，真正要使用时才初始化真正的 Binding。  </p>
+<h5 id="4-2-16_ProvidesBinding-java">4.2.16 ProvidesBinding.java</h5><p>ProvidesBinding 是 Binding 的子类，对于 Provide 方式的注入，APT 会一个继承自 ProvidesBinding.java 的子类，该生成类以 Provide 函数名首字母大写加上 ProvidesAdapter 命名，是 Provide 函数所在 Module 对应生成的ModuleAdapter中的静态内部类。<br><strong>ProvidesBinding 主要属性有：</strong>  </p>
+<h5 id="(1)-_moduleClass">(1). moduleClass</h5><p>表示被 @Provides 修饰的函数所在的 Module 类名。  </p>
+<h5 id="(2)-_methodName">(2). methodName</h5><p>表示被 @Provides 修饰的函数函数名。  </p>
+<h5 id="4-2-17_SetBinding-java">4.2.17 SetBinding.java</h5><p>SetBinding 是 Binding 的子类，它的不同处在于保存了父 Binding，这样就形成了一个链表。  </p>
+<h5 id="4-2-18_StaticInjection-java">4.2.18 StaticInjection.java</h5><p>抽象类，APT 会为每一个被 @Inject 修饰的静态属性自动生成一个继承自这个 StaticInjection 的子类。该子类会以属性类的 ClassName 加上 $$StaticInjection 命名，在属性类的同一个 package 下。  </p>
+<h5 id="4-2-19_Lazy-java">4.2.19 Lazy.java</h5><p>Lazy 是一个接口，用来标记表示可以通过 get() 函数得到真正的对象。</p>
+<h5 id="4-2-20_MembersInjector-java">4.2.20 MembersInjector.java</h5><p>MembersInjector 是一个接口，提供了 injectMembers() 用来向<code>Host</code>对象中注入(即设置)<code>Dependency</code>，<code>HostDependency</code>需要实现此接口。  </p>
+<h5 id="4-2-21_Module-java">4.2.21 Module.java</h5><p>Module 是一个运行时注解，可以用来修饰类、接口、Enum。用来为 Dagger 提供需要依赖注入的 Host 信息及一些 Dependency 的生成方式。Module 的属性都在<code>ModuleAdapter.java</code>中介绍过，唯一没有介绍过的 addsTo 表示 Module 可以作为哪些类的依赖。  </p>
+<p>被 @Module 注解修饰类(ModuleClass)，APT 会生成一个以 ModuleClass 的 ClassName 加上 $$ModuleAdapter 命名，在 ModuleClass 的同一个 package 下的子类。  </p>
+<h5 id="4-2-22_Provides-java">4.2.22 Provides.java</h5><p>Provides 是一个注解，只可以用来修饰函数。<br>每个被 @Provides 修饰的生成函数都会生成一个继承自 ProvidesBinding.java 的子类，ProvidesBinding.java 继承自 Binding.java，生成类以 Provide 函数名首字母大写加上 ProvidesAdapter 命名，是 Provide 函数所在 Module 对应生成的ModuleAdapter中的静态内部类。<br>Binding 更具体信息在下面会介绍。  </p>
+<h5 id="4-2-23_ErrorHandler_Interface">4.2.23 ErrorHandler Interface</h5><p>位于 Linker.java 内部，表示处理 Linker.linkRequested() 运行过程中的 error。  </p>
+<h5 id="4-2-24_ThrowingErrorHandler-java">4.2.24 ThrowingErrorHandler.java</h5><p>上面 ErrorHandler Interface 的实现类，将 errors 汇总后以 IllegalStateException 抛出，为 Linker.linkRequested() 运行过程中积累的 errors 的默认处理方式。  </p>
+<h3 id="5-_聊聊_Dagger_本身">5. 聊聊 Dagger 本身</h3><p>Dagger 由于其自身的复杂性，其实是一个上手难度颇高的库，难学会、难用好。但从功能上来讲，它又是一个实用价值非常高的库。而且即将发布的 Dagger 2.0 已经被 Square 转手交给了 Google 来开发和维护，从今以后它就是 Google 的官方库了，那么不论从官方支持方面还是从流行度上面， Dagger 都将会有一个很大的提升。关于 Dagger 的功能和用法，我会写一篇文章详细讲述。在本文的最后，列两个可能比较多人会问的问题和简单的回答：</p>
+<h4 id="(1)-_Dagger_适合什么样的项目">(1). Dagger 适合什么样的项目</h4><p>Dagger 是一个依赖注入库，而依赖注入是一种优秀的编程思想，它可以通过解耦项目来提升项目的可阅读性、可扩展性和可维护性，并使得单元测试更为方便。因此，<strong>Dagger 适用于所有项目</strong>。</p>
+<h4 id="(2)-_Dagger_适合什么样的个人和团队">(2). Dagger 适合什么样的个人和团队</h4><p>Dagger 适合<strong>有学习能力并且愿意学习</strong>的个人和团队。这里要注意，如果你是开发团队的负责人，在决定启用 Dagger 之前一定要确认你的所有队员(起码是大部分队员)都符合这样的条件，否则 Dagger 可能会起反作用，毕竟——它不是 ButterKnife。</p>
+<blockquote>
+<p>本文为 <a href="https://github.com/android-cn/android-open-project-analysis" target="_blank" rel="external">Android 开源项目源码解析</a> 中 Dagger 部分<br>项目地址：<a href="https://github.com/square/dagger" target="_blank" rel="external">Dagger</a>，分析的版本：<a href="https://github.com/square/dagger/commit/2f9579c48e887ffa316f329c12c2fa2abbec27b1" title="Commit id is 2f9579c48e887ffa316f329c12c2fa2abbec27b1" target="_blank" rel="external">2f9579c</a>，Demo 地址：<a href="https://github.com/android-cn/android-open-project-demo/tree/master/dagger-demo" target="_blank" rel="external">Dagger Demo</a><br>分析者：<a href="https://github.com/rengwuxian" target="_blank" rel="external">扔物线</a>，校对者：<a href="https://github.com/trinea" target="_blank" rel="external">Trinea</a>，校对状态：完成   </p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/" data-id="cibk39tn8006150flnd8tn445" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android 开源项目源码解析之CircularFloatingActionMenu 源码解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_android-lockpattern/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 开源项目源码解析之Android Lock Pattern 源码解析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/03/android-open-project-analysis_dagger/" data-title="Android 开源项目源码解析之Dagger 源码解析" data-url="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">39</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/">Android 开源项目源码解析之HoloGraphLibrary 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/">Android 开源项目源码解析之EventBus 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/">Instagram是如何提升TextView渲染性能的</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/">Android 开源项目源码解析之Dagger 源码解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

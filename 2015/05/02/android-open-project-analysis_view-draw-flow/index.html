@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android 开源项目源码解析之View 绘制流程 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="View 绘制机制1. View 树的绘图流程当 Activity 接收到焦点的时候，它会被请求绘制布局,该请求由Android framework 处理.绘制是从根节点开始，对布局树进行 measure 和 draw 。整个 View 树的绘图流程在ViewRoot.java类的performTraversals()函数展开，该函数所做 的工作可简单概况为是否需要重新计算视图大小(measure">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 开源项目源码解析之View 绘制流程">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/02/android-open-project-analysis_view-draw-flow/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="View 绘制机制1. View 树的绘图流程当 Activity 接收到焦点的时候，它会被请求绘制布局,该请求由Android framework 处理.绘制是从根节点开始，对布局树进行 measure 和 draw 。整个 View 树的绘图流程在ViewRoot.java类的performTraversals()函数展开，该函数所做 的工作可简单概况为是否需要重新计算视图大小(measure">
+<meta property="og:image" content="http://likebamboo.com/AndroidBlog/image/viewdrawflow/view_mechanism_flow.png">
+<meta property="og:image" content="http://likebamboo.com/AndroidBlog/image/viewdrawflow/view_draw_method_chain.png">
+<meta property="og:image" content="http://likebamboo.com/AndroidBlog/image/viewdrawflow/measure_layout.png">
+<meta property="og:image" content="http://likebamboo.com/AndroidBlog/image/viewdrawflow/measurechildflow.png">
+<meta property="og:image" content="http://likebamboo.com/AndroidBlog/image/viewdrawflow/draw_method_flow.png">
+<meta property="og:updated_time" content="2015-06-30T13:57:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 开源项目源码解析之View 绘制流程">
+<meta name="twitter:description" content="View 绘制机制1. View 树的绘图流程当 Activity 接收到焦点的时候，它会被请求绘制布局,该请求由Android framework 处理.绘制是从根节点开始，对布局树进行 measure 和 draw 。整个 View 树的绘图流程在ViewRoot.java类的performTraversals()函数展开，该函数所做 的工作可简单概况为是否需要重新计算视图大小(measure">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-android-open-project-analysis_view-draw-flow" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android-open-project-analysis_view-draw-flow/" class="article-date">
+  <time datetime="2015-05-01T16:00:00.000Z" itemprop="datePublished">2015-05-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 开源项目源码解析之View 绘制流程
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="View_绘制机制">View 绘制机制</h4><h5 id="1-_View_树的绘图流程">1. View 树的绘图流程</h5><p>当 Activity 接收到焦点的时候，它会被请求绘制布局,该请求由Android framework 处理.绘制是从根节点开始，对布局树进行 measure 和 draw 。整个 View 树的绘图流程在<code>ViewRoot.java</code>类的<code>performTraversals()</code>函数展开，该函数所做 的工作可简单概况为是否需要重新计算视图大小(measure)、是否需要重新安置视图的位置(layout)、以及是否需要重绘(draw)，流程图如下：<br><img src="image/viewdrawflow/view_mechanism_flow.png" alt="viewdrawflow img"><br><a id="more"></a><br><strong>View 绘制流程函数调用链</strong><br><img src="image/viewdrawflow/view_draw_method_chain.png" alt="view_draw_method_chain img"><br>图片来自 <a href="https://plus.google.com/+ArpitMathur/posts/cT1EuBbxEgN" target="_blank" rel="external">https://plus.google.com/+ArpitMathur/posts/cT1EuBbxEgN</a><br>需要说明的是，用户主动调用request，只会出发 measure 和 layout 过程，而不会执行 draw 过程</p>
+<h5 id="2-_概念">2. 概念</h5><p><strong>measure 和 layout</strong>  </p>
+<p>从整体上来看 Measure 和 Layout 两个步骤的执行：<br><img src="image/viewdrawflow/measure_layout.png" alt="MeasureLayout img"><br>树的遍历是有序的，由父视图到子视图，每一个 ViewGroup 负责测绘它所有的子视图，而最底层的 View 会负责测绘自身。  </p>
+<p><strong>具体分析</strong><br>measure 过程由<code>measure(int, int)</code>方法发起，从上到下有序的测量 View ，在 measure 过程的最后，每个视图存储了自己的尺寸大小和测量规格。<br>layout 过程由<code>layout(int, int, int, int)</code>方法发起，也是自上而下进行遍历。在该过程中，每个父视图会根据 measure 过程得到的尺寸来摆放自己的子视图。  </p>
+<p> measure 过程会为一个View及所有子节点的 mMeasuredWidth 和 mMeasuredHeight 变量赋值，该值可以通过 <code>getMeasuredWidth()</code>和<code>getMeasuredHeight()</code>方法获得。而且这两个值必须在父视图约束范围之内，这样才可以保证所有的父视图都接收所有子视图的测量。如果子视图对于 Measure 得到的大小不满意的时候，父视图会介入并设置测量规则进行第二次 measure。比如，父视图可以先根据未给定的 dimension 去测量每一个子视图，如果最终子视图的未约束尺寸太大或者太小的时候，父视图就会使用一个确切的大小再次对子视图进行 measure 。 </p>
+<p><strong>measure 过程传递尺寸的两个类</strong>  </p>
+<ul>
+<li>ViewGroup.LayoutParams （View 自身的布局参数）  </li>
+<li>MeasureSpecs 类（父视图对子视图的测量要求）</li>
+</ul>
+<p>ViewGroup.LayoutParams<br>这个类我们很常见，就是用来指定视图的高度和宽度等参数。对于每个视图的 height 和 width，你有以下选择：  </p>
+<ul>
+<li>具体值   </li>
+<li>MATCH_PARENT 表示子视图希望和父视图一样大(不包含padding值)   </li>
+<li>WRAP_CONTENT 表示视图为正好能包裹其内容大小(包含padding值)    </li>
+</ul>
+<p>ViewGroup 的子类有其对应的 ViewGroup.LayoutParams 的子类。比如 RelativeLayout 拥有的 ViewGroup.LayoutParams 的子类 RelativeLayoutParams。<br>有时我们需要使用 view.getLayoutParams() 方法获取一个视图 LayoutParams ，然后进行强转，但由于不知道其具体类型，可能会导致强转错误。其实该方法得到的就是其所在父视图类型的 LayoutParams，比如 View 的父控件为 RelativeLayout，那么得到的 LayoutParams 类型就为 RelativeLayoutParams。  </p>
+<p>MeasureSpecs<br>测量规格，包含测量要求和尺寸的信息，有三种模式:    </p>
+<ul>
+<li><p>UNSPECIFIED<br>父视图不对子视图有任何约束，它可以达到所期望的任意尺寸。比如ListView、ScrollView，一般自定义View中用不到，</p>
+</li>
+<li><p>EXACTLY<br>父视图为子视图指定一个确切的尺寸，而且无论子视图期望多大，它都必须在该指定大小的边界内，对应的属性为 match_parent 或具体值，比如 100dp，父控件可以通过<code>MeasureSpec.getSize(measureSpec)</code>直接得到子控件的尺寸。</p>
+</li>
+<li><p>AT_MOST<br>父视图为子视图指定一个最大尺寸。子视图必须确保它自己所有子视图可以适应在该尺寸范围内，对应的属性为 wrap_content，这种模式下，父控件无法确定子 View 的尺寸，只能由子控件自己根据需求去计算自己的尺寸，这种模式就是我们自定义视图需要实现测量逻辑的情况。</p>
+</li>
+</ul>
+<h5 id="3-_measure_核心方法">3. measure 核心方法</h5><ul>
+<li><p>measure(int widthMeasureSpec, int heightMeasureSpec)<br>该方法定义在<code>View.java</code>类中，为final类型，不可被复写，但 measure 调用链最终会回调 View/ViewGroup 对象的 <code>onMeasure()</code>方法，因此自定义视图时，只需要复写 <code>onMeasure()</code> 方法即可。</p>
+</li>
+<li><p>onMeasure(int widthMeasureSpec, int heightMeasureSpec)<br>该方法就是我们自定义视图中实现测量逻辑的方法，该方法的参数是父视图对子视图的 width 和 height 的测量要求。在我们自身的自定义视图中，要做的就是根据该 widthMeasureSpec 和 heightMeasureSpec 计算视图的 width 和 height，不同的模式处理方式不同。</p>
+</li>
+<li><p>setMeasuredDimension()<br>测量阶段终极方法，在 <code>onMeasure(int widthMeasureSpec, int heightMeasureSpec)</code> 方法中调用，将计算得到的尺寸，传递给该方法，测量阶段即结束。该方法也是必须要调用的方法，否则会报异常。在我们在自定义视图的时候，不需要关心系统复杂的 Measure 过程的，只需调用<code>setMeasuredDimension()</code>设置根据 MeasureSpec 计算得到的尺寸即可，你可以参考 <a href="https://github.com/android-cn/android-open-project-analysis/tree/master/view-pager-indicator" target="_blank" rel="external">ViewPagerIndicator</a> 的onMeasure方法。  </p>
+</li>
+</ul>
+<p>下面我们取 ViewGroup 的 <code>measureChildren（int widthMeasureSpec, int heightMeasureSpec)</code> 方法对复合 View 的 Measure 流程做一个分析：<br>MeasureChild 的方法调用流程图：<br><img src="image/viewdrawflow/measurechildflow.png" alt="MeasureLayout img">    </p>
+<p><strong>源码分析</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span><br><span class="line">  * 请求所有子 View 去 measure 自己，要考虑的部分有对子 View 的测绘要求 MeasureSpec 以及其自身的 padding</span><br><span class="line">  * 这里跳过所有为 GONE 状态的子 View ，最繁重的工作是在 getChildMeasureSpec 方法中处理的</span><br><span class="line">  *</span><br><span class="line">  * <span class="doctag">@param</span> widthMeasureSpec  对该 View 的 width 测绘要求</span><br><span class="line">  * <span class="doctag">@param</span> heightMeasureSpec 对该 View 的 height 测绘要求</span><br><span class="line">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">measureChildren</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">final</span> <span class="keyword">int</span> size = mChildrenCount;</span><br><span class="line">     <span class="keyword">final</span> View[] children = mChildren;</span><br><span class="line">     <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; ++i) &#123;</span><br><span class="line">         <span class="keyword">final</span> View child = children[i];</span><br><span class="line">         <span class="keyword">if</span> ((child.mViewFlags &amp; VISIBILITY_MASK) != GONE) &#123;</span><br><span class="line">             measureChild(child, widthMeasureSpec, heightMeasureSpec);</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">measureChild</span><span class="params">(View child, <span class="keyword">int</span> parentWidthMeasureSpec,</span><br><span class="line">         <span class="keyword">int</span> parentHeightMeasureSpec)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">final</span> LayoutParams lp = child.getLayoutParams();<span class="comment">//获取Child的LayoutParams</span></span><br><span class="line"></span><br><span class="line">     <span class="keyword">final</span> <span class="keyword">int</span> childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,<span class="comment">// 获取 ChildView的widthMeasureSpec</span></span><br><span class="line">             mPaddingLeft + mPaddingRight, lp.width);</span><br><span class="line">     <span class="keyword">final</span> <span class="keyword">int</span> childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,<span class="comment">// 获取 ChildView的heightMeasureSpec</span></span><br><span class="line">             mPaddingTop + mPaddingBottom, lp.height);</span><br><span class="line"></span><br><span class="line">     child.measure(childWidthMeasureSpec, childHeightMeasureSpec);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** </span><br><span class="line">  * 该方法是 measureChildren 中最繁重的部分，为每一个 ChildView 计算出自己的 MeasureSpec。</span><br><span class="line">  * 目标是将 ChildView 的 MeasureSpec 和 LayoutParams 结合起来去得到一个最合适的结果。</span><br><span class="line">  *</span><br><span class="line">  * <span class="doctag">@param</span> spec 对该 View 的测绘要求</span><br><span class="line">  * <span class="doctag">@param</span> padding 当前 View 在当前唯独上的 paddingand，也有可能含有 margins</span><br><span class="line">  *</span><br><span class="line">  * <span class="doctag">@param</span> childDimension 在当前维度上（height或width）的具体指</span><br><span class="line">  * <span class="doctag">@return</span> 子视图的 MeasureSpec </span><br><span class="line">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getChildMeasureSpec</span><span class="params">(<span class="keyword">int</span> spec, <span class="keyword">int</span> padding, <span class="keyword">int</span> childDimension)</span> </span>&#123;</span><br><span class="line"> 		</span><br><span class="line"> 		.........</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 根据获取到的子视图的测量要求和大小创建子视图的MeasureSpec</span></span><br><span class="line">  <span class="keyword">return</span> MeasureSpec.makeMeasureSpec(resultSize, resultMode);  </span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">/**</span><br><span class="line">  *</span><br><span class="line">  * 用于获取 View 最终的大小，父视图提供了宽、高的约束信息</span><br><span class="line">  * 一个 View 的真正的测量工作是在 onMeasure(int, int) 中，由该方法调用。</span><br><span class="line">  * 因此，只有 onMeasure(int, int) 可以而且必须被子类复写</span><br><span class="line">  *</span><br><span class="line">  * <span class="doctag">@param</span> widthMeasureSpec 在水平方向上，父视图指定的的 Measure 要求</span><br><span class="line">  * <span class="doctag">@param</span> heightMeasureSpec 在竖直方向上，控件上父视图指定的 Measure 要求</span><br><span class="line">  *</span><br><span class="line">  */</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">measure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">   ...</span><br><span class="line">   </span><br><span class="line">   onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line">   </span><br><span class="line">   ...</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">     setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec),</span><br><span class="line">             getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="4-_layout_相关概念及核心方法">4. layout 相关概念及核心方法</h5><p>首先要明确的是，子视图的具体位置都是相对于父视图而言的。View 的 onLayout 方法为空实现，而 ViewGroup 的 onLayout 为 abstract 的，因此，如果自定义的 View 要继承 ViewGroup 时，必须实现 onLayout 函数。  </p>
+<p>在layout过程中，子视图会调用<code>getMeasuredWidth()</code>和<code>getMeasuredHeight()</code>方法获取到 measure 过程得到的 mMeasuredWidth 和 mMeasuredHeight，作为自己的 width 和 height。然后调用每一个子视图的<code>layout(l, t, r, b)</code>函数，来确定每个子视图在父视图中的位置。    </p>
+<p><strong> LinearLayout 的 onLayout 源码分析</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"> <span class="annotation">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onLayout</span><span class="params">(<span class="keyword">boolean</span> changed, <span class="keyword">int</span> l, <span class="keyword">int</span> t, <span class="keyword">int</span> r, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (mOrientation == VERTICAL) &#123;</span><br><span class="line">           layoutVertical(l, t, r, b);</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           layoutHorizontal(l, t, r, b);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="comment">/**</span><br><span class="line">    * 遍历所有的子 View，为其设置相对父视图的坐标</span><br><span class="line">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">void</span> <span class="title">layoutVertical</span><span class="params">(<span class="keyword">int</span> left, <span class="keyword">int</span> top, <span class="keyword">int</span> right, <span class="keyword">int</span> bottom)</span> </span>&#123;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">            <span class="keyword">final</span> View child = getVirtualChildAt(i);</span><br><span class="line">            <span class="keyword">if</span> (child == <span class="keyword">null</span>) &#123;</span><br><span class="line">                childTop += measureNullChild(i);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (child.getVisibility() != GONE) &#123;<span class="comment">//不需要立即展示的View设置为GONE可加快绘制</span></span><br><span class="line">                <span class="keyword">final</span> <span class="keyword">int</span> childWidth = child.getMeasuredWidth();<span class="comment">//measure过程确定的Width</span></span><br><span class="line">                <span class="keyword">final</span> <span class="keyword">int</span> childHeight = child.getMeasuredHeight();<span class="comment">//measure过程确定的height</span></span><br><span class="line">                </span><br><span class="line">                ...确定 childLeft、childTop 的值</span><br><span class="line"></span><br><span class="line">                setChildFrame(child, childLeft, childTop + getLocationOffset(child),</span><br><span class="line">                        childWidth, childHeight);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setChildFrame</span><span class="params">(View child, <span class="keyword">int</span> left, <span class="keyword">int</span> top, <span class="keyword">int</span> width, <span class="keyword">int</span> height)</span> </span>&#123;        </span><br><span class="line">       child.layout(left, top, left + width, top + height);</span><br><span class="line">   &#125;	</span><br><span class="line">     </span><br><span class="line">   View.<span class="function">java</span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">layout</span><span class="params">(<span class="keyword">int</span> l, <span class="keyword">int</span> t, <span class="keyword">int</span> r, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">   	...</span><br><span class="line">   	setFrame(l, t, r, b)</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="comment">/**</span><br><span class="line">    * 为该子 View 设置相对其父视图上的坐标</span><br><span class="line">    */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">setFrame</span><span class="params">(<span class="keyword">int</span> left, <span class="keyword">int</span> top, <span class="keyword">int</span> right, <span class="keyword">int</span> bottom)</span> </span>&#123;</span><br><span class="line">    	...</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="5-_绘制流程相关概念及核心方法">5. 绘制流程相关概念及核心方法</h5><p>先来看下与 draw 过程相关的函数：  </p>
+<ul>
+<li><p>View.draw(Canvas canvas)：<br>由于 ViewGroup 并没有复写此方法，因此，所有的视图最终都是调用 View 的 draw 方法进行绘制的。在自定义的视图中，也不应该复写该方法，而是复写 <code>onDraw(Canvas)</code> 方法进行绘制，如果自定义的视图确实要复写该方法，那么请先调用 <code>super.draw(canvas)</code>完成系统的绘制，然后再进行自定义的绘制。</p>
+</li>
+<li><p>View.onDraw()：<br>View的<code>onDraw（Canvas）</code>默认是空实现，自定义绘制过程需要复写的方法，绘制自身的内容。  </p>
+</li>
+<li><p>dispatchDraw()<br>发起对子视图的绘制。View中默认是空实现，ViewGroup 复写了<code>dispatchDraw()</code>来对其子视图进行绘制。该方法我们不用去管，自定义的 ViewGroup 不应该对<code>dispatchDraw()</code>进行复写。</p>
+</li>
+</ul>
+<p>绘制流程图<br><img src="image/viewdrawflow/draw_method_flow.png" alt="MeasureLayout img">    </p>
+<p><strong>- View.draw(Canvas) 源码分析</strong><br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    * Manually render this view (and all of its children) to the given Canvas.</span><br><span class="line">    * The view must have already done a full layout before this function is</span><br><span class="line">    * called.  When implementing a view, implement</span><br><span class="line">    * &#123;@link #onDraw(android.graphics.Canvas)&#125; instead of overriding this method.</span><br><span class="line">    * If you do need to override this method, call the superclass version.</span><br><span class="line">    *</span><br><span class="line">    * @param canvas The Canvas to which the View is rendered.  </span><br><span class="line">    *</span><br><span class="line">    * 根据给定的 Canvas 自动渲染 View（包括其所有子 View）。在调用该方法之前必须要完成 layout。当你自定义 view 的时候，</span><br><span class="line">    * 应该去是实现 onDraw(Canvas) 方法，而不是 draw(canvas) 方法。如果你确实需要复写该方法，请记得先调用父类的方法。</span><br><span class="line">    */</span><br><span class="line">   public void draw(Canvas canvas) &#123;</span><br><span class="line">   </span><br><span class="line">       / * Draw traversal performs several drawing steps which must be executed</span><br><span class="line">        * in the appropriate order:</span><br><span class="line">        *</span><br><span class="line">        *      1. Draw the background if need</span><br><span class="line">        *      2. If necessary, save the canvas' layers to prepare for fading</span><br><span class="line">        *      3. Draw view's content</span><br><span class="line">        *      4. Draw children (dispatchDraw)</span><br><span class="line">        *      5. If necessary, draw the fading edges and restore layers</span><br><span class="line">        *      6. Draw decorations (scrollbars for instance)</span><br><span class="line">        */</span><br><span class="line"></span><br><span class="line">	// Step 1, draw the background, if needed</span><br><span class="line">       if (!dirtyOpaque) &#123;</span><br><span class="line">           drawBackground(canvas);</span><br><span class="line">       &#125;</span><br><span class="line">       </span><br><span class="line">        // skip step 2 &amp; 5 if possible (common case)</span><br><span class="line">       final int viewFlags = mViewFlags;</span><br><span class="line">       if (!verticalEdges &amp;&amp; !horizontalEdges) &#123;</span><br><span class="line">           // Step 3, draw the content</span><br><span class="line">           if (!dirtyOpaque) onDraw(canvas);</span><br><span class="line"></span><br><span class="line">           // Step 4, draw the children</span><br><span class="line">           dispatchDraw(canvas);</span><br><span class="line"></span><br><span class="line">           // Step 6, draw decorations (scrollbars)</span><br><span class="line">           onDrawScrollBars(canvas);</span><br><span class="line"></span><br><span class="line">           if (mOverlay != null &amp;&amp; !mOverlay.isEmpty()) &#123;</span><br><span class="line">               mOverlay.getOverlayView().dispatchDraw(canvas);</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           // we're done...</span><br><span class="line">           return;</span><br><span class="line">       &#125;</span><br><span class="line">       </span><br><span class="line">       // Step 2, save the canvas' layers</span><br><span class="line">       ...</span><br><span class="line">       </span><br><span class="line">       // Step 3, draw the content</span><br><span class="line">       if (!dirtyOpaque) </span><br><span class="line">       	onDraw(canvas);</span><br><span class="line"></span><br><span class="line">       // Step 4, draw the children</span><br><span class="line">       dispatchDraw(canvas);</span><br><span class="line"></span><br><span class="line">       // Step 5, draw the fade effect and restore layers</span><br><span class="line">       </span><br><span class="line">       // Step 6, draw decorations (scrollbars)</span><br><span class="line">       onDrawScrollBars(canvas);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>由上面的处理过程，我们也可以得出一些优化的小技巧：当不需要绘制 Layer 的时候第二步和第五步会跳过。<strong>因此在绘制的时候，能省的 layer 尽可省，可以提高绘制效率</strong>  </p>
+<p><strong>ViewGroup.dispatchDraw() 源码分析</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">dispatchDraw(Canvas canvas)&#123;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"> <span class="keyword">if</span> ((flags &amp; FLAG_RUN_ANIMATION) != <span class="number">0</span> &amp;&amp; canAnimate()) &#123;<span class="comment">//处理ChildView的动画</span></span><br><span class="line"> 	<span class="keyword">final</span> <span class="keyword">boolean</span> buildCache = !isHardwareAccelerated();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; childrenCount; i++) &#123;</span><br><span class="line">                <span class="keyword">final</span> View child = children[i];</span><br><span class="line">                <span class="keyword">if</span> ((child.mViewFlags &amp; VISIBILITY_MASK) == VISIBLE) &#123;<span class="comment">//只绘制 Visible 状态的布局，因此可以通过延时加载来提高效率</span></span><br><span class="line">                    <span class="keyword">final</span> LayoutParams params = child.getLayoutParams();</span><br><span class="line">                    attachLayoutAnimationParameters(child, params, i, childrenCount);<span class="comment">// 添加布局变化的动画</span></span><br><span class="line">                    bindLayoutAnimation(child);<span class="comment">//为Child绑定动画</span></span><br><span class="line">                    <span class="keyword">if</span> (cache) &#123;</span><br><span class="line">                        child.setDrawingCacheEnabled(<span class="keyword">true</span>);</span><br><span class="line">                        <span class="keyword">if</span> (buildCache) &#123;</span><br><span class="line">                            child.buildDrawingCache(<span class="keyword">true</span>);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line"> 	<span class="keyword">final</span> LayoutAnimationController controller = mLayoutAnimationController;</span><br><span class="line">            <span class="keyword">if</span> (controller.willOverlap()) &#123;</span><br><span class="line">                mGroupFlags |= FLAG_OPTIMIZE_INVALIDATE;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">	controller.start();<span class="comment">// 启动 View 的动画</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">// 绘制 ChildView</span></span><br><span class="line"> <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; childrenCount; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> childIndex = customOrder ? getChildDrawingOrder(childrenCount, i) : i;</span><br><span class="line">            <span class="keyword">final</span> View child = (preorderedList == <span class="keyword">null</span>)</span><br><span class="line">                    ? children[childIndex] : preorderedList.get(childIndex);</span><br><span class="line">            <span class="keyword">if</span> ((child.mViewFlags &amp; VISIBILITY_MASK) == VISIBLE || child.getAnimation() != <span class="keyword">null</span>) &#123;</span><br><span class="line">                more |= drawChild(canvas, child, drawingTime);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">drawChild</span><span class="params">(Canvas canvas, View child, <span class="keyword">long</span> drawingTime)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> child.draw(canvas, <span class="keyword">this</span>, drawingTime);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line">     * This method is called by ViewGroup.drawChild() to have each child view draw itself.</span><br><span class="line">     * This draw() method is an implementation detail and is not intended to be overridden or</span><br><span class="line">     * to be called from anywhere else other than ViewGroup.drawChild().</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">draw</span><span class="params">(Canvas canvas, ViewGroup parent, <span class="keyword">long</span> drawingTime)</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>drawChild(canvas, this, drawingTime)<br>直接调用了 View 的<code>child.draw(canvas, this,drawingTime)</code>方法，文档中也说明了，除了被<code>ViewGroup.drawChild()</code>方法外，你不应该在其它任何地方去复写或调用该方法，它属于 ViewGroup。而<code>View.draw(Canvas)</code>方法是我们自定义控件中可以复写的方法，具体可以参考上述对<code>view.draw(Canvas)</code>的说明。从参数中可以看到，<code>child.draw(canvas, this, drawingTime)</code> 肯定是处理了和父视图相关的逻辑，但 View 的最终绘制，还是 <code>View.draw(Canvas)</code>方法。</p>
+</li>
+<li><p>invalidate()<br>请求重绘 View 树，即 draw 过程，假如视图发生大小没有变化就不会调用<code>layout()</code>过程，并且只绘制那些调用了<code>invalidate()</code>方法的 View。</p>
+</li>
+<li><p>requestLayout()<br>当布局变化的时候，比如方向变化，尺寸的变化，会调用该方法，在自定义的视图中，如果某些情况下希望重新测量尺寸大小，应该手动去调用该方法，它会触发<code>measure()</code>和<code>layout()</code>过程，但不会进行 draw。  </p>
+</li>
+</ul>
+<p>参考资料<br><a href="http://developer.android.com/guide/topics/ui/how-android-draws.html" target="_blank" rel="external">how-android-draws</a><br><a href="http://blog.csdn.net/wangjinyu501/article/details/9008271" target="_blank" rel="external">http://blog.csdn.net/wangjinyu501/article/details/9008271</a><br><a href="http://blog.csdn.net/qinjuning/article/details/7110211" target="_blank" rel="external">http://blog.csdn.net/qinjuning/article/details/7110211</a><br><a href="http://blog.csdn.net/qinjuning/article/details/8074262" target="_blank" rel="external">http://blog.csdn.net/qinjuning/article/details/8074262</a></p>
+<blockquote>
+<p>本文为 <a href="https://github.com/android-cn/android-open-project-analysis" target="_blank" rel="external">Android 开源项目源码解析</a> 公共技术点中的 View 绘制流程 部分<br> 分析者：<a href="https://github.com/lightSky" target="_blank" rel="external">lightSky</a>  </p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/02/android-open-project-analysis_view-draw-flow/" data-id="cibk39tmr005950fl1ruahlge" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android-open-project-analysis_view-draw-flow/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_prototype/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android设计模式源码解析之原型模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_iterator/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android设计模式源码解析之迭代器(Iterator)模式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/02/android-open-project-analysis_view-draw-flow/" data-title="Android 开源项目源码解析之View 绘制流程" data-url="http://likebamboo.com/AndroidBlog/2015/05/02/android-open-project-analysis_view-draw-flow/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">39</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/">Android 开源项目源码解析之HoloGraphLibrary 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/">Android 开源项目源码解析之EventBus 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/">Instagram是如何提升TextView渲染性能的</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/">Android 开源项目源码解析之Dagger 源码解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

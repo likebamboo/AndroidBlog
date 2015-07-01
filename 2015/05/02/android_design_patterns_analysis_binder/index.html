@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android设计模式源码解析之Builder模式 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1. 模式介绍模式的定义将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android设计模式源码解析之Builder模式">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_binder/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="1. 模式介绍模式的定义将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/blob/master/builder/mr.simple/images/builder-uml.png">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/builder/mr.simple/images/result.png">
+<meta property="og:updated_time" content="2015-06-30T13:57:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android设计模式源码解析之Builder模式">
+<meta name="twitter:description" content="1. 模式介绍模式的定义将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-android_design_patterns_analysis_binder" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_binder/" class="article-date">
+  <time datetime="2015-05-01T16:00:00.000Z" itemprop="datePublished">2015-05-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android设计模式源码解析之Builder模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-_模式介绍">1. 模式介绍</h2><h3 id="模式的定义">模式的定义</h3><p>将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。<br><a id="more"></a></p>
+<h3 id="模式的使用场景">模式的使用场景</h3><ol>
+<li>相同的方法，不同的执行顺序，产生不同的事件结果时；   </li>
+<li>多个部件或零件，都可以装配到一个对象中，但是产生的运行结果又不相同时；</li>
+<li>产品类非常复杂，或者产品类中的调用顺序不同产生了不同的效能，这个时候使用建造者模式非常合适；</li>
+</ol>
+<h2 id="2-_UML类图">2. UML类图</h2><p><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/blob/master/builder/mr.simple/images/builder-uml.png" alt="url">  </p>
+<h3 id="角色介绍">角色介绍</h3><ul>
+<li>Product 产品类 :  产品的抽象类。</li>
+<li>Builder : 抽象类， 规范产品的组建，一般是由子类实现具体的组件过程。</li>
+<li>ConcreteBuilder : 具体的构建器.</li>
+<li>Director : 统一组装过程(可省略)。</li>
+</ul>
+<h2 id="3-_模式的简单实现">3. 模式的简单实现</h2><h3 id="简单实现的介绍">简单实现的介绍</h3><p>电脑的组装过程较为复杂，步骤繁多，但是顺序却是不固定的。下面我们以组装电脑为例来演示一下简单且经典的builder模式。</p>
+<h3 id="实现源码">实现源码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.dp.example.builder;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * Computer产品抽象类, 为了例子简单, 只列出这几个属性</span><br><span class="line"> * </span><br><span class="line"> * <span class="doctag">@author</span> mrsimple</span><br><span class="line"> *</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">int</span> mCpuCore = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">int</span> mRamSize = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">protected</span> String mOs = <span class="string">"Dos"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="title">Computer</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 设置CPU核心数</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">setCPU</span><span class="params">(<span class="keyword">int</span> core)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 设置内存</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">setRAM</span><span class="params">(<span class="keyword">int</span> gb)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 设置操作系统</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">setOs</span><span class="params">(String os)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"Computer [mCpuCore="</span> + mCpuCore + <span class="string">", mRamSize="</span> + mRamSize</span><br><span class="line">				+ <span class="string">", mOs="</span> + mOs + <span class="string">"]"</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.dp.example.builder;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * Apple电脑</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppleComputer</span> <span class="keyword">extends</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="title">AppleComputer</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCPU</span><span class="params">(<span class="keyword">int</span> core)</span> </span>&#123;</span><br><span class="line">		mCpuCore = core;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRAM</span><span class="params">(<span class="keyword">int</span> gb)</span> </span>&#123;</span><br><span class="line">		mRamSize = gb;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOs</span><span class="params">(String os)</span> </span>&#123;</span><br><span class="line">		mOs = os;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.dp.example.builder;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.dp.example.builder;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * builder抽象类</span><br><span class="line"> *</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 设置CPU核心数</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildCPU</span><span class="params">(<span class="keyword">int</span> core)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 设置内存</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildRAM</span><span class="params">(<span class="keyword">int</span> gb)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 设置操作系统</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildOs</span><span class="params">(String os)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 创建Computer</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Computer <span class="title">create</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.dp.example.builder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ApplePCBuilder</span> <span class="keyword">extends</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> Computer mApplePc = <span class="keyword">new</span> AppleComputer();</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buildCPU</span><span class="params">(<span class="keyword">int</span> core)</span> </span>&#123;</span><br><span class="line">		mApplePc.setCPU(core);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buildRAM</span><span class="params">(<span class="keyword">int</span> gb)</span> </span>&#123;</span><br><span class="line">		mApplePc.setRAM(gb);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">buildOs</span><span class="params">(String os)</span> </span>&#123;</span><br><span class="line">		mApplePc.setOs(os);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Computer <span class="title">create</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> mApplePc;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.dp.example.builder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Director</span> </span>&#123;</span><br><span class="line">	Builder mBuilder = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * </span><br><span class="line">	 * <span class="doctag">@param</span> builder</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Director</span><span class="params">(Builder builder)</span> </span>&#123;</span><br><span class="line">		mBuilder = builder;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span><br><span class="line">	 * 构建对象</span><br><span class="line">	 * </span><br><span class="line">	 * <span class="doctag">@param</span> cpu</span><br><span class="line">	 * <span class="doctag">@param</span> ram</span><br><span class="line">	 * <span class="doctag">@param</span> os</span><br><span class="line">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">construct</span><span class="params">(<span class="keyword">int</span> cpu, <span class="keyword">int</span> ram, String os)</span> </span>&#123;</span><br><span class="line">		mBuilder.buildCPU(cpu);</span><br><span class="line">		mBuilder.buildRAM(ram);</span><br><span class="line">		mBuilder.buildOs(os);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * 经典实现较为繁琐</span><br><span class="line"> * </span><br><span class="line"> * <span class="doctag">@author</span> mrsimple</span><br><span class="line"> *</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 构建器</span></span><br><span class="line">		Builder builder = <span class="keyword">new</span> ApplePCBuilder();</span><br><span class="line">		<span class="comment">// Director</span></span><br><span class="line">		Director pcDirector = <span class="keyword">new</span> Director(builder);</span><br><span class="line">		<span class="comment">// 封装构建过程, 4核, 内存2GB, Mac系统</span></span><br><span class="line">		pcDirector.construct(<span class="number">4</span>, <span class="number">2</span>, <span class="string">"Mac OS X 10.9.1"</span>);</span><br><span class="line">		<span class="comment">// 构建电脑, 输出相关信息</span></span><br><span class="line">		System.out.println(<span class="string">"Computer Info : "</span> + builder.create().toString());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过Builder来构建产品对象, 而Director封装了构建复杂产品对象对象的过程，不对外隐藏构建细节。</p>
+<h2 id="Android源码中的模式实现">Android源码中的模式实现</h2><p>在Android源码中，我们最常用到的Builder模式就是AlertDialog.Builder， 使用该Builder来构建复杂的AlertDialog对象。简单示例如下 : </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//显示基本的AlertDialog  </span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">showDialog</span><span class="params">(Context context)</span> </span>&#123;  </span><br><span class="line">    AlertDialog.Builder builder = <span class="keyword">new</span> AlertDialog.Builder(context);  </span><br><span class="line">    builder.setIcon(R.drawable.icon);  </span><br><span class="line">    builder.setTitle(<span class="string">"Title"</span>);  </span><br><span class="line">    builder.setMessage(<span class="string">"Message"</span>);  </span><br><span class="line">    builder.setPositiveButton(<span class="string">"Button1"</span>,  </span><br><span class="line">            <span class="keyword">new</span> DialogInterface.OnClickListener() &#123;  </span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(DialogInterface dialog, <span class="keyword">int</span> whichButton)</span> </span>&#123;  </span><br><span class="line">                    setTitle(<span class="string">"点击了对话框上的Button1"</span>);  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;);  </span><br><span class="line">    builder.setNeutralButton(<span class="string">"Button2"</span>,  </span><br><span class="line">            <span class="keyword">new</span> DialogInterface.OnClickListener() &#123;  </span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(DialogInterface dialog, <span class="keyword">int</span> whichButton)</span> </span>&#123;  </span><br><span class="line">                    setTitle(<span class="string">"点击了对话框上的Button2"</span>);  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;);  </span><br><span class="line">    builder.setNegativeButton(<span class="string">"Button3"</span>,  </span><br><span class="line">            <span class="keyword">new</span> DialogInterface.OnClickListener() &#123;  </span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(DialogInterface dialog, <span class="keyword">int</span> whichButton)</span> </span>&#123;  </span><br><span class="line">                    setTitle(<span class="string">"点击了对话框上的Button3"</span>);  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;);  </span><br><span class="line">    builder.create().show();  <span class="comment">// 构建AlertDialog， 并且显示</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果 :<br><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/builder/mr.simple/images/result.png" alt="result">     </p>
+<p>下面我们看看AlertDialog的相关源码 :</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AlertDialog</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AlertDialog</span> <span class="keyword">extends</span> <span class="title">Dialog</span> <span class="keyword">implements</span> <span class="title">DialogInterface</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Controller, 接受Builder成员变量P中的各个参数</span></span><br><span class="line">    <span class="keyword">private</span> AlertController mAlert;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造函数</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">AlertDialog</span><span class="params">(Context context, <span class="keyword">int</span> theme)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(context, theme, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4 : 构造AlertDialog</span></span><br><span class="line">    AlertDialog(Context context, <span class="keyword">int</span> theme, <span class="keyword">boolean</span> createContextWrapper) &#123;</span><br><span class="line">        <span class="keyword">super</span>(context, resolveDialogTheme(context, theme), createContextWrapper);</span><br><span class="line">        mWindow.alwaysReadCloseOnTouchAttr();</span><br><span class="line">        mAlert = <span class="keyword">new</span> AlertController(getContext(), <span class="keyword">this</span>, getWindow());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实际上调用的是mAlert的setTitle方法</span></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTitle</span><span class="params">(CharSequence title)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.setTitle(title);</span><br><span class="line">        mAlert.setTitle(title);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实际上调用的是mAlert的setCustomTitle方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCustomTitle</span><span class="params">(View customTitleView)</span> </span>&#123;</span><br><span class="line">        mAlert.setCustomTitle(customTitleView);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMessage</span><span class="params">(CharSequence message)</span> </span>&#123;</span><br><span class="line">        mAlert.setMessage(message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// AlertDialog其他的代码省略</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ************  Builder为AlertDialog的内部类   *******************</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 1 : 存储AlertDialog的各个参数, 例如title, message, icon等.</span></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> AlertController.AlertParams P;</span><br><span class="line">        <span class="comment">// 属性省略</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">/**</span><br><span class="line">         * Constructor using a context for this builder and the &#123;<span class="doctag">@link</span> AlertDialog&#125; it creates.</span><br><span class="line">         */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Builder</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>(context, resolveDialogTheme(context, <span class="number">0</span>));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Builder</span><span class="params">(Context context, <span class="keyword">int</span> theme)</span> </span>&#123;</span><br><span class="line">            P = <span class="keyword">new</span> AlertController.AlertParams(<span class="keyword">new</span> ContextThemeWrapper(</span><br><span class="line">                    context, resolveDialogTheme(context, theme)));</span><br><span class="line">            mTheme = theme;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Builder的其他代码省略 ......</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2 : 设置各种参数</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setTitle</span><span class="params">(CharSequence title)</span> </span>&#123;</span><br><span class="line">            P.mTitle = title;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setMessage</span><span class="params">(CharSequence message)</span> </span>&#123;</span><br><span class="line">            P.mMessage = message;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setIcon</span><span class="params">(<span class="keyword">int</span> iconId)</span> </span>&#123;</span><br><span class="line">            P.mIconId = iconId;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setPositiveButton</span><span class="params">(CharSequence text, <span class="keyword">final</span> OnClickListener listener)</span> </span>&#123;</span><br><span class="line">            P.mPositiveButtonText = text;</span><br><span class="line">            P.mPositiveButtonListener = listener;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">setView</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">            P.mView = view;</span><br><span class="line">            P.mViewSpacingSpecified = <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 3 : 构建AlertDialog, 传递参数</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> AlertDialog <span class="title">create</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">// 调用new AlertDialog构造对象， 并且将参数传递个体AlertDialog </span></span><br><span class="line">            <span class="keyword">final</span> AlertDialog dialog = <span class="keyword">new</span> AlertDialog(P.mContext, mTheme, <span class="keyword">false</span>);</span><br><span class="line">            <span class="comment">// 5 : 将P中的参数应用的dialog中的mAlert对象中</span></span><br><span class="line">            P.apply(dialog.mAlert);</span><br><span class="line">            dialog.setCancelable(P.mCancelable);</span><br><span class="line">            <span class="keyword">if</span> (P.mCancelable) &#123;</span><br><span class="line">                dialog.setCanceledOnTouchOutside(<span class="keyword">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            dialog.setOnCancelListener(P.mOnCancelListener);</span><br><span class="line">            <span class="keyword">if</span> (P.mOnKeyListener != <span class="keyword">null</span>) &#123;</span><br><span class="line">                dialog.setOnKeyListener(P.mOnKeyListener);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> dialog;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，通过Builder来设置AlertDialog中的title, message, button等参数， 这些参数都存储在类型为AlertController.AlertParams的成员变量P中，AlertController.AlertParams中包含了与之对应的成员变量。在调用Builder类的create函数时才创建AlertDialog, 并且将Builder成员变量P中保存的参数应用到AlertDialog的mAlert对象中，即P.apply(dialog.mAlert)代码段。我们看看apply函数的实现 : </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">apply</span><span class="params">(AlertController dialog)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mCustomTitleView != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dialog.setCustomTitle(mCustomTitleView);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (mTitle != <span class="keyword">null</span>) &#123;</span><br><span class="line">            dialog.setTitle(mTitle);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mIcon != <span class="keyword">null</span>) &#123;</span><br><span class="line">            dialog.setIcon(mIcon);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mIconId &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            dialog.setIcon(mIconId);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mIconAttrId &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            dialog.setIcon(dialog.getIconAttributeResId(mIconAttrId));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mMessage != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dialog.setMessage(mMessage);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mPositiveButtonText != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dialog.setButton(DialogInterface.BUTTON_POSITIVE, mPositiveButtonText,</span><br><span class="line">                mPositiveButtonListener, <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mNegativeButtonText != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, mNegativeButtonText,</span><br><span class="line">                mNegativeButtonListener, <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mNeutralButtonText != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dialog.setButton(DialogInterface.BUTTON_NEUTRAL, mNeutralButtonText,</span><br><span class="line">                mNeutralButtonListener, <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mForceInverseBackground) &#123;</span><br><span class="line">        dialog.setInverseBackgroundForced(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// For a list, the client can either supply an array of items or an</span></span><br><span class="line">    <span class="comment">// adapter or a cursor</span></span><br><span class="line">    <span class="keyword">if</span> ((mItems != <span class="keyword">null</span>) || (mCursor != <span class="keyword">null</span>) || (mAdapter != <span class="keyword">null</span>)) &#123;</span><br><span class="line">        createListView(dialog);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mView != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mViewSpacingSpecified) &#123;</span><br><span class="line">            dialog.setView(mView, mViewSpacingLeft, mViewSpacingTop, mViewSpacingRight,</span><br><span class="line">                    mViewSpacingBottom);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            dialog.setView(mView);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际上就是把P中的参数挨个的设置到AlertController中， 也就是AlertDialog中的mAlert对象。从AlertDialog的各个setter方法中我们也可以看到，实际上也都是调用了mAlert对应的setter方法。在这里，Builder同时扮演了上文中提到的builder、ConcreteBuilder、Director的角色，简化了Builder模式的设计。       </p>
+<h2 id="4-_杂谈">4. 杂谈</h2><h3 id="优点与缺点">优点与缺点</h3><h4 id="优点">优点</h4><ul>
+<li>良好的封装性， 使用建造者模式可以使客户端不必知道产品内部组成的细节；</li>
+<li>建造者独立，容易扩展；</li>
+<li>在对象创建过程中会使用到系统中的一些其它对象，这些对象在产品对象的创建过程中不易得到。</li>
+</ul>
+<h4 id="缺点">缺点</h4><ul>
+<li>会产生多余的Builder对象以及Director对象，消耗内存；</li>
+<li>对象的构建过程暴露。 </li>
+</ul>
+<blockquote>
+<p>本文为 <a href="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis" target="_blank" rel="external">Android 设计模式源码解析</a> 中 Builder模式 分析<br>Android系统版本： 2.3<br>分析者：<a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a>，分析状态：完成，校对者：<a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a>，校对状态：完成   </p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_binder/" data-id="cibk39tm2004450flgbzokktx" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_binder/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_bridge/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android设计模式源码解析之桥接模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android-open-project-analysis_annotation/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 开源项目源码解析之Java 注解 Annotation</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/02/android_design_patterns_analysis_binder/" data-title="Android设计模式源码解析之Builder模式" data-url="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_binder/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">39</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/">Android 开源项目源码解析之HoloGraphLibrary 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/">Android 开源项目源码解析之EventBus 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/">Instagram是如何提升TextView渲染性能的</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/">Android 开源项目源码解析之Dagger 源码解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

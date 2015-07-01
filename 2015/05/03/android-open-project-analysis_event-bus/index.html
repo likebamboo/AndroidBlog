@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android 开源项目源码解析之EventBus 源码解析 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1. 功能介绍1.1 EventBusEventBus 是一个 Android 事件发布/订阅框架，通过解耦发布者和订阅者简化 Android 事件传递，这里的事件可以理解为消息，本文中统一称为事件。事件传递既可用于 Android 四大组件间通讯，也可以用户异步线程和主线程间通讯等等。传统的事件传递方式包括：Handler、BroadCastReceiver、Interface 回调，相比之下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 开源项目源码解析之EventBus 源码解析">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="1. 功能介绍1.1 EventBusEventBus 是一个 Android 事件发布/订阅框架，通过解耦发布者和订阅者简化 Android 事件传递，这里的事件可以理解为消息，本文中统一称为事件。事件传递既可用于 Android 四大组件间通讯，也可以用户异步线程和主线程间通讯等等。传统的事件传递方式包括：Handler、BroadCastReceiver、Interface 回调，相比之下">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/event-bus/image/relation-flow-chart.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/event-bus/image/event-response-flow-chart.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/event-bus/image/class-relation.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/event-bus/image/register-flow-chart.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/event-bus/image/post-flow-chart.png">
+<meta property="og:updated_time" content="2015-06-30T13:57:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 开源项目源码解析之EventBus 源码解析">
+<meta name="twitter:description" content="1. 功能介绍1.1 EventBusEventBus 是一个 Android 事件发布/订阅框架，通过解耦发布者和订阅者简化 Android 事件传递，这里的事件可以理解为消息，本文中统一称为事件。事件传递既可用于 Android 四大组件间通讯，也可以用户异步线程和主线程间通讯等等。传统的事件传递方式包括：Handler、BroadCastReceiver、Interface 回调，相比之下">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-android-open-project-analysis_event-bus" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/" class="article-date">
+  <time datetime="2015-05-02T16:00:00.000Z" itemprop="datePublished">2015-05-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 开源项目源码解析之EventBus 源码解析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1-_功能介绍">1. 功能介绍</h3><h4 id="1-1_EventBus">1.1 EventBus</h4><p>EventBus 是一个 Android 事件发布/订阅框架，通过解耦发布者和订阅者简化 Android 事件传递，这里的事件可以理解为消息，本文中统一称为事件。事件传递既可用于 Android 四大组件间通讯，也可以用户异步线程和主线程间通讯等等。<br>传统的事件传递方式包括：Handler、BroadCastReceiver、Interface 回调，相比之下 EventBus 的优点是代码简洁，使用简单，并将事件发布和订阅充分解耦。<br><a id="more"></a></p>
+<h4 id="1-2_概念">1.2 概念</h4><p><strong>事件(Event)：</strong>又可称为消息，本文中统一用事件表示。其实就是一个对象，可以是网络请求返回的字符串，也可以是某个开关状态等等。<code>事件类型(EventType)</code>指事件所属的 Class。<br>事件分为一般事件和 Sticky 事件，相对于一般事件，Sticky 事件不同之处在于，当事件发布后，再有订阅者开始订阅该类型事件，依然能收到该类型事件最近一个 Sticky 事件。  </p>
+<p><strong>订阅者(Subscriber)：</strong>订阅某种事件类型的对象。当有发布者发布这类事件后，EventBus 会执行订阅者的 onEvent 函数，这个函数叫<code>事件响应函数</code>。订阅者通过 register 接口订阅某个事件类型，unregister 接口退订。订阅者存在优先级，优先级高的订阅者可以取消事件继续向优先级低的订阅者分发，默认所有订阅者优先级都为 0。  </p>
+<p><strong>发布者(Publisher)：</strong>发布某事件的对象，通过 post 接口发布事件。  </p>
+<h3 id="2-_总体设计">2. 总体设计</h3><p>本项目较为简单，总体设计请参考<code>3.1 订阅者、发布者、EventBus 关系图</code>及<code>4.1 类关系图</code>。  </p>
+<h3 id="3-_流程图">3. 流程图</h3><h4 id="3-1_订阅者、发布者、EventBus_关系图">3.1 订阅者、发布者、EventBus 关系图</h4><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/event-bus/image/relation-flow-chart.png" alt="eventbus img"><br>EventBus 负责存储订阅者、事件相关信息，订阅者和发布者都只和 EventBus 关联。  </p>
+<h4 id="3-2_事件响应流程">3.2 事件响应流程</h4><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/event-bus/image/event-response-flow-chart.png" alt="eventbus img"><br>订阅者首先调用 EventBus 的 register 接口订阅某种类型的事件，当发布者通过 post 接口发布该类型的事件时，EventBus 执行调用者的事件响应函数。 </p>
+<h3 id="4-_详细设计">4. 详细设计</h3><h4 id="4-1_类关系图">4.1 类关系图</h4><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/event-bus/image/class-relation.png" alt="eventbus img"><br>以上是 EventBus 主要类的关系图，从中我们也可以看出大部分类都与 EventBus 直接关联。上部分主要是订阅者相关信息，中间是 EventBus 类，下面是 发布者发布事件后的调用，具体类的功能请看下面的详细介绍。  </p>
+<h4 id="4-2_类详细介绍">4.2 类详细介绍</h4><h5 id="4-2-1_EventBus-java">4.2.1 EventBus.java</h5><p>EventBus 类负责所有对外暴露的 API，其中的 register、post、unregister 函数配合上自定义的 EventType 及事件响应函数即可完成核心功能，见 3.2 图。<br>EventBus 默认可通过静态函数 getDefault 获取单例，当然有需要也可以通过 EventBusBuilder 或 构造函数新建一个 EventBus，每个新建的 EventBus 发布和订阅事件都是相互隔离的，即一个 EventBus 对象中的发布者发布事件，另一个 EventBus 对象中的订阅者不会收到该订阅。<br>EventBus 中对外 API，主要包括两类：<br><strong>(1) register 和 unregister</strong><br>分别表示订阅事件和取消订阅。register 最底层函数有三个参数，分别为订阅者对象、是否是 Sticky 事件、优先级。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">(Object subscriber, <span class="keyword">boolean</span> sticky, <span class="keyword">int</span> priority)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>PS：在此之前的版本 EventBus 还允许自定义事件响应函数名称，这版本中此功能已经被去除。<br>register 函数流程图如下：<br><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/event-bus/image/register-flow-chart.png" alt="eventbus img"><br>register 函数中会先根据订阅者类名去<code>subscriberMethodFinder</code>中查找当前订阅者所有事件响应函数，然后循环每一个事件响应函数，依次执行下面的 subscribe 函数：  </p>
+<p><strong>(2) subscribe</strong><br>subscribe 函数分三步<br>第一步：通过<code>subscriptionsByEventType</code>得到该事件类型所有订阅者信息队列，根据优先级将当前订阅者信息插入到订阅者队列<code>subscriptionsByEventType</code>中；<br>第二步：在<code>typesBySubscriber</code>中得到当前订阅者订阅的所有事件队列，将此事件保存到队列<code>typesBySubscriber</code>中，用于后续取消订阅；<br>第三步：检查这个事件是否是 Sticky 事件，如果是则从<code>stickyEvents</code>事件保存队列中取出该事件类型最后一个事件发送给当前订阅者。  </p>
+<p><strong>(3) post、cancel 、removeStickyEvent</strong><br>post 函数用于发布事件，cancel 函数用于取消某订阅者订阅的所有事件类型、removeStickyEvent 函数用于删除 sticky 事件。<br>post 函数流程图如下：<br><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/event-bus/image/post-flow-chart.png" alt="eventbus img"><br>post 函数会首先得到当前线程的 post 信息<code>PostingThreadState</code>，其中包含事件队列，将当前事件添加到其事件队列中，然后循环调用 postSingleEvent 函数发布队列中的每个事件。  </p>
+<p>postSingleEvent 函数会先去<code>eventTypesCache</code>得到该事件对应类型的的父类及接口类型，没有缓存则查找并插入缓存。循环得到的每个类型和接口，调用 postSingleEventForEventType 函数发布每个事件到每个订阅者。  </p>
+<p>postSingleEventForEventType 函数在<code>subscriptionsByEventType</code>查找该事件订阅者订阅者队列，调用 postToSubscription 函数向每个订阅者发布事件。  </p>
+<p>postToSubscription 函数中会判断订阅者的 ThreadMode，从而决定在什么 Mode 下执行事件响应函数。ThreadMode共有四类：  </p>
+<ol>
+<li><code>PostThread</code>：默认的 ThreadMode，表示在执行 Post 操作的线程直接调用订阅者的事件响应方法，不论该线程是否为主线程（UI线程）。当该线程为主线程时，响应方法中不能有耗时操作，否则有卡主线程的风险。适用场景：<strong>对于是否在主线程执行无要求，但若 Post 线程为主线程，不能耗时的操作</strong>；  </li>
+<li><code>MainThread</code>：在主线程中执行响应方法。如果发布线程就是主线程，则直接调用订阅者的事件响应方法，否则通过主线程的 Handler 发送消息在主线程中处理——调用订阅者的事件响应函数。显然，<code>MainThread</code>类的方法也不能有耗时操作，以避免卡主线程。适用场景：<strong>必须在主线程执行的操作</strong>；  </li>
+<li><code>BackgroundThread</code>：在后台线程中执行响应方法。如果发布线程<strong>不是</strong>主线程，则直接调用订阅者的事件响应函数，否则启动<strong>唯一的</strong>后台线程去处理。由于后台线程是唯一的，当事件超过一个的时候，它们会被放在队列中依次执行，因此该类响应方法虽然没有<code>PostThread</code>类和<code>MainThread</code>类方法对性能敏感，但最好不要有重度耗时的操作或太频繁的轻度耗时操作，以造成其他操作等待。适用场景：<em>操作轻微耗时且不会过于频繁</em>，即一般的耗时操作都可以放在这里；  </li>
+<li><code>Async</code>：不论发布线程是否为主线程，都使用一个空闲线程来处理。和<code>BackgroundThread</code>不同的是，<code>Async</code>类的所有线程是相互独立的，因此不会出现卡线程的问题。适用场景：<em>长耗时操作，例如网络访问</em>。  </li>
+</ol>
+<p><strong>(4) 主要成员变量含义</strong><br>1.<code>defaultInstance</code>默认的 EventBus 实例，根据<code>EventBus.getDefault()</code>函数得到。<br>2.<code>DEFAULT_BUILDER</code>默认的 EventBus Builder。<br>3.<code>eventTypesCache</code>事件对应类型及其父类和实现的接口的缓存，以 eventType 为 key，元素为 Object 的 ArrayList 为 Value，Object 对象为 eventType 的父类或接口。<br>4.<code>subscriptionsByEventType</code>事件订阅者的保存队列，以 eventType 为 key，元素为<code>Subscription</code>的 ArrayList 为 Value，其中<code>Subscription</code>为订阅者信息，由 subscriber, subscriberMethod, priority 构成。<br>5.<code>typesBySubscriber</code>订阅者订阅的事件的保存队列，以 subscriber 为 key，元素为 eventType 的 ArrayList 为 Value。<br>6.<code>stickyEvents</code>Sticky 事件保存队列，以 eventType 为 key，event 为元素，由此可以看出对于同一个 eventType 最多只会有一个 event 存在。<br>7.<code>currentPostingThreadState</code>当前线程的 post 信息，包括事件队列、是否正在分发中、是否在主线程、订阅者信息、事件实例、是否取消。<br>8.<code>mainThreadPoster</code>、<code>backgroundPoster</code>、<code>asyncPoster</code>事件主线程处理者、事件 Background 处理者、事件异步处理者。<br>9.<code>subscriberMethodFinder</code>订阅者响应函数信息存储和查找类。<br>10.<code>executorService</code>异步和 BackGround 处理方式的线程池。<br>11.<code>throwSubscriberException</code>当调用事件处理函数异常时是否抛出异常，默认为 false，建议通过<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EventBus.builder().throwSubscriberException(<span class="keyword">true</span>).installDefaultEventBus()</span><br></pre></td></tr></table></figure></p>
+<p>打开。<br>12.<code>logSubscriberExceptions</code>当调用事件处理函数异常时是否打印异常信息，默认为 true。<br>13.<code>logNoSubscriberMessages</code>当没有订阅者订阅该事件时是否打印日志，默认为 true。<br>14.<code>sendSubscriberExceptionEvent</code>当调用事件处理函数异常时是否发送 SubscriberExceptionEvent 事件，若此开关打开，订阅者可通过<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(SubscriberExceptionEvent event)</span> </span><br><span class="line">```  </span><br><span class="line">订阅该事件进行处理，默认为 <span class="keyword">true</span>。 </span><br><span class="line">15.`sendNoSubscriberEvent`当没有事件处理函数对事件处理时是否发送 NoSubscriberEvent 事件，若此开关打开，订阅者可通过</span><br><span class="line">```java</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(NoSubscriberEvent event)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>订阅该事件进行处理，默认为 true。<br>16.<code>eventInheritance</code>是否支持事件继承，默认为 true。  </p>
+<h5 id="4-2-2_EventBusBuilder-java">4.2.2 EventBusBuilder.java</h5><p>跟一般 Builder 类似，用于在需要设置参数过多时构造 EventBus。包含的属性也是 EventBus 的一些设置参数，意义见<code>4.2.1 EventBus.java</code>的介绍，build 函数用于新建 EventBus 对象，installDefaultEventBus 函数将当前设置应用于 Default EventBus。  </p>
+<h5 id="4-2-3_SubscriberMethodFinder-java">4.2.3 SubscriberMethodFinder.java</h5><p>订阅者响应函数信息存储和查找类，由 HashMap 缓存，以 ${subscriberClassName} 为 key，SubscriberMethod 对象为元素的 ArrayList 为 value。findSubscriberMethods 函数用于查找订阅者响应函数，如果不在缓存中，则遍历自己的每个函数并递归父类查找，查找成功后保存到缓存中。遍历及查找规则为：<br>a. 遍历 subscriberClass 每个方法；<br>b. 该方法不以<code>java.</code>、<code>javax.</code>、<code>android.</code>这些 SDK 函数开头，并以<code>onEvent</code>开头，表示可能是事件响应函数继续，否则检查下一个方法；<br>c. 该方法是否是 public 的，并且不是 ABSTRACT、STATIC、BRIDGE、SYNTHETIC 修饰的，满足条件则继续。其中 BRIDGE、SYNTHETIC 为编译器生成的一些函数修饰符；<br>d. 该方法是否只有 1 个参数，满足条件则继续；<br>e. 该方法名为 <code>onEvent</code> 则 threadMode 为<code>ThreadMode.PostThread</code>；<br>该方法名为 <code>onEventMainThread</code> 则 threadMode 为<code>ThreadMode.MainThread</code>；<br>该方法名为 <code>onEventBackgroundThread</code> 则 threadMode 为<code>ThreadMode.BackgroundThread</code>；<br>该方法名为 <code>onEventAsync</code> 则 threadMode 为<code>ThreadMode.Async</code>；<br>其他情况且不在忽略名单 (skipMethodVerificationForClasses) 中则抛出异常。<br>f. 得到该方法唯一的参数即事件类型 eventType，将这个方法、threadMode、eventType 一起构造 SubscriberMethod 对象放到 ArrayList 中。<br>g. 回到 b 遍历 subscriberClass 的下一个方法，若方法遍历结束到 h；<br>h. 回到 a 遍历自己的父类，若父类遍历结束回到 i；<br>i. 若 ArrayList 依然为空则抛出异常，否则会将 ArrayList 做为 value，${subscriberClassName} 做为 key 放到缓存 HashMap 中。<br>对于事件函数的查找有两个小的性能优化点：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a. 第一次查找后保存到了缓存中，即上面介绍的 HashMap  </span><br><span class="line">b. 遇到 java. javax. android. 开头的类会自动停止查找</span><br></pre></td></tr></table></figure></p>
+<p>类中的 skipMethodVerificationForClasses 属性表示跳过哪些类中非法以 <code>onEvent</code> 开头的函数检查，若不跳过则会抛出异常。<br>PS：在此之前的版本 EventBus 允许自定义事件响应函数名称，缓存的 HashMap key 为 ${subscriberClassName}.${eventMethodName}，这版本中此功能已经被去除。  </p>
+<h5 id="4-2-4_SubscriberMethod-java">4.2.4 SubscriberMethod.java</h5><p>订阅者事件响应函数信息，包括响应方法、线程 Mode、事件类型以及一个用来比较 SubscriberMethod 是否相等的特征值 methodString 共四个变量，其中 methodString 为 ${methodClassName}#${methodName}(${eventTypeClassName}。  </p>
+<h5 id="4-2-5_Subscription-java">4.2.5 Subscription.java</h5><p>订阅者信息，包括 subscriber 对象、事件响应方法 SubscriberMethod、优先级 priority。  </p>
+<h5 id="4-2-6_HandlerPoster-jva">4.2.6 HandlerPoster.jva</h5><p>事件主线程处理，对应<code>ThreadMode.MainThread</code>。继承自 Handler，enqueue 函数将事件放到队列中，并利用 handler 发送 message，handleMessage 函数从队列中取事件，invoke 事件响应函数处理。  </p>
+<h5 id="4-2-7_AsyncPoster-java">4.2.7 AsyncPoster.java</h5><p>事件异步线程处理，对应<code>ThreadMode.Async</code>，继承自 Runnable。enqueue 函数将事件放到队列中，并调用线程池执行当前任务，在 run  函数从队列中取事件，invoke 事件响应函数处理。  </p>
+<h5 id="4-2-8_BackgroundPoster-java">4.2.8 BackgroundPoster.java</h5><p>事件 Background 处理，对应<code>ThreadMode.BackgroundThread</code>，继承自 Runnable。enqueue 函数将事件放到队列中，并调用线程池执行当前任务，在 run  函数从队列中取事件，invoke 事件响应函数处理。与 AsyncPoster.java 不同的是，BackgroundPoster中的任务只在同一个线程中依次执行，而不是并发执行。  </p>
+<h5 id="4-2-9_PendingPost-java">4.2.9 PendingPost.java</h5><p>订阅者和事件信息实体类，并含有同一队列中指向下一个对象的指针。通过缓存存储不用的对象，减少下次创建的性能消耗。  </p>
+<h5 id="4-2-10_PendingPostQueue-java">4.2.10 PendingPostQueue.java</h5><p>通过 head 和 tail 指针维护一个<code>PendingPost</code>队列。HandlerPoster、AsyncPoster、BackgroundPoster 都包含一个此队列实例，表示各自的订阅者及事件信息队列，在事件到来时进入队列，处理时从队列中取出一个元素进行处理。  </p>
+<h5 id="4-2-11_SubscriberExceptionEvent-java">4.2.11 SubscriberExceptionEvent.java</h5><p>当调用事件处理函数异常时发送的 EventBus 内部自定义事件，通过 post 发送，订阅者可自行订阅这类事件进行处理。  </p>
+<h5 id="4-2-12_NoSubscriberEvent-java">4.2.12 NoSubscriberEvent.java</h5><p>当没有事件处理函数对事件处理时发送的 EventBus 内部自定义事件，通过 post 发送，订阅者可自行订阅这类事件进行处理。  </p>
+<h5 id="4-2-13_EventBusException-java">4.2.13 EventBusException.java</h5><p>封装于 RuntimeException 之上的 Exception，只是覆盖构造函数，相当于一个标记，标记是属于 EventBus 的 Exception。  </p>
+<h5 id="4-2-14_ThreadMode-java">4.2.14 ThreadMode.java</h5><p>线程 Mode 枚举类，表示事件响应函数执行线程信息，包括<code>ThreadMode.PostThread</code>、<code>ThreadMode.MainThread</code>、<code>ThreadMode.BackgroundThread</code>、<code>ThreadMode.Async</code>四种。  </p>
+<h3 id="5-_与_Otto_对比等_Otto_分析完成">5. 与 Otto 对比等 Otto 分析完成</h3><blockquote>
+<p>本文为 <a href="https://github.com/android-cn/android-open-project-analysis" target="_blank" rel="external">Android 开源项目源码解析</a> 中 EventBus 部分<br>项目地址：<a href="https://github.com/greenrobot/EventBus" target="_blank" rel="external">EventBus</a>，分析的版本：<a href="https://github.com/greenrobot/EventBus/commit/ccc2771199f958a34bd4ea6c90d0a8c671c2e70a" title="Commit id is ccc2771199f958a34bd4ea6c90d0a8c671c2e70a" target="_blank" rel="external">ccc2771</a>，Demo 地址：<a href="https://github.com/android-cn/android-open-project-demo/tree/master/event-bus-demo" target="_blank" rel="external">EventBus Demo</a><br>分析者：<a href="https://github.com/trinea" target="_blank" rel="external">Trinea</a>，校对者：<a href="https://github.com/rengwuxian" target="_blank" rel="external">扔物线</a>，校对状态：完成   </p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/" data-id="cibk39tn3005t50flvnfb2h6s" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android 开源项目源码解析之HoloGraphLibrary 源码解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Instagram是如何提升TextView渲染性能的</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/03/android-open-project-analysis_event-bus/" data-title="Android 开源项目源码解析之EventBus 源码解析" data-url="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">39</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/">Android 开源项目源码解析之HoloGraphLibrary 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/">Android 开源项目源码解析之EventBus 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/">Instagram是如何提升TextView渲染性能的</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/">Android 开源项目源码解析之Dagger 源码解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

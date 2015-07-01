@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android设计模式源码解析之策略模式 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1. 模式介绍模式的定义策略模式定义了一系列的算法，并将每一个算法封装起来，而且使它们还可以相互替换。策略模式让算法独立于使用它的客户而独立变化。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android设计模式源码解析之策略模式">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_strategy/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="1. 模式介绍模式的定义策略模式定义了一系列的算法，并将每一个算法封装起来，而且使它们还可以相互替换。策略模式让算法独立于使用它的客户而独立变化。">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/strategy/gkerison/images/strategy-kerison-uml.png">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/strategy/gkerison/images/strategy-kerison-uml-calc.png">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/strategy/gkerison/images/strategy-kerison-uml-calc-result.png">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/strategy/gkerison/images/strategy-kerison-uml-android-interpolator.png">
+<meta property="og:image" content="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/strategy/gkerison/images/strategy-kerison-uml-android.png">
+<meta property="og:updated_time" content="2015-06-30T13:58:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android设计模式源码解析之策略模式">
+<meta name="twitter:description" content="1. 模式介绍模式的定义策略模式定义了一系列的算法，并将每一个算法封装起来，而且使它们还可以相互替换。策略模式让算法独立于使用它的客户而独立变化。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-android_design_patterns_analysis_strategy" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_strategy/" class="article-date">
+  <time datetime="2015-05-01T16:00:00.000Z" itemprop="datePublished">2015-05-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android设计模式源码解析之策略模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-_模式介绍">1. 模式介绍</h2><h3 id="模式的定义">模式的定义</h3><p><strong>策略模式定义了一系列的算法，并将每一个算法封装起来，而且使它们还可以相互替换。策略模式让算法独立于使用它的客户而独立变化。</strong><br><a id="more"></a><br><code>注：针对同一类型操作，将复杂多样的处理方式分别开来，有选择的实现各自特有的操作。</code></p>
+<h3 id="模式的使用场景">模式的使用场景</h3><ul>
+<li>针对同一类型问题的多种处理方式，仅仅是具体行为有差别时。</li>
+<li>需要安全的封装多种同一类型的操作时。</li>
+<li>出现同一抽象多个子类，而又需要使用if-else 或者 switch-case来选择时。</li>
+</ul>
+<h2 id="2-_UML类图">2. UML类图</h2><p><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/strategy/gkerison/images/strategy-kerison-uml.png" alt="url">  </p>
+<h3 id="角色介绍">角色介绍</h3><ul>
+<li>Context：用来操作策略的上下文环境。</li>
+<li>Strategy : 策略的抽象。</li>
+<li>ConcreteStrategyA、ConcreteStrategyB : 具体的策略实现。</li>
+</ul>
+<h2 id="3-_模式的简单实现">3. 模式的简单实现</h2><h3 id="简单实现的介绍">简单实现的介绍</h3><p>通常如果一个问题有多个解决方案或者稍有区别的操作时，最简单的方式就是利用if-else or switch-case方式来解决，对于简单的解决方案这样做无疑是比较简单、方便、快捷的，但是如果解决方案中包括大量的处理逻辑需要封装，或者处理方式变动较大的时候则就显得混乱、复杂，而策略模式则很好的解决了这样的问题，它将各种方案分离开来，让操作者根据具体的需求来动态的选择不同的策略方案。<br>这里以简单的计算操作(+、-、*、/)作为示例：</p>
+<h3 id="未使用策略模式">未使用策略模式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">calc</span><span class="params">(String op, <span class="keyword">double</span> paramA, <span class="keyword">double</span> paramB)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="string">"+"</span>.equals(op)) &#123;</span><br><span class="line">		System.out.println(<span class="string">"执行加法..."</span>);</span><br><span class="line">		<span class="keyword">return</span> paramA + paramB;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"-"</span>.equals(op)) &#123;</span><br><span class="line">		System.out.println(<span class="string">"执行减法..."</span>);</span><br><span class="line">		<span class="keyword">return</span> paramA - paramB;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"*"</span>.equals(op)) &#123;</span><br><span class="line">		System.out.println(<span class="string">"执行乘法..."</span>);</span><br><span class="line">		<span class="keyword">return</span> paramA * paramB;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"/"</span>.equals(op)) &#123;</span><br><span class="line">		System.out.println(<span class="string">"执行除法..."</span>);</span><br><span class="line">		<span class="keyword">if</span> (paramB == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"除数不能为0!"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> paramA / paramB;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"未找到计算方法!"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="使用策略模式">使用策略模式</h3><p>UML类图<br><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/strategy/gkerison/images/strategy-kerison-uml-calc.png" alt="url">  </p>
+<ul>
+<li>Calc：进行计算操作的上下文环境。</li>
+<li>Strategy : 计算操作的抽象。</li>
+<li>AddStrategy、SubStrategy、MultiStrategy、DivStrategy : 具体的 +、-、*、/ 实现。</li>
+</ul>
+<p>具体实现代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//针对操作进行抽象</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">calc</span><span class="params">(<span class="keyword">double</span> paramA, <span class="keyword">double</span> paramB)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//加法的具体实现策略</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AddStrategy</span> <span class="keyword">implements</span> <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">calc</span><span class="params">(<span class="keyword">double</span> paramA, <span class="keyword">double</span> paramB)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// <span class="doctag"><span class="keyword">TODO</span></span> Auto-generated method stub</span></span><br><span class="line">		System.out.println(<span class="string">"执行加法策略..."</span>);</span><br><span class="line">		<span class="keyword">return</span> paramA + paramB;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//减法的具体实现策略</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SubStrategy</span> <span class="keyword">implements</span> <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">calc</span><span class="params">(<span class="keyword">double</span> paramA, <span class="keyword">double</span> paramB)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// <span class="doctag"><span class="keyword">TODO</span></span> Auto-generated method stub</span></span><br><span class="line">		System.out.println(<span class="string">"执行减法策略..."</span>);</span><br><span class="line">		<span class="keyword">return</span> paramA - paramB;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//乘法的具体实现策略</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiStrategy</span> <span class="keyword">implements</span> <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">calc</span><span class="params">(<span class="keyword">double</span> paramA, <span class="keyword">double</span> paramB)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// <span class="doctag"><span class="keyword">TODO</span></span> Auto-generated method stub</span></span><br><span class="line">		System.out.println(<span class="string">"执行乘法策略..."</span>);</span><br><span class="line">		<span class="keyword">return</span> paramA * paramB;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//除法的具体实现策略</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DivStrategy</span> <span class="keyword">implements</span> <span class="title">Strategy</span> </span>&#123;</span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">calc</span><span class="params">(<span class="keyword">double</span> paramA, <span class="keyword">double</span> paramB)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// <span class="doctag"><span class="keyword">TODO</span></span> Auto-generated method stub</span></span><br><span class="line">		System.out.println(<span class="string">"执行除法策略..."</span>);</span><br><span class="line">		<span class="keyword">if</span> (paramB == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"除数不能为0!"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> paramA / paramB;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//上下文环境的实现</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Calc</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> Strategy strategy;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setStrategy</span><span class="params">(Strategy strategy)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.strategy = strategy;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">calc</span><span class="params">(<span class="keyword">double</span> paramA, <span class="keyword">double</span> paramB)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// <span class="doctag"><span class="keyword">TODO</span></span> Auto-generated method stub</span></span><br><span class="line">		<span class="comment">// doing something</span></span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span>.strategy == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"你还没有设置计算的策略"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.strategy.calc(paramA, paramB);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//执行方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">calc</span><span class="params">(Strategy strategy, <span class="keyword">double</span> paramA, <span class="keyword">double</span> paramB)</span> </span>&#123;</span><br><span class="line">	Calc calc = <span class="keyword">new</span> Calc();</span><br><span class="line">	calc.setStrategy(strategy);</span><br><span class="line">	<span class="keyword">return</span> calc.calc(paramA, paramB);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>二者运行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">double</span> paramA = <span class="number">5</span>;</span><br><span class="line">	<span class="keyword">double</span> paramB = <span class="number">21</span>;</span><br><span class="line">	</span><br><span class="line">	System.out.println(<span class="string">"------------- 普通形式 ----------------"</span>);</span><br><span class="line">	System.out.println(<span class="string">"加法结果是："</span> + calc(<span class="string">"+"</span>, paramA, paramB));</span><br><span class="line">	System.out.println(<span class="string">"减法结果是："</span> + calc(<span class="string">"-"</span>, paramA, paramB));</span><br><span class="line">	System.out.println(<span class="string">"乘法结果是："</span> + calc(<span class="string">"*"</span>, paramA, paramB));</span><br><span class="line">	System.out.println(<span class="string">"除法结果是："</span> + calc(<span class="string">"/"</span>, paramA, paramB));</span><br><span class="line">	</span><br><span class="line">	System.out.println(<span class="string">"------------ 策略模式  ----------------"</span>);</span><br><span class="line">	System.out.println(<span class="string">"加法结果是："</span> + calc(<span class="keyword">new</span> AddStrategy(), paramA, paramB));</span><br><span class="line">	System.out.println(<span class="string">"减法结果是："</span> + calc(<span class="keyword">new</span> SubStrategy(), paramA, paramB));</span><br><span class="line">	System.out.println(<span class="string">"乘法结果是："</span> + calc(<span class="keyword">new</span> MultiStrategy(), paramA, paramB));</span><br><span class="line">	System.out.println(<span class="string">"除法结果是："</span> + calc(<span class="keyword">new</span> DivStrategy(), paramA, paramB));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果为：</p>
+<p><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/strategy/gkerison/images/strategy-kerison-uml-calc-result.png" alt="url">  </p>
+<h3 id="总结">总结</h3><p>通过简单的代码可以清晰的看出二者的优势所在，前者通过简单的if-else来解决问题，在解决简单问题事会更简单、方便，后者则是通过给予不同的具体策略来获取不同的结果，对于较为复杂的业务逻辑显得更为直观，扩展也更为方便。</p>
+<h2 id="Android源码中的模式实现">Android源码中的模式实现</h2><p>日常的Android开发中经常会用到动画，Android中最简单的动画就是Tween Animation了，当然帧动画和属性动画也挺方便的，但是基本原理都类似，毕竟动画的本质都是一帧一帧的展现给用户的，只不要当fps小于60的时候，人眼基本看不出间隔，也就成了所谓的流畅动画。（注：属性动画是3.0以后才有的，低版本可采用<a href="https://github.com/JakeWharton/NineOldAndroids" target="_blank" rel="external">NineOldAndroids</a>来兼容。而动画的动态效果往往也取决于插值器Interpolator不同，我们只需要对Animation对象设置不同的Interpolator就可以实现不同的效果，这是怎么实现的呢？</p>
+<p>首先要想知道动画的执行流程，还是得从View入手，因为Android中主要针对的操作对象还是View，所以我们首先到View中查找，我们找到了View.startAnimation(Animation animation)这个方法。   </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startAnimation</span><span class="params">(Animation animation)</span> </span>&#123;</span><br><span class="line">	<span class="comment">//初始化动画开始时间</span></span><br><span class="line">       animation.setStartTime(Animation.START_ON_FIRST_FRAME);</span><br><span class="line">	<span class="comment">//对View设置动画</span></span><br><span class="line">       setAnimation(animation); </span><br><span class="line">	<span class="comment">//刷新父类缓存</span></span><br><span class="line">       invalidateParentCaches();</span><br><span class="line">	<span class="comment">//刷新View本身及子View</span></span><br><span class="line">       invalidate(<span class="keyword">true</span>);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>考虑到View一般不会单独存在，都是存在于某个ViewGroup中，所以google使用动画绘制的地方选择了在ViewGroup中的drawChild(Canvas canvas, View child, long drawingTime)方法中进行调用子View的绘制。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">drawChild</span><span class="params">(Canvas canvas, View child, <span class="keyword">long</span> drawingTime)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> child.draw(canvas, <span class="keyword">this</span>, drawingTime);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>再看下View中的draw(Canvas canvas, ViewGroup parent, long drawingTime)方法中是如何调用使用Animation的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">draw</span><span class="params">(Canvas canvas, ViewGroup parent, <span class="keyword">long</span> drawingTime)</span> </span>&#123;</span><br><span class="line">	<span class="comment">//...</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">//查看是否需要清除动画信息</span></span><br><span class="line">	<span class="keyword">final</span> <span class="keyword">int</span> flags = parent.mGroupFlags;</span><br><span class="line">       <span class="keyword">if</span> ((flags &amp; ViewGroup.FLAG_CLEAR_TRANSFORMATION) == ViewGroup.FLAG_CLEAR_TRANSFORMATION) &#123;</span><br><span class="line">           parent.getChildTransformation().clear();</span><br><span class="line">           parent.mGroupFlags &amp;= ~ViewGroup.FLAG_CLEAR_TRANSFORMATION;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取设置的动画信息</span></span><br><span class="line">   	<span class="keyword">final</span> Animation a = getAnimation();</span><br><span class="line">       <span class="keyword">if</span> (a != <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="comment">//绘制动画</span></span><br><span class="line">           more = drawAnimation(parent, drawingTime, a, scalingRequired);</span><br><span class="line">           concatMatrix = a.willChangeTransformationMatrix();</span><br><span class="line">           <span class="keyword">if</span> (concatMatrix) &#123;</span><br><span class="line">               mPrivateFlags3 |= PFLAG3_VIEW_IS_ANIMATING_TRANSFORM;</span><br><span class="line">           &#125;</span><br><span class="line">           transformToApply = parent.getChildTransformation();</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">//...</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出在父类调用View的draw方法中，会先判断是否设置了清除到需要做该表的标记，然后再获取设置的动画的信息，如果设置了动画，就会调用View中的drawAnimation方法，具体如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">drawAnimation</span><span class="params">(ViewGroup parent, <span class="keyword">long</span> drawingTime,</span><br><span class="line">           Animation a, <span class="keyword">boolean</span> scalingRequired)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	Transformation invalidationTransform;</span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">int</span> flags = parent.mGroupFlags;</span><br><span class="line">	<span class="comment">//判断动画是否已经初始化过</span></span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">boolean</span> initialized = a.isInitialized();</span><br><span class="line">       <span class="keyword">if</span> (!initialized) &#123;</span><br><span class="line">           a.initialize(mRight - mLeft, mBottom - mTop, parent.getWidth(), parent.getHeight());</span><br><span class="line">           a.initializeInvalidateRegion(<span class="number">0</span>, <span class="number">0</span>, mRight - mLeft, mBottom - mTop);</span><br><span class="line">           <span class="keyword">if</span> (mAttachInfo != <span class="keyword">null</span>) a.setListenerHandler(mAttachInfo.mHandler);</span><br><span class="line">           onAnimationStart();</span><br><span class="line">       &#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//判断View是否需要进行缩放</span></span><br><span class="line">	<span class="keyword">final</span> Transformation t = parent.getChildTransformation();</span><br><span class="line">       <span class="keyword">boolean</span> more = a.getTransformation(drawingTime, t, <span class="number">1f</span>);</span><br><span class="line">       <span class="keyword">if</span> (scalingRequired &amp;&amp; mAttachInfo.mApplicationScale != <span class="number">1f</span>) &#123;</span><br><span class="line">           <span class="keyword">if</span> (parent.mInvalidationTransformation == <span class="keyword">null</span>) &#123;</span><br><span class="line">               parent.mInvalidationTransformation = <span class="keyword">new</span> Transformation();</span><br><span class="line">           &#125;</span><br><span class="line">           invalidationTransform = parent.mInvalidationTransformation;</span><br><span class="line">           a.getTransformation(drawingTime, invalidationTransform, <span class="number">1f</span>);</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           invalidationTransform = t;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (more) &#123;</span><br><span class="line">		<span class="comment">//根据具体实现，判断当前动画类型是否需要进行调整位置大小，然后刷新不同的区域</span></span><br><span class="line">           <span class="keyword">if</span> (!a.willChangeBounds()) &#123;</span><br><span class="line">			<span class="comment">//...</span></span><br><span class="line">				</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="comment">//...</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> more;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中主要的操作是动画始化、动画操作、界面刷新。动画的具体实现是调用了Animation中的getTransformation(long currentTime, Transformation outTransformation,float scale)方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getTransformation</span><span class="params">(<span class="keyword">long</span> currentTime, Transformation outTransformation,</span><br><span class="line">           <span class="keyword">float</span> scale)</span> </span>&#123;</span><br><span class="line">       mScaleFactor = scale;</span><br><span class="line">       <span class="keyword">return</span> getTransformation(currentTime, outTransformation);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>在上面的方法中主要是获取缩放系数和调用Animation.getTransformation(long currentTime, Transformation outTransformation)来计算和应用动画效果。</p>
+<pre><code class="java">Interpolator mInterpolator;  <span class="comment">//成员变量</span>
+<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getTransformation</span><span class="params">(<span class="keyword">long</span> currentTime, Transformation outTransformation)</span> </span>{
+        <span class="comment">//计算处理当前动画的时间点...</span>
+        <span class="keyword">final</span> <span class="keyword">float</span> interpolatedTime = mInterpolator.getInterpolation(normalizedTime);
+        <span class="comment">//后续处理，以此来应用动画效果...</span>
+        applyTransformation(interpolatedTime, outTransformation);
+    <span class="keyword">return</span> mMore;
+}
+</code></pre>
+<p>很容易发现Android系统中在处理动画的时候会调用插值器中的getInterpolation(float input)方法来获取当前的时间点，依次来计算当前变化的情况。这就不得不说到Android中的插值器Interpolator，它的作用是根据时间流逝的百分比来计算出当前属性值改变的百分比，系统预置的有LinearInterpolator（线性插值器：匀速动画）、AccelerateDecelerateInterpolator（加速减速插值器：动画两头慢中间快）和DecelerateInterpolator（减速插值器：动画越来越慢）等，如图：</p>
+<p><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/strategy/gkerison/images/strategy-kerison-uml-android-interpolator.png" alt="url"> </p>
+<p>由于初期比较旧的版本采用的插值器是TimeInterpolator抽象，google采用了多加一层接口继承来实现兼容也不足为怪了。很显然策略模式在这里作了很好的实现，Interpolator就是处理动画时间的抽象，LinearInterpolator、CycleInterpolator等插值器就是具体的实现策略。插值器与Animation的关系图如下：</p>
+<p><img src="https://github.com/simple-android-framework-exchange/android_design_patterns_analysis/raw/master/strategy/gkerison/images/strategy-kerison-uml-android.png" alt="url"> </p>
+<p>这里以LinearInterpolator和CycleInterpolator为例：</p>
+<ul>
+<li><p>LinearInterpolator</p>
+<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">float</span> <span class="title">getInterpolation</span><span class="params">(<span class="keyword">float</span> input)</span> </span>{
+    <span class="keyword">return</span> input;
+}
+</code></pre></li>
+<li><p>CycleInterpolator</p>
+<pre><code>  <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">getInterpolation</span><span class="params">(<span class="keyword">float</span> input)</span> </span>{
+    <span class="keyword">return</span> (<span class="keyword">float</span>)(Math.<span class="built_in">sin</span>(<span class="number">2</span> * mCycles * Math.PI * input));
+}    
+</code></pre></li>
+</ul>
+<p>可以看出LinearInterpolator中计算当前时间的方法是做线性运算，也就是返回input*1，所以动画会成直线匀速播放出来，而CycleInterpolator是按照正弦运算，所以动画会正反方向跑一次，其它插值器依次类推。不同的插值器的计算方法都有所差别，用户设置插值器以实现动画速率的算法替换。       </p>
+<h2 id="4-_杂谈">4. 杂谈</h2><p>策略模式主要用来分离算法，根据相同的行为抽象来做不同的具体策略实现。</p>
+<p>通过以上也可以看出策略模式的优缺点：</p>
+<p>优点：</p>
+<ul>
+<li>结构清晰明了、使用简单直观。</li>
+<li>耦合度相对而言较低，扩展方便。</li>
+<li>操作封装也更为彻底，数据更为安全。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>随着策略的增加，子类也会变得繁多。</li>
+</ul>
+<blockquote>
+<p>本文为 <a href="https://github.com/simple-android-framework/android_design_patterns_analysis" target="_blank" rel="external">Android 设计模式源码解析</a> 中策略模式分析<br>Android系统版本：4.4.2<br>分析者：<a href="https://github.com/GKerison" target="_blank" rel="external">GKerison</a>，分析状态：已完成，校对者：<a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a>，校对状态：完成   </p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_strategy/" data-id="cibk39tlg003850flqbo843c3" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_strategy/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android-open-project-analysis_dependency-injection/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android 开源项目源码解析之 依赖注入
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_singleton/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android设计模式源码解析之单例模式</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/02/android_design_patterns_analysis_strategy/" data-title="Android设计模式源码解析之策略模式" data-url="http://likebamboo.com/AndroidBlog/2015/05/02/android_design_patterns_analysis_strategy/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">39</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/">Android 开源项目源码解析之HoloGraphLibrary 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/">Android 开源项目源码解析之EventBus 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/">Instagram是如何提升TextView渲染性能的</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/">Android 开源项目源码解析之Dagger 源码解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

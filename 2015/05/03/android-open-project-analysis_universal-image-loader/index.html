@@ -1,0 +1,615 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android 开源项目源码解析之Universal Image Loader 源码分析 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1. 功能介绍1.1 Android Universal Image LoaderAndroid Universal Image Loader 是一个强大的、可高度定制的图片缓存，本文简称为UIL。简单的说 UIL 就做了一件事——获取图片并显示在相应的控件上。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 开源项目源码解析之Universal Image Loader 源码分析">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_universal-image-loader/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="1. 功能介绍1.1 Android Universal Image LoaderAndroid Universal Image Loader 是一个强大的、可高度定制的图片缓存，本文简称为UIL。简单的说 UIL 就做了一件事——获取图片并显示在相应的控件上。">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/overall-design.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/uil-flow.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/relation-class.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/display-image-flow-chart.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/load-display-flow-chart.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/lru_header.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/lru_put.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/lru_put_exceed_maxsize2.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/lru_put_trim.png">
+<meta property="og:image" content="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/lru_trim_result.png">
+<meta property="og:updated_time" content="2015-06-30T13:57:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 开源项目源码解析之Universal Image Loader 源码分析">
+<meta name="twitter:description" content="1. 功能介绍1.1 Android Universal Image LoaderAndroid Universal Image Loader 是一个强大的、可高度定制的图片缓存，本文简称为UIL。简单的说 UIL 就做了一件事——获取图片并显示在相应的控件上。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-android-open-project-analysis_universal-image-loader" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_universal-image-loader/" class="article-date">
+  <time datetime="2015-05-02T16:00:00.000Z" itemprop="datePublished">2015-05-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 开源项目源码解析之Universal Image Loader 源码分析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1-_功能介绍">1. 功能介绍</h3><h4 id="1-1_Android_Universal_Image_Loader">1.1 Android Universal Image Loader</h4><p>Android Universal Image Loader 是一个强大的、可高度定制的图片缓存，本文简称为<code>UIL</code>。<br>简单的说 UIL 就做了一件事——获取图片并显示在相应的控件上。<br><a id="more"></a></p>
+<h4 id="1-2_基本使用">1.2 基本使用</h4><h5 id="1-2-1_初始化">1.2.1 初始化</h5><p>添加完依赖后在<code>Application</code>或<code>Activity</code>中初始化<code>ImageLoader</code>，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">YourApplication</span> <span class="keyword">extends</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	    <span class="keyword">super</span>.onCreate();</span><br><span class="line">	    ImageLoaderConfiguration configuration = <span class="keyword">new</span> ImageLoaderConfiguration.Builder(<span class="keyword">this</span>)</span><br><span class="line">	        <span class="comment">// 添加你的配置需求</span></span><br><span class="line">	        .build();</span><br><span class="line">	    ImageLoader.getInstance().init(configuration);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中 configuration 表示<code>ImageLoader</code>的配置信息，可包括图片最大尺寸、线程池、缓存、下载器、解码器等等。  </p>
+<h5 id="1-2-2_Manifest_配置">1.2.2 Manifest 配置</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">manifest</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">uses-permission</span> <span class="attribute">android:name</span>=<span class="value">"android.permission.INTERNET"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">uses-permission</span> <span class="attribute">android:name</span>=<span class="value">"android.permission.WRITE_EXTERNAL_STORAGE"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">application</span></span><br><span class="line">        <span class="attribute">android:name</span>=<span class="value">".YourApplication"</span></span><br><span class="line">        …… &gt;</span></span><br><span class="line">        ……</span><br><span class="line">    <span class="tag">&lt;/<span class="title">application</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">manifest</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>添加网络权限。如果允许磁盘缓存，需要添加写外设的权限。  </p>
+<h5 id="1-2-3_下载显示图片">1.2.3 下载显示图片</h5><p>下载图片，解析为 Bitmap 并在 ImageView 中显示。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">imageLoader.displayImage(imageUri, imageView);</span><br></pre></td></tr></table></figure></p>
+<p>下载图片，解析为 Bitmap 传递给回调接口。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">imageLoader.loadImage(imageUri, <span class="keyword">new</span> SimpleImageLoadingListener() &#123;</span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadingComplete</span><span class="params">(String imageUri, View view, Bitmap loadedImage)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 图片处理</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>以上是简单使用，更复杂 API 见本文<code>详细设计</code>。  </p>
+<h4 id="1-3_特点">1.3 特点</h4><ul>
+<li>可配置度高。支持任务线程池、下载器、解码器、内存及磁盘缓存、显示选项等等的配置。  </li>
+<li>包含内存缓存和磁盘缓存两级缓存。  </li>
+<li>支持多线程，支持异步和同步加载。  </li>
+<li>支持多种缓存算法、下载进度监听、ListView 图片错乱解决等。 </li>
+</ul>
+<h3 id="2-_总体设计">2. 总体设计</h3><h4 id="2-1-_总体设计图">2.1. 总体设计图</h4><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/overall-design.png" alt="总体设计图"><br>上面是 UIL 的总体设计图。整个库分为<code>ImageLoaderEngine</code>，<code>Cache</code>及<code>ImageDownloader</code>，<code>ImageDecoder</code>，<code>BitmapDisplayer</code>，<code>BitmapProcessor</code>五大模块，其中<code>Cache</code>分为<code>MemoryCache</code>和<code>DiskCache</code>两部分。  </p>
+<p>简单的讲就是<code>ImageLoader</code>收到加载及显示图片的任务，并将它交给<code>ImageLoaderEngine</code>，<code>ImageLoaderEngine</code>分发任务到具体线程池去执行，任务通过<code>Cache</code>及<code>ImageDownloader</code>获取图片，中间可能经过<code>BitmapProcessor</code>和<code>ImageDecoder</code>处理，最终转换为<code>Bitmap</code>交给<code>BitmapDisplayer</code>在<code>ImageAware</code>中显示。  </p>
+<h4 id="2-2-_UIL_中的概念">2.2. UIL 中的概念</h4><p>简单介绍一些概念，在<code>4. 详细设计</code>中会仔细介绍。<br><strong>ImageLoaderEngine：</strong>任务分发器，负责分发<code>LoadAndDisplayImageTask</code>和<code>ProcessAndDisplayImageTask</code>给具体的线程池去执行，本文中也称其为<code>engine</code>，具体参考<code>4.2.6 ImageLoaderEngine.java</code>。  </p>
+<p><strong>ImageAware：</strong>显示图片的对象，可以是<code>ImageView</code>等，具体参考<code>4.2.9 ImageAware.java</code>。  </p>
+<p><strong>ImageDownloader：</strong>图片下载器，负责从图片的各个来源获取输入流, 具体参考<code>4.2.22 ImageDownloader.java</code>。  </p>
+<p><strong>Cache：</strong>图片缓存，分为<code>MemoryCache</code>和<code>DiskCache</code>两部分。  </p>
+<p><strong>MemoryCache：</strong>内存图片缓存，可向内存缓存缓存图片或从内存缓存读取图片，具体参考<code>4.2.24 MemoryCache.java</code>。  </p>
+<p><strong>DiskCache：</strong>本地图片缓存，可向本地磁盘缓存保存图片或从本地磁盘读取图片，具体参考<code>4.2.38 DiskCache.java</code>。  </p>
+<p><strong>ImageDecoder：</strong>图片解码器，负责将图片输入流<code>InputStream</code>转换为<code>Bitmap</code>对象, 具体参考<code>4.2.53 ImageDecoder.java</code>。 </p>
+<p><strong>BitmapProcessor：</strong>图片处理器，负责从缓存读取或写入前对图片进行处理。具体参考<code>4.2.61 BitmapProcessor.java</code>。  </p>
+<p><strong>BitmapDisplayer：</strong>将<code>Bitmap</code>对象显示在相应的控件<code>ImageAware</code>上, 具体参考<code>4.2.56 BitmapDisplayer.java</code>。  </p>
+<p><strong>LoadAndDisplayImageTask：</strong>用于加载并显示图片的任务, 具体参考<code>4.2.20 LoadAndDisplayImageTask.java</code>。  </p>
+<p><strong>ProcessAndDisplayImageTask：</strong>用于处理并显示图片的任务, 具体参考<code>4.2.19 ProcessAndDisplayImageTask.java</code>。  </p>
+<p><strong>DisplayBitmapTask：</strong>用于显示图片的任务, 具体参考<code>4.2.18 DisplayBitmapTask.java</code>。  </p>
+<h3 id="3-_流程图">3. 流程图</h3><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/uil-flow.png" alt=""><br>上图为图片加载及显示流程图，在uil库中给出，这里用中文重新画出。  </p>
+<h3 id="4-_详细设计">4. 详细设计</h3><h4 id="4-1_类关系图">4.1 类关系图</h4><p><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/relation-class.png" alt="">  </p>
+<h4 id="4-2_核心类功能介绍">4.2 核心类功能介绍</h4><h5 id="4-2-1_ImageLoader-java">4.2.1 ImageLoader.java</h5><p>图片加载器，对外的主要 API，采取了单例模式，用于图片的加载和显示。  </p>
+<p><strong>主要函数：</strong>  </p>
+<h5 id="(1)-_getInstance()">(1). getInstance()</h5><p>得到<code>ImageLoader</code>的单例。通过双层是否为 null 判断提高性能。  </p>
+<h5 id="(2)-_init(ImageLoaderConfiguration_configuration)">(2). init(ImageLoaderConfiguration configuration)</h5><p>初始化配置参数，参数<code>configuration</code>为<code>ImageLoader</code>的配置信息，包括图片最大尺寸、任务线程池、磁盘缓存、下载器、解码器等等。<br>实现中会初始化<code>ImageLoaderEngine engine</code>属性，该属性为任务分发器。  </p>
+<h5 id="(3)-_displayImage(String_uri,_ImageAware_imageAware,_DisplayImageOptions_options,_ImageLoadingListener_listener,_ImageLoadingProgressListener_progressListener)">(3). displayImage(String uri, ImageAware imageAware, DisplayImageOptions options, ImageLoadingListener listener, ImageLoadingProgressListener progressListener)</h5><p>加载并显示图片或加载并执行回调接口。<code>ImageLoader</code> 加载图片主要分为三类接口：  </p>
+<ul>
+<li><code>displayImage(…)</code> 表示异步加载并显示图片到对应的<code>ImageAware</code>上。  </li>
+<li><code>loadImage(…)</code> 表示异步加载图片并执行回调接口。  </li>
+<li><code>loadImageSync(…)</code> 表示同步加载图片。  </li>
+</ul>
+<p>以上三类接口最终都会调用到这个函数进行图片加载。函数参数解释如下：<br><strong>uri:</strong> 图片的 uri。uri 支持多种来源的图片，包括 http、https、file、content、assets、drawable 及自定义，具体介绍可见<code>ImageDownloader</code>。<br><strong>imageAware:</strong> 一个接口，表示需要加载图片的对象，可包装 View。<br><strong>options:</strong> 图片显示的配置项。比如加载前、加载中、加载失败应该显示的占位图片，图片是否需要在磁盘缓存，是否需要在内存缓存等。<br><strong>listener:</strong> 图片加载各种时刻的回调接口，包括开始加载、加载失败、加载成功、取消加载四个时刻的回调函数。<br><strong>progressListener:</strong> 图片加载进度的回调接口。  </p>
+<p><strong>函数流程图如下：</strong><br><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/display-image-flow-chart.png" alt="ImageLoader Display Image Flow Chart">  </p>
+<h5 id="4-2-2_ImageLoaderConfiguration-java">4.2.2 ImageLoaderConfiguration.java</h5><p><code>ImageLoader</code>的配置信息，包括图片最大尺寸、线程池、缓存、下载器、解码器等等。  </p>
+<p><strong>主要属性：</strong>  </p>
+<h5 id="(1)-_Resources_resources">(1). Resources resources</h5><p>程序本地资源访问器，用于加载<code>DisplayImageOptions</code>中设置的一些 App 中图片资源。  </p>
+<h5 id="(2)-_int_maxImageWidthForMemoryCache">(2). int maxImageWidthForMemoryCache</h5><p>内存缓存的图片最大宽度。  </p>
+<h5 id="(3)-_int_maxImageHeightForMemoryCache">(3). int maxImageHeightForMemoryCache</h5><p>内存缓存的图片最大高度。  </p>
+<h5 id="(4)-_int_maxImageWidthForDiskCache">(4). int maxImageWidthForDiskCache</h5><p>磁盘缓存的图片最大宽度。  </p>
+<h5 id="(5)-_int_maxImageHeightForDiskCache">(5). int maxImageHeightForDiskCache</h5><p>磁盘缓存的图片最大高度。  </p>
+<h5 id="(6)-_BitmapProcessor_processorForDiskCache">(6). BitmapProcessor processorForDiskCache</h5><p>图片处理器，用于处理从磁盘缓存中读取到的图片。  </p>
+<h5 id="(7)-_Executor_taskExecutor">(7). Executor taskExecutor</h5><p><code>ImageLoaderEngine</code>中用于执行从源获取图片任务的 Executor。  </p>
+<h5 id="(18)-_Executor_taskExecutorForCachedImages">(18). Executor taskExecutorForCachedImages</h5><p><code>ImageLoaderEngine</code>中用于执行从缓存获取图片任务的 Executor。  </p>
+<h5 id="(19)-_boolean_customExecutor">(19). boolean customExecutor</h5><p>用户是否自定义了上面的 taskExecutor。  </p>
+<h5 id="(20)-_boolean_customExecutorForCachedImages">(20). boolean customExecutorForCachedImages</h5><p>用户是否自定义了上面的 taskExecutorForCachedImages。  </p>
+<h5 id="(21)-_int_threadPoolSize">(21). int threadPoolSize</h5><p>上面两个默认线程池的核心池大小，即最大并发数。  </p>
+<h5 id="(22)-_int_threadPriority">(22). int threadPriority</h5><p>上面两个默认线程池的线程优先级。  </p>
+<h5 id="(23)-_QueueProcessingType_tasksProcessingType">(23). QueueProcessingType tasksProcessingType</h5><p>上面两个默认线程池的线程队列类型。目前只有 FIFO, LIFO 两种可供选择。  </p>
+<h5 id="(24)-_MemoryCache_memoryCache">(24). MemoryCache memoryCache</h5><p>图片内存缓存。  </p>
+<h5 id="(25)-_DiskCache_diskCache">(25). DiskCache diskCache</h5><p>图片磁盘缓存，一般放在 SD 卡。  </p>
+<h5 id="(26)-_ImageDownloader_downloader">(26). ImageDownloader downloader</h5><p>图片下载器。  </p>
+<h5 id="(27)-_ImageDecoder_decoder">(27). ImageDecoder decoder</h5><p>图片解码器，内部可使用我们常用的<code>BitmapFactory.decode(…)</code>将图片资源解码成<code>Bitmap</code>对象。  </p>
+<h5 id="(28)-_DisplayImageOptions_defaultDisplayImageOptions">(28). DisplayImageOptions defaultDisplayImageOptions</h5><p>图片显示的配置项。比如加载前、加载中、加载失败应该显示的占位图片，图片是否需要在磁盘缓存，是否需要在内存缓存等。  </p>
+<h5 id="(29)-_ImageDownloader_networkDeniedDownloader">(29). ImageDownloader networkDeniedDownloader</h5><p>不允许访问网络的图片下载器。  </p>
+<h5 id="(30)-_ImageDownloader_slowNetworkDownloader">(30). ImageDownloader slowNetworkDownloader</h5><p>慢网络情况下的图片下载器。  </p>
+<h5 id="4-2-3_ImageLoaderConfiguration-Builder-java_静态内部类">4.2.3 ImageLoaderConfiguration.Builder.java 静态内部类</h5><p>Builder 模式，用于构造参数繁多的<code>ImageLoaderConfiguration</code>。<br>其属性与<code>ImageLoaderConfiguration</code>类似，函数多是属性设置函数。  </p>
+<p><strong>主要函数及含义：</strong>  </p>
+<h5 id="(1)-_build()">(1). build()</h5><p>按照配置，生成 ImageLoaderConfiguration。代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ImageLoaderConfiguration <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	initEmptyFieldsWithDefaultValues();</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> ImageLoaderConfiguration(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="(2)-_initEmptyFieldsWithDefaultValues()">(2). initEmptyFieldsWithDefaultValues()</h5><p>初始化值为<code>null</code>的属性。若用户没有配置相关项，UIL 会通过调用<code>DefaultConfigurationFactory</code>中的函数返回一个默认值当配置。<br><code>taskExecutorForCachedImages</code>、<code>taskExecutor</code>及<code>ImageLoaderEngine</code>的<code>taskDistributor</code>的默认值如下：  </p>
+<table>
+<thead>
+<tr>
+<th>parameters</th>
+<th>taskDistributor</th>
+<th>taskExecutorForCachedImages/taskExecutor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>corePoolSize</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr>
+<td>maximumPoolSize</td>
+<td>Integer.MAX_VALUE</td>
+<td>3</td>
+</tr>
+<tr>
+<td>keepAliveTime</td>
+<td>60</td>
+<td>0</td>
+</tr>
+<tr>
+<td>unit</td>
+<td>SECONDS</td>
+<td>MILLISECONDS</td>
+</tr>
+<tr>
+<td>workQueue</td>
+<td>SynchronousQueue</td>
+<td>LIFOLinkedBlockingDeque / LinkedBlockingQueue</td>
+</tr>
+<tr>
+<td>priority</td>
+<td>5</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p><code>diskCacheFileNameGenerator</code>默认值为<code>HashCodeFileNameGenerator</code>。<br><code>memoryCache</code>默认值为<code>LruMemoryCache</code>。如果内存缓存不允许缓存一张图片的多个尺寸，则用<code>FuzzyKeyMemoryCache</code>做封装，同一个图片新的尺寸会覆盖缓存中该图片老的尺寸。<br><code>diskCache</code>默认值与<code>diskCacheSize</code>和<code>diskCacheFileCount</code>值有关，如果他们有一个大于 0，则默认为<code>LruDiskCache</code>，否则使用无大小限制的<code>UnlimitedDiskCache</code>。<br><code>downloader</code>默认值为<code>BaseImageDownloader</code>。<br><code>decoder</code>默认值为<code>BaseImageDecoder</code>。<br>详细及其他属性默认值请到<code>DefaultConfigurationFactory</code>中查看。  </p>
+<h5 id="(3)-_denyCacheImageMultipleSizesInMemory()">(3). denyCacheImageMultipleSizesInMemory()</h5><p>设置内存缓存不允许缓存一张图片的多个尺寸，默认允许。<br>后面会讲到 View 的 <code>getWidth()</code> 在初始化前后的不同值与这个设置的关系。  </p>
+<h5 id="(4)-_diskCacheSize(int_maxCacheSize)">(4). diskCacheSize(int maxCacheSize)</h5><p>设置磁盘缓存的最大字节数，如果大于 0 或者下面的<code>maxFileCount</code>大于 0，默认的<code>DiskCache</code>会用<code>LruDiskCache</code>，否则使用无大小限制的<code>UnlimitedDiskCache</code>。  </p>
+<h5 id="(5)-_diskCacheFileCount(int_maxFileCount)">(5). diskCacheFileCount(int maxFileCount)</h5><p>设置磁盘缓存文件夹下最大文件数，如果大于 0 或者上面的<code>maxCacheSize</code>大于 0，默认的<code>DiskCache</code>会用<code>LruDiskCache</code>，否则使用无大小限制的<code>UnlimitedDiskCache</code>。  </p>
+<h5 id="4-2-4_ImageLoaderConfiguration-NetworkDeniedImageDownloader-java_静态内部类">4.2.4 ImageLoaderConfiguration.NetworkDeniedImageDownloader.java 静态内部类</h5><p>不允许访问网络的图片下载器，实现了<code>ImageDownloader</code>接口。<br>实现也比较简单，包装一个<code>ImageDownloader</code>对象，通过在 getStream(…) 函数中禁止 Http 和 Https Scheme 禁止网络访问，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> InputStream <span class="title">getStream</span><span class="params">(String imageUri, Object extra)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">	<span class="keyword">switch</span> (Scheme.ofUri(imageUri)) &#123;</span><br><span class="line">		<span class="keyword">case</span> HTTP:</span><br><span class="line">		<span class="keyword">case</span> HTTPS:</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException();</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">return</span> wrappedDownloader.getStream(imageUri, extra);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="4-2-5_ImageLoaderConfiguration-SlowNetworkImageDownloader-java_静态内部类">4.2.5 ImageLoaderConfiguration.SlowNetworkImageDownloader.java 静态内部类</h5><p>慢网络情况下的图片下载器，实现了<code>ImageDownloader</code>接口。<br>通过包装一个<code>ImageDownloader</code>对象实现，在 getStream(…) 函数中当 Scheme 为 Http 和 Https 时，用<code>FlushedInputStream</code>代替<code>InputStream</code>处理慢网络情况，具体见后面<code>FlushedInputStream</code>的介绍。  </p>
+<h5 id="4-2-6_ImageLoaderEngine-java">4.2.6 ImageLoaderEngine.java</h5><p><code>LoadAndDisplayImageTask</code>和<code>ProcessAndDisplayImageTask</code>任务分发器，负责分发任务给具体的线程池。  </p>
+<p><strong>主要属性：</strong>  </p>
+<h5 id="(1)-_ImageLoaderConfiguration_configuration">(1). ImageLoaderConfiguration configuration</h5><p><code>ImageLoader</code>的配置信息，可包括图片最大尺寸、线程池、缓存、下载器、解码器等等。  </p>
+<h5 id="(2)-_Executor_taskExecutor">(2). Executor taskExecutor</h5><p>用于执行从源获取图片任务的 Executor，为<code>configuration</code>中的 taskExecutor，如果为<code>null</code>，则会调用<code>DefaultConfigurationFactory.createExecutor(…)</code>根据配置返回一个默认的线程池。  </p>
+<h5 id="(3)-_Executor_taskExecutorForCachedImages">(3). Executor taskExecutorForCachedImages</h5><p>用于执行从缓存获取图片任务的 Executor，为<code>configuration</code>中的 taskExecutorForCachedImages，如果为<code>null</code>，则会调用<code>DefaultConfigurationFactory.createExecutor(…)</code>根据配置返回一个默认的线程池。  </p>
+<h5 id="(4)-_Executor_taskDistributor">(4). Executor taskDistributor</h5><p>任务分发线程池，任务指<code>LoadAndDisplayImageTask</code>和<code>ProcessAndDisplayImageTask</code>，因为只需要分发给上面的两个 Executor 去执行任务，不存在较耗时或阻塞操作，所以用无并发数(Int 最大值)限制的线程池即可。  </p>
+<h5 id="(5)-_Map_cacheKeysForImageAwares">(5). Map<integer, string=""> cacheKeysForImageAwares</integer,></h5><p><code>ImageAware</code>与内存缓存 key 对应的 map，key 为<code>ImageAware</code>的 id，value 为内存缓存的 key。</p>
+<h5 id="(6)-_Map_uriLocks">(6). Map<string, reentrantlock=""> uriLocks</string,></h5><p>图片正在加载的重入锁 map，key 为图片的 uri，value 为标识其正在加载的重入锁。  </p>
+<h5 id="(7)-_AtomicBoolean_paused">(7). AtomicBoolean paused</h5><p>是否被暂停。如果为<code>true</code>，则所有新的加载或显示任务都会等待直到取消暂停(为<code>false</code>)。  </p>
+<h5 id="(8)-_AtomicBoolean_networkDenied">(8). AtomicBoolean networkDenied</h5><p>是否不允许访问网络，如果为<code>true</code>，通过<code>ImageLoadingListener.onLoadingFailed(…)</code>获取图片，则所有不在缓存中需要网络访问的请求都会失败，返回失败原因为<code>网络访问被禁止</code>。  </p>
+<h5 id="(9)-_AtomicBoolean_slowNetwork">(9). AtomicBoolean slowNetwork</h5><p>是否是慢网络情况，如果为<code>true</code>，则自动调用<code>SlowNetworkImageDownloader</code>下载图片。  </p>
+<h5 id="(10)-_Object_pauseLock">(10). Object pauseLock</h5><p>暂停的等待锁，可在<code>engine</code>被暂停后调用这个锁等待。  </p>
+<p><strong>主要函数：</strong>  </p>
+<h5 id="(1)-_void_submit(final_LoadAndDisplayImageTask_task)">(1). void submit(final LoadAndDisplayImageTask task)</h5><p>添加一个<code>LoadAndDisplayImageTask</code>。直接用<code>taskDistributor</code>执行一个 Runnable，在 Runnable 内部根据图片是否被磁盘缓存过确定使用<code>taskExecutorForCachedImages</code>还是<code>taskExecutor</code>执行该 task。  </p>
+<h5 id="(2)-_void_submit(ProcessAndDisplayImageTask_task)">(2). void submit(ProcessAndDisplayImageTask task)</h5><p>添加一个<code>ProcessAndDisplayImageTask</code>。直接用<code>taskExecutorForCachedImages</code>执行该 task。  </p>
+<h5 id="(3)-_void_pause()">(3). void pause()</h5><p>暂停图片加载任务。所有新的加载或显示任务都会等待直到取消暂停(为<code>false</code>)。  </p>
+<h5 id="(4)-_void_resume()">(4). void resume()</h5><p>继续图片加载任务。</p>
+<h5 id="(5)-_stop()">(5). stop()</h5><p>暂停所有加载和显示图片任务并清除这里的内部属性值。  </p>
+<h5 id="(6)-_fireCallback(Runnable_r)">(6). fireCallback(Runnable r)</h5><p><code>taskDistributor</code>立即执行某个任务。  </p>
+<h5 id="(7)-_getLockForUri(String_uri)">(7). getLockForUri(String uri)</h5><p>得到某个 uri 的重入锁，如果不存在则新建。   </p>
+<h5 id="(8)-_createTaskExecutor()">(8). createTaskExecutor()</h5><p>调用<code>DefaultConfigurationFactory.createExecutor(…)</code>创建一个线程池。  </p>
+<h5 id="(9)-_getLoadingUriForView(ImageAware_imageAware)">(9). getLoadingUriForView(ImageAware imageAware)</h5><p>得到某个<code>imageAware</code>正在加载的图片 uri。  </p>
+<h5 id="(10)-_prepareDisplayTaskFor(ImageAware_imageAware,_String_memoryCacheKey)">(10). prepareDisplayTaskFor(ImageAware imageAware, String memoryCacheKey)</h5><p>准备开始一个<code>Task</code>。向<code>cacheKeysForImageAwares</code>中插入<code>ImageAware</code>的 id 和图片在内存缓存中的 key。  </p>
+<h5 id="(11)-_void_cancelDisplayTaskFor(ImageAware_imageAware)">(11). void cancelDisplayTaskFor(ImageAware imageAware)</h5><p>取消一个显示任务。从<code>cacheKeysForImageAwares</code>中删除<code>ImageAware</code>对应元素。  </p>
+<h5 id="(12)-_denyNetworkDownloads(boolean_denyNetworkDownloads)">(12). denyNetworkDownloads(boolean denyNetworkDownloads)</h5><p>设置是否不允许网络访问。  </p>
+<h5 id="(13)-_handleSlowNetwork(boolean_handleSlowNetwork)">(13). handleSlowNetwork(boolean handleSlowNetwork)</h5><p>设置是否慢网络情况。  </p>
+<h5 id="4-2-7_DefaultConfigurationFactory-java">4.2.7 DefaultConfigurationFactory.java</h5><p>为<code>ImageLoaderConfiguration</code>及<code>ImageLoaderEngine</code>提供一些默认配置。  </p>
+<p><strong>主要函数：</strong>  </p>
+<h5 id="(1)-_createExecutor(int_threadPoolSize,_int_threadPriority,_QueueProcessingType_tasksProcessingType)">(1). createExecutor(int threadPoolSize, int threadPriority, QueueProcessingType tasksProcessingType)</h5><p>创建线程池。<br><code>threadPoolSize</code>表示核心池大小(最大并发数)。<br><code>threadPriority</code>表示线程优先级。<br><code>tasksProcessingType</code>表示线程队列类型，目前只有 FIFO, LIFO 两种可供选择。<br>内部实现会调用<code>createThreadFactory(…)</code>返回一个支持线程优先级设置，并且以固定规则命名新建的线程的线程工厂类<code>DefaultConfigurationFactory.DefaultThreadFactory</code>。  </p>
+<h5 id="(2)-_createTaskDistributor()">(2). createTaskDistributor()</h5><p>为<code>ImageLoaderEngine</code>中的任务分发器<code>taskDistributor</code>提供线程池，该线程池为 normal 优先级的无并发大小限制的线程池。  </p>
+<h5 id="(3)-_createFileNameGenerator()">(3). createFileNameGenerator()</h5><p>返回一个<code>HashCodeFileNameGenerator</code>对象，即以 uri HashCode 为文件名的文件名生成器。  </p>
+<h5 id="(4)-_createDiskCache(Context_context,_FileNameGenerator_diskCacheFileNameGenerator,_long_diskCacheSize,_int_diskCacheFileCount)">(4). createDiskCache(Context context, FileNameGenerator diskCacheFileNameGenerator, long diskCacheSize, int diskCacheFileCount)</h5><p>创建一个 Disk Cache。如果 diskCacheSize 或者 diskCacheFileCount 大于 0，返回一个<code>LruDiskCache</code>，否则返回无大小限制的<code>UnlimitedDiskCache</code>。  </p>
+<h5 id="(5)-_createMemoryCache(Context_context,_int_memoryCacheSize)">(5). createMemoryCache(Context context, int memoryCacheSize)</h5><p>创建一个 Memory Cache。返回一个<code>LruMemoryCache</code>，若 memoryCacheSize 为 0，则设置该内存缓存的最大字节数为 App 最大可用内存的 1/8。<br>这里 App 的最大可用内存也支持系统在 Honeycomb之后(ApiLevel &gt;= 11) application 中<code>android:largeHeap=&quot;true&quot;</code>的设置。  </p>
+<h5 id="(6)-_createImageDownloader(Context_context)">(6). createImageDownloader(Context context)</h5><p>创建图片下载器，返回一个<code>BaseImageDownloader</code>。  </p>
+<h5 id="(7)-_createImageDecoder(boolean_loggingEnabled)">(7). createImageDecoder(boolean loggingEnabled)</h5><p>创建图片解码器，返回一个<code>BaseImageDecoder</code>。  </p>
+<h5 id="(8)-_createBitmapDisplayer()">(8). createBitmapDisplayer()</h5><p>创建图片显示器，返回一个<code>SimpleBitmapDisplayer</code>。  </p>
+<h5 id="4-2-8_DefaultConfigurationFactory-DefaultThreadFactory">4.2.8 DefaultConfigurationFactory.DefaultThreadFactory</h5><p>默认的线程工厂类，为<br><code>DefaultConfigurationFactory.createExecutor(…)</code><br>和<br><code>DefaultConfigurationFactory.createTaskDistributor(…)</code><br>提供线程工厂。支持线程优先级设置，并且以固定规则命名新建的线程。  </p>
+<p>PS：重命名线程是个很好的习惯，它的一大作用就是方便问题排查，比如性能优化，用 TraceView 查看线程，根据名字很容易分辨各个线程。  </p>
+<h5 id="4-2-9_ImageAware-java">4.2.9 ImageAware.java</h5><p>需要显示图片的对象的接口，可包装 View 表示某个需要显示图片的 View。  </p>
+<p><strong>主要函数：</strong>  </p>
+<h5 id="(1)-_View_getWrappedView()">(1). View getWrappedView()</h5><p>得到被包装的 View，图片在该 View 上显示。  </p>
+<h5 id="(2)-_getWidth()_与_getHeight()">(2). getWidth() 与 getHeight()</h5><p>得到宽度高度，在计算图片缩放比例时会用到。  </p>
+<h5 id="(3)-_getId()">(3). getId()</h5><p>得到唯一标识 id。<code>ImageLoaderEngine</code>中用这个 id 标识正在加载图片的<code>ImageAware</code>和图片内存缓存 key 的对应关系，图片请求前会将内存缓存 key 与新的内存缓存 key 进行比较，如果不相等，则之前的图片请求会被取消。这样当<code>ImageAware</code>被复用时就不会因异步加载(前面任务未取消)而造成错乱了。 </p>
+<h5 id="4-2-10_ViewAware-java">4.2.10 ViewAware.java</h5><p>封装 Android View 来显示图片的抽象类，实现了<code>ImageAware</code>接口，利用<code>Reference</code>来 Warp View 防止内存泄露。  </p>
+<p><strong>主要函数：</strong>  </p>
+<h5 id="(1)-_ViewAware(View_view,_boolean_checkActualViewSize)">(1). ViewAware(View view, boolean checkActualViewSize)</h5><p>构造函数。<br><code>view</code>表示需要显示图片的对象。<br><code>checkActualViewSize</code>表示通过<code>getWidth()</code>和<code>getHeight()</code>获取图片宽高时返回真实的宽和高，还是<code>LayoutParams</code>的宽高，true 表示返回真实宽和高。<br>如果为<code>true</code>会导致一个问题，<code>View</code>在还没有初始化完成时加载图片，这时它的真实宽高为0，会取它<code>LayoutParams</code>的宽高，而图片缓存的 key 与这个宽高有关，所以当<code>View</code>初始化完成再次需要加载该图片时，<code>getWidth()</code>和<code>getHeight()</code>返回的宽高都已经变化，缓存 key 不一样，从而导致缓存命中失败会再次从网络下载一次图片。可通过<code>ImageLoaderConfiguration.Builder.denyCacheImageMultipleSizesInMemory()</code>设置不允许内存缓存缓存一张图片的多个尺寸。  </p>
+<h5 id="(2)-_setImageDrawable(Drawable_drawable)">(2). setImageDrawable(Drawable drawable)</h5><p>如果当前操作在主线程并且 View 没有被回收，则调用抽象函数<code>setImageDrawableInto(Drawable drawable, View view)</code>去向<code>View</code>设置图片。  </p>
+<h5 id="(3)-_setImageBitmap(Bitmap_bitmap)">(3). setImageBitmap(Bitmap bitmap)</h5><p>如果当前操作在主线程并且 View 没有被回收，则调用抽象函数<code>setImageBitmapInto(Bitmap bitmap, View view)</code>去向<code>View</code>设置图片。  </p>
+<h5 id="4-2-11_ImageViewAware-java">4.2.11 ImageViewAware.java</h5><p>封装 Android ImageView 来显示图片的<code>ImageAware</code>，继承了<code>ViewAware</code>，利用<code>Reference</code>来 Warp View 防止内存泄露。<br>如果<code>getWidth()</code>函数小于等于0，会利用反射获取<code>mMaxWidth</code>的值作为宽。<br>如果<code>getHeight()</code>函数小于等于0，会利用反射获取<code>mMaxHeight</code>的值作为高。  </p>
+<h5 id="4-2-12_NonViewAware-java">4.2.12 NonViewAware.java</h5><p>仅包含处理图片相关信息却没有需要显示图片的 View 的<code>ImageAware</code>，实现了<code>ImageAware</code>接口。常用于加载图片后调用回调接口而不是显示的情况。  </p>
+<h5 id="4-2-13_DisplayImageOptions-java">4.2.13 DisplayImageOptions.java</h5><p>图片显示的配置项。比如加载前、加载中、加载失败应该显示的占位图片，图片是否需要在磁盘缓存，是否需要在 memory 缓存等。  </p>
+<p><strong>主要属性及含义：</strong>  </p>
+<h5 id="(1)-_int_imageResOnLoading">(1). int imageResOnLoading</h5><p>图片正在加载中的占位图片的 resource id，优先级比下面的<code>imageOnLoading</code>高，当存在时，<code>imageOnLoading</code>不起作用。  </p>
+<h5 id="(2)-_int_imageResForEmptyUri">(2). int imageResForEmptyUri</h5><p>空 uri 时的占位图片的 resource id，优先级比下面的<code>imageForEmptyUri</code>高，当存在时，<code>imageForEmptyUri</code>不起作用。  </p>
+<h5 id="(3)-_int_imageResOnFail">(3). int imageResOnFail</h5><p>加载失败时的占位图片的 resource id，优先级比下面的<code>imageOnFail</code>高，当存在时，<code>imageOnFail</code>不起作用。  </p>
+<h5 id="(4)-_Drawable_imageOnLoading">(4). Drawable imageOnLoading</h5><p>加载中的占位图片的 drawabled 对象，默认为 null。  </p>
+<h5 id="(5)-_Drawable_imageForEmptyUri">(5). Drawable imageForEmptyUri</h5><p>空 uri 时的占位图片的 drawabled 对象，默认为 null。  </p>
+<h5 id="(6)-_Drawable_imageOnFail">(6). Drawable imageOnFail</h5><p>加载失败时的占位图片的 drawabled 对象，默认为 null。  </p>
+<h5 id="(7)-_boolean_resetViewBeforeLoading">(7). boolean resetViewBeforeLoading</h5><p>在加载前是否重置 view，通过 Builder 构建的对象默认为 false。  </p>
+<h5 id="(8)-_boolean_cacheInMemory">(8). boolean cacheInMemory</h5><p>是否缓存在内存中，通过 Builder 构建的对象默认为 false。  </p>
+<h5 id="(9)-_boolean_cacheOnDisk">(9). boolean cacheOnDisk</h5><p>是否缓存在磁盘中，通过 Builder 构建的对象默认为 false。  </p>
+<h5 id="(10)-_ImageScaleType_imageScaleType">(10). ImageScaleType imageScaleType</h5><p>图片的缩放类型，通过 Builder 构建的对象默认为<code>IN_SAMPLE_POWER_OF_2</code>。  </p>
+<h5 id="(11)-_Options_decodingOptions;">(11). Options decodingOptions;</h5><p>为 BitmapFactory.Options，用于<code>BitmapFactory.decodeStream(imageStream, null, decodingOptions)</code>得到图片尺寸等信息。  </p>
+<h5 id="(12)-_int_delayBeforeLoading">(12). int delayBeforeLoading</h5><p>设置在开始加载前的延迟时间，单位为毫秒，通过 Builder 构建的对象默认为 0。  </p>
+<h5 id="(13)-_boolean_considerExifParams">(13). boolean considerExifParams</h5><p>是否考虑图片的 EXIF 信息，通过 Builder 构建的对象默认为 false。  </p>
+<h5 id="(14)-_Object_extraForDownloader">(14). Object extraForDownloader</h5><p>下载器需要的辅助信息。下载时传入<code>ImageDownloader.getStream(String, Object)</code>的对象，方便用户自己扩展，默认为 null。  </p>
+<h5 id="(15)-_BitmapProcessor_preProcessor">(15). BitmapProcessor preProcessor</h5><p>缓存在内存之前的处理程序，默认为 null。  </p>
+<h5 id="(16)-_BitmapProcessor_postProcessor">(16). BitmapProcessor postProcessor</h5><p>缓存在内存之后的处理程序，默认为 null。  </p>
+<h5 id="(17)-_BitmapDisplayer_displayer">(17). BitmapDisplayer displayer</h5><p>图片的显示方式，通过 Builder 构建的对象默认为<code>SimpleBitmapDisplayer</code>。  </p>
+<h5 id="(18)-_Handler_handler">(18). Handler handler</h5><p>handler 对象，默认为 null。  </p>
+<h5 id="(19)-_boolean_isSyncLoading">(19). boolean isSyncLoading</h5><p>是否同步加载，通过 Builder 构建的对象默认为 false。  </p>
+<h5 id="4-2-14_DisplayImageOptions-Builder-java_静态内部类">4.2.14 DisplayImageOptions.Builder.java 静态内部类</h5><p>Builder 模式，用于构造参数繁多的<code>DisplayImageOptions</code>。<br>其属性与<code>DisplayImageOptions</code>类似，函数多是属性设置函数。  </p>
+<h5 id="4-2-15_ImageLoadingListener-java">4.2.15 ImageLoadingListener.java</h5><p>图片加载各种时刻的回调接口，可在图片加载的某些点做监听。<br>包括开始加载(onLoadingStarted)、加载失败(onLoadingFailed)、加载成功(onLoadingComplete)、取消加载(onLoadingCancelled)四个回调函数。  </p>
+<h5 id="4-2-16_SimpleImageLoadingListener-java">4.2.16 SimpleImageLoadingListener.java</h5><p>实现<code>ImageLoadingListener</code>接口，不过各个函数都是空实现，表示不在 Image 加载过程中做任何回调监听。<br><code>ImageLoader.displayImage(…)</code>函数中当入参<code>listener</code>为空时的默认值。  </p>
+<h5 id="4-2-17_ImageLoadingProgressListener-java">4.2.17 ImageLoadingProgressListener.java</h5><p>Image 加载进度的回调接口。其中抽象函数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">onProgressUpdate</span><span class="params">(String imageUri, View view, <span class="keyword">int</span> current, <span class="keyword">int</span> total)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>会在获取图片存储到文件系统时被回调。其中<code>total</code>表示图片总大小，为网络请求结果<code>Response Header</code>中<code>content-length</code>字段，如果不存在则为 -1。  </p>
+<h5 id="4-2-18_DisplayBitmapTask-java">4.2.18 DisplayBitmapTask.java</h5><p>显示图片的<code>Task</code>，实现了<code>Runnable</code>接口，必须在主线程调用。  </p>
+<p><strong>主要函数：</strong>  </p>
+<h5 id="(1)_run()">(1) run()</h5><p>首先判断<code>imageAware</code>是否被 GC 回收，如果是直接调用取消加载回调接口<code>ImageLoadingListener.onLoadingCancelled(…)</code>；<br>否则判断<code>imageAware</code>是否被复用，如果是直接调用取消加载回调接口<code>ImageLoadingListener.onLoadingCancelled(…)</code>；<br>否则调用<code>displayer</code>显示图片，并将<code>imageAware</code>从正在加载的 map 中移除。调用加载成功回调接口<code>ImageLoadingListener.onLoadingComplete(…)</code>。  </p>
+<p>对于 ListView 或是 GridView 这类会缓存 Item 的 View 来说，单个 Item 中如果含有 ImageView，在滑动过程中可能因为异步加载及 View 复用导致图片错乱，这里对<code>imageAware</code>是否被复用的判断就能很好的解决这个问题。原因类似：<a href="http://www.trinea.cn/android/android-listview-display-error-image-when-scroll/" target="_blank" rel="external">Android ListView 滑动过程中图片显示重复错位闪烁问题原因及解决方案</a>。  </p>
+<h5 id="4-2-19_ProcessAndDisplayImageTask-java">4.2.19 ProcessAndDisplayImageTask.java</h5><p>处理并显示图片的<code>Task</code>，实现了<code>Runnable</code>接口。  </p>
+<p><strong>主要函数：</strong>  </p>
+<h5 id="(1)_run()-1">(1) run()</h5><p>主要通过 imageLoadingInfo 得到<code>BitmapProcessor</code>处理图片，并用处理后的图片和配置新建一个<code>DisplayBitmapTask</code>在<code>ImageAware</code>中显示图片。  </p>
+<h5 id="4-2-20_LoadAndDisplayImageTask-java">4.2.20 LoadAndDisplayImageTask.java</h5><p>加载并显示图片的<code>Task</code>，实现了<code>Runnable</code>接口，用于从网络、文件系统或内存获取图片并解析，然后调用<code>DisplayBitmapTask</code>在<code>ImageAware</code>中显示图片。  </p>
+<p><strong>主要函数：</strong>  </p>
+<h5 id="(1)_run()-2">(1) run()</h5><p>获取图片并显示，核心代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">bmp = configuration.memoryCache.get(memoryCacheKey);</span><br><span class="line"><span class="keyword">if</span> (bmp == <span class="keyword">null</span> || bmp.isRecycled()) &#123;</span><br><span class="line">	bmp = tryLoadBitmap();</span><br><span class="line">	...</span><br><span class="line">	...</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> (bmp != <span class="keyword">null</span> &amp;&amp; options.isCacheInMemory()) &#123;</span><br><span class="line">		L.d(LOG_CACHE_IMAGE_IN_MEMORY, memoryCacheKey);</span><br><span class="line">		configuration.memoryCache.put(memoryCacheKey, bmp);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">……</span><br><span class="line">DisplayBitmapTask displayBitmapTask = <span class="keyword">new</span> DisplayBitmapTask(bmp, imageLoadingInfo, engine, loadedFrom);</span><br><span class="line">runTask(displayBitmapTask, syncLoading, handler, engine);</span><br></pre></td></tr></table></figure></p>
+<p>从上面代码段中可以看到先是从内存缓存中去读取 bitmap 对象，若 bitmap 对象不存在，则调用 tryLoadBitmap() 函数获取 bitmap 对象，获取成功后若在 DisplayImageOptions.Builder 中设置了 cacheInMemory(true), 同时将 bitmap 对象缓存到内存中。<br>最后新建<code>DisplayBitmapTask</code>显示图片。  </p>
+<p><strong>函数流程图如下：</strong><br><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/load-display-flow-chart.png" alt="Load and Display Image Task Flow Chart">  </p>
+<ol>
+<li>判断图片的内存缓存是否存在，若存在直接执行步骤 8；  </li>
+<li>判断图片的磁盘缓存是否存在，若存在直接执行步骤 5；  </li>
+<li>从网络上下载图片；  </li>
+<li>将图片缓存在磁盘上；  </li>
+<li>将图片 decode 成 bitmap 对象；  </li>
+<li>根据<code>DisplayImageOptions</code>配置对图片进行预处理(Pre-process Bitmap)；  </li>
+<li>将 bitmap 对象缓存到内存中；  </li>
+<li>根据<code>DisplayImageOptions</code>配置对图片进行后处理(Post-process Bitmap)；  </li>
+<li>执行<code>DisplayBitmapTask</code>将图片显示在相应的控件上。<br>流程图可以参见<code>3. 流程图</code>。  </li>
+</ol>
+<h5 id="(2)_tryLoadBitmap()">(2) tryLoadBitmap()</h5><p>从磁盘缓存或网络获取图片，核心代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">File imageFile = configuration.diskCache.get(uri);</span><br><span class="line"><span class="keyword">if</span> (imageFile != <span class="keyword">null</span> &amp;&amp; imageFile.exists()) &#123;</span><br><span class="line">	...</span><br><span class="line">	bitmap = decodeImage(Scheme.FILE.wrap(imageFile.getAbsolutePath()));</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (bitmap == <span class="keyword">null</span> || bitmap.getWidth() &lt;= <span class="number">0</span> || bitmap.getHeight() &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">	...</span><br><span class="line">	String imageUriForDecoding = uri;</span><br><span class="line">	<span class="keyword">if</span> (options.isCacheOnDisk() &amp;&amp; tryCacheImageOnDisk()) &#123;</span><br><span class="line">		imageFile = configuration.diskCache.get(uri);</span><br><span class="line">		<span class="keyword">if</span> (imageFile != <span class="keyword">null</span>) &#123;</span><br><span class="line">			imageUriForDecoding = Scheme.FILE.wrap(imageFile.getAbsolutePath());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	checkTaskNotActual();</span><br><span class="line">	bitmap = decodeImage(imageUriForDecoding);</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>首先根据 uri 看看磁盘中是不是已经缓存了这个文件，如果已经缓存，调用 decodeImage 函数，将图片文件 decode 成 bitmap 对象；<br>如果 bitmap 不合法或缓存文件不存在，判断是否需要缓存在磁盘，需要则调用<code>tryCacheImageOnDisk()</code>函数去下载并缓存图片到本地磁盘，再通过<code>decodeImage(imageUri)</code>函数将图片文件decode成bitmap对象，否则直接通过<code>decodeImage(imageUriForDecoding)</code>下载图片并解析。  </p>
+<h5 id="(3)_tryCacheImageOnDisk()">(3) tryCacheImageOnDisk()</h5><p>下载图片并存储在磁盘内，根据磁盘缓存图片最长宽高的配置处理图片。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loaded = downloadImage();</span><br></pre></td></tr></table></figure></p>
+<p>主要就是这一句话，调用下载器下载并保存图片。<br>如果你在<code>ImageLoaderConfiguration</code>中还配置了<code>maxImageWidthForDiskCache</code>或者<code>maxImageHeightForDiskCache</code>，还会调用<code>resizeAndSaveImage()</code>函数，调整图片尺寸，并保存新的图片文件。  </p>
+<h5 id="(4)_downloadImage()">(4) downloadImage()</h5><p>下载图片并存储在磁盘内。调用<code>getDownloader()</code>得到<code>ImageDownloader</code>去下载图片。  </p>
+<h5 id="(4)_resizeAndSaveImage(int_maxWidth,_int_maxHeight)">(4) resizeAndSaveImage(int maxWidth, int maxHeight)</h5><p>从磁盘缓存中得到图片，重新设置大小及进行一些处理后保存。  </p>
+<h5 id="(5)_getDownloader()">(5) getDownloader()</h5><p>根据<code>ImageLoaderEngine</code>配置得到下载器。<br>如果不允许访问网络，则使用不允许访问网络的图片下载器<code>NetworkDeniedImageDownloader</code>；如果是慢网络情况，则使用慢网络情况下的图片下载器<code>SlowNetworkImageDownloader</code>；否则直接使用<code>ImageLoaderConfiguration</code>中的<code>downloader</code>。  </p>
+<h5 id="4-2-21_ImageLoadingInfo-java">4.2.21 ImageLoadingInfo.java</h5><p>加载和显示图片任务需要的信息。<br><code>String uri</code> 图片 url。<br><code>String memoryCacheKey</code> 图片缓存 key。<br><code>ImageAware imageAware</code> 需要加载图片的对象。<br><code>ImageSize targetSize</code> 图片的显示尺寸。<br><code>DisplayImageOptions options</code> 图片显示的配置项。<br><code>ImageLoadingListener listener</code> 图片加载各种时刻的回调接口。<br><code>ImageLoadingProgressListener progressListener</code> 图片加载进度的回调接口。<br><code>ReentrantLock loadFromUriLock</code> 图片加载中的重入锁。  </p>
+<h5 id="4-2-22_ImageDownloader-java">4.2.22 ImageDownloader.java</h5><p>图片下载接口。待实现函数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getStream(String imageUri, Object extra)</span><br></pre></td></tr></table></figure></p>
+<p>表示通过 uri 得到 InputStream。<br>通过内部定义的枚举<code>Scheme</code>, 可以看出 UIL 支持哪些图片来源。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HTTP(<span class="string">"http"</span>), HTTPS(<span class="string">"https"</span>), FILE(<span class="string">"file"</span>), CONTENT(<span class="string">"content"</span>), ASSETS(<span class="string">"assets"</span>), DRAWABLE(<span class="string">"drawable"</span>), UNKNOWN(<span class="string">""</span>);</span><br></pre></td></tr></table></figure></p>
+<h5 id="4-2-23_BaseImageDownloader-java">4.2.23 BaseImageDownloader.java</h5><p><code>ImageDownloader</code>的具体实现类。得到上面各种<code>Scheme</code>对应的图片 InputStream。  </p>
+<p><strong>主要函数</strong>  </p>
+<h5 id="(1)-_getStream(String_imageUri,_Object_extra)">(1). getStream(String imageUri, Object extra)</h5><p>在<code>getStream(…)</code>函数内根据不同<code>Scheme</code>类型获取图片输入流。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> InputStream <span class="title">getStream</span><span class="params">(String imageUri, Object extra)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">	<span class="keyword">switch</span> (Scheme.ofUri(imageUri)) &#123;</span><br><span class="line">		<span class="keyword">case</span> HTTP:</span><br><span class="line">		<span class="keyword">case</span> HTTPS:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromNetwork(imageUri, extra);</span><br><span class="line">		<span class="keyword">case</span> FILE:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromFile(imageUri, extra);</span><br><span class="line">		<span class="keyword">case</span> CONTENT:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromContent(imageUri, extra);</span><br><span class="line">		<span class="keyword">case</span> ASSETS:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromAssets(imageUri, extra);</span><br><span class="line">		<span class="keyword">case</span> DRAWABLE:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromDrawable(imageUri, extra);</span><br><span class="line">		<span class="keyword">case</span> UNKNOWN:</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromOtherSource(imageUri, extra);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>具体见下面各函数介绍。  </p>
+<h5 id="(2)-_getStreamFromNetwork(String_imageUri,_Object_extra)">(2). getStreamFromNetwork(String imageUri, Object extra)</h5><p>通过<code>HttpURLConnection</code>从网络获取图片的<code>InputStream</code>。支持 response code 为 3xx 的重定向。这里有个小细节代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	imageStream = conn.getInputStream();</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">	<span class="comment">// Read all data to allow reuse connection (http://bit.ly/1ad35PY)</span></span><br><span class="line">	IoUtils.readAndCloseStream(conn.getErrorStream());</span><br><span class="line">	<span class="keyword">throw</span> e;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在发生异常时会调用<code>conn.getErrorStream()</code>继续读取 Error Stream，这是为了利于网络连接回收及复用。但有意思的是在 Froyo(2.2) 之前，HttpURLConnection 有个重大 Bug，调用 close() 函数会影响连接池，导致连接复用失效，不少库通过在 2.3 之前使用 AndroidHttpClient 解决这个问题。  </p>
+<h5 id="(3)-_getStreamFromFile(String_imageUri,_Object_extra)">(3). getStreamFromFile(String imageUri, Object extra)</h5><p>从文件系统获取图片的<code>InputStream</code>。如果 uri 是 video 类型，则需要单独得到 video 的缩略图返回，否则按照一般读取文件操作返回。  </p>
+<h5 id="(4)-_getStreamFromContent(String_imageUri,_Object_extra)">(4). getStreamFromContent(String imageUri, Object extra)</h5><p>从 ContentProvider 获取图片的<code>InputStream</code>。<br>如果是 video 类型，则先从<code>MediaStore</code>得到 video 的缩略图返回；<br>如果是联系人类型，通过<code>ContactsContract.Contacts.openContactPhotoInputStream(res, uri)</code>读取内容返回。<br>否则通过 ContentResolver.openInputStream(…) 读取内容返回。  </p>
+<h5 id="(5)-_getStreamFromAssets(String_imageUri,_Object_extra)">(5). getStreamFromAssets(String imageUri, Object extra)</h5><p>从 Assets 中获取图片的<code>InputStream</code>。  </p>
+<h5 id="(6)-_getStreamFromDrawable(String_imageUri,_Object_extra)">(6). getStreamFromDrawable(String imageUri, Object extra)</h5><p>从 Drawable 资源中获取图片的<code>InputStream</code>。  </p>
+<h5 id="(7)-_getStreamFromOtherSource(String_imageUri,_Object_extra)">(7). getStreamFromOtherSource(String imageUri, Object extra)</h5><p>UNKNOWN(自定义)类型的处理，目前是直接抛出不支持的异常。  </p>
+<h5 id="4-2-24_MemoryCache-java">4.2.24 MemoryCache.java</h5><p>Bitmap 内存缓存接口，需要实现的接口包括 get(…)、put(…)、remove(…)、clear()、keys()。  </p>
+<h5 id="4-2-25_BaseMemoryCache-java">4.2.25 BaseMemoryCache.java</h5><p>实现了<code>MemoryCache</code>主要函数的抽象类，以 Map\<string, reference\<bitmap\="">> softMap 做为缓存池，利于虚拟机在内存不足时回收缓存对象。提供抽象函数：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> Reference&lt;Bitmap&gt; <span class="title">createReference</span><span class="params">(Bitmap value)</span></span></span><br></pre></td></tr></table></figure></string,></p>
+<p>表示根据 Bitmap 创建一个 Reference<bitmap> 做为缓存对象。Reference 可以是 WeakReference、SoftReference 等。  </bitmap></p>
+<h5 id="4-2-26_WeakMemoryCache-java">4.2.26 WeakMemoryCache.java</h5><p>以<code>WeakReference&lt;Bitmap&gt;</code>做为缓存 value 的内存缓存，实现了<code>BaseMemoryCache</code>。<br>实现了<code>BaseMemoryCache</code>的<code>createReference(Bitmap value)</code>函数，直接返回一个<code>new WeakReference&lt;Bitmap&gt;(value)</code>做为缓存 value。  </p>
+<h5 id="4-2-27_LimitedMemoryCache-java">4.2.27 LimitedMemoryCache.java</h5><p>限制总字节大小的内存缓存，继承自<code>BaseMemoryCache</code>的抽象类。<br>会在 put(…) 函数中判断总体大小是否超出了上限，是则循环删除缓存对象直到小于上限。删除顺序由抽象函数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> Bitmap <span class="title">removeNext</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure></p>
+<p>决定。抽象函数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">getSize</span><span class="params">(Bitmap value)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>表示每个元素大小。  </p>
+<h5 id="4-2-28_LargestLimitedMemoryCache-java">4.2.28 LargestLimitedMemoryCache.java</h5><p>限制总字节大小的内存缓存，会在缓存满时优先删除 size 最大的元素，继承自<code>LimitedMemoryCache</code>。<br>实现了<code>LimitedMemoryCache</code>缓存<code>removeNext()</code>函数，总是返回当前缓存中 size 最大的元素。  </p>
+<h5 id="4-2-29_UsingFreqLimitedMemoryCache-java">4.2.29 UsingFreqLimitedMemoryCache.java</h5><p>限制总字节大小的内存缓存，会在缓存满时优先删除使用次数最少的元素，继承自<code>LimitedMemoryCache</code>。<br>实现了<code>LimitedMemoryCache</code>缓存<code>removeNext()</code>函数，总是返回当前缓存中使用次数最少的元素。  </p>
+<h5 id="4-2-30_LRULimitedMemoryCache-java">4.2.30 LRULimitedMemoryCache.java</h5><p>限制总字节大小的内存缓存，会在缓存满时优先删除最近最少使用的元素，继承自<code>LimitedMemoryCache</code>。<br>通过<code>new LinkedHashMap&lt;String, Bitmap&gt;(10, 1.1f, true)</code>作为缓存池。LinkedHashMap 第三个参数表示是否需要根据访问顺序(accessOrder)排序，true 表示根据<code>accessOrder</code>排序，最近访问的跟最新加入的一样放到最后面，false 表示根据插入顺序排序。这里为 true 且缓存满时始终删除第一个元素，即始终删除最近最少访问的元素。<br>实现了<code>LimitedMemoryCache</code>缓存<code>removeNext()</code>函数，总是返回第一个元素，即最近最少使用的元素。  </p>
+<h5 id="4-2-31_FIFOLimitedMemoryCache-java">4.2.31 FIFOLimitedMemoryCache.java</h5><p>限制总字节大小的内存缓存，会在缓存满时优先删除先进入缓存的元素，继承自<code>LimitedMemoryCache</code>。<br>实现了<code>LimitedMemoryCache</code>缓存<code>removeNext()</code>函数，总是返回最先进入缓存的元素。  </p>
+<p><strong>以上所有<code>LimitedMemoryCache</code>子类都有个问题，就是 Bitmap 虽然通过<code>WeakReference&lt;Bitmap&gt;</code>包装，但实际根本不会被虚拟机回收，因为他们子类中同时都保留了 Bitmap 的强引用。大都是 UIL 早期实现的版本，不推荐使用。</strong>  </p>
+<h5 id="4-2-32_LruMemoryCache-java">4.2.32 LruMemoryCache.java</h5><p>限制总字节大小的内存缓存，会在缓存满时优先删除最近最少使用的元素，实现了<code>MemoryCache</code>。LRU(Least Recently Used) 为最近最少使用算法。  </p>
+<p>以<code>new LinkedHashMap&lt;String, Bitmap&gt;(0, 0.75f, true)</code>作为缓存池。LinkedHashMap 第三个参数表示是否需要根据访问顺序(accessOrder)排序，true 表示根据<code>accessOrder</code>排序，最近访问的跟最新加入的一样放到最后面，false 表示根据插入顺序排序。这里为 true 且缓存满时始终删除第一个元素，即始终删除最近最少访问的元素。  </p>
+<p>在<code>put(…)</code>函数中通过<code>trimToSize(int maxSize)</code>函数判断总体大小是否超出了上限，是则删除第缓存池中第一个元素，即最近最少使用的元素，直到总体大小小于上限。  </p>
+<p><code>LruMemoryCache</code>功能上与<code>LRULimitedMemoryCache</code>类似，不过在实现上更加优雅。用简单的实现接口方式，而不是不断继承的方式。  </p>
+<h5 id="4-2-33_LimitedAgeMemoryCache-java">4.2.33 LimitedAgeMemoryCache.java</h5><p>限制了对象最长存活周期的内存缓存。<br><code>MemoryCache</code>的装饰者，相当于为<code>MemoryCache</code>添加了一个特性。以一个<code>MemoryCache</code>内存缓存和一个 maxAge 做为构造函数入参。在 get(…) 时判断如果对象存活时间已经超过设置的最长时间，则删除。  </p>
+<h5 id="4-2-34_FuzzyKeyMemoryCache-java">4.2.34 FuzzyKeyMemoryCache.java</h5><p>可以将某些原本不同的 key 看做<code>相等</code>，在 put 时删除这些<code>相等</code>的 key。<br><code>MemoryCache</code>的装饰者，相当于为<code>MemoryCache</code>添加了一个特性。以一个<code>MemoryCache</code>内存缓存和一个 keyComparator 做为构造函数入参。在 put(…) 时判断如果 key 与缓存中已有 key 经过<code>Comparator</code>比较后相等，则删除之前的元素。  </p>
+<h5 id="4-2-35_FileNameGenerator-java">4.2.35 FileNameGenerator.java</h5><p>根据 uri 得到文件名的接口。  </p>
+<h5 id="4-2-36_HashCodeFileNameGenerator-java">4.2.36 HashCodeFileNameGenerator.java</h5><p>以 uri 的 hashCode 作为文件名。  </p>
+<h5 id="4-2-37_Md5FileNameGenerator-java">4.2.37 Md5FileNameGenerator.java</h5><p>以 uri 的 MD5 值作为文件名。  </p>
+<h5 id="4-2-38_DiskCache-java">4.2.38 DiskCache.java</h5><p>图片的磁盘缓存接口。  </p>
+<p><strong>主要函数:</strong>  </p>
+<h5 id="(1)_File_get(String_imageUri)">(1) File get(String imageUri)</h5><p>根据原始图片的 uri 去获取缓存图片的文件。  </p>
+<h5 id="(2)_boolean_save(String_imageUri,_InputStream_imageStream,_IoUtils-CopyListener_listener)">(2) boolean save(String imageUri, InputStream imageStream, IoUtils.CopyListener listener)</h5><p>保存 imageStream 到磁盘中，listener 表示保存进度且可在其中取消某些段的保存。  </p>
+<h5 id="(3)_boolean_save(String_imageUri,_Bitmap_bitmap)">(3) boolean save(String imageUri, Bitmap bitmap)</h5><p>保存图片到磁盘。  </p>
+<h5 id="(4)_boolean_remove(String_imageUri)">(4) boolean remove(String imageUri)</h5><p>根据图片 uri 删除缓存图片。  </p>
+<h5 id="(5)_void_close()">(5) void close()</h5><p>关闭磁盘缓存，并释放资源。  </p>
+<h5 id="(6)_void_clear()">(6) void clear()</h5><p>清空磁盘缓存。  </p>
+<h5 id="(7)_File_getDirectory()">(7) File getDirectory()</h5><p>得到磁盘缓存的根目录。  </p>
+<h5 id="4-2-39_BaseDiskCache-java">4.2.39 BaseDiskCache.java</h5><p>一个无大小限制的本地图片缓存，实现了<code>DiskCache</code>主要函数的抽象类。<br>图片缓存在<code>cacheDir</code>文件夹内，当<code>cacheDir</code>不可用时，则使用备库<code>reserveCacheDir</code>。  </p>
+<p><strong>主要函数：</strong> </p>
+<h5 id="(1)-_save(String_imageUri,_InputStream_imageStream,_IoUtils-CopyListener_listener)">(1). save(String imageUri, InputStream imageStream, IoUtils.CopyListener listener)</h5><p>先根据<code>imageUri</code>得到目标文件，将<code>imageStream</code>先写入与目标文件同一文件夹的 .tmp 结尾的临时文件内，若未被<code>listener</code>取消且写入成功则将临时文件重命名为目标文件并返回 true，否则删除临时文件并返回 false。  </p>
+<h5 id="(2)-_save(String_imageUri,_Bitmap_bitmap)">(2). save(String imageUri, Bitmap bitmap)</h5><p>先根据<code>imageUri</code>得到目标文件，通过<code>Bitmap.compress(…)</code>函数将<code>bitmap</code>先写入与目标文件同一文件夹的 .tmp 结尾的临时文件内，若写入成功则将临时文件重命名为目标文件并返回 true，否则删除临时文件并返回 false。  </p>
+<h5 id="(3)-_File_getFile(String_imageUri)">(3). File getFile(String imageUri)</h5><p>根据 imageUri 和 <code>fileNameGenerator</code>得到文件名，返回<code>cacheDir</code>内该文件，若<code>cacheDir</code>不可用，则使用备库<code>reserveCacheDir</code>。  </p>
+<h5 id="4-2-40_LimitedAgeDiskCache-java">4.2.40 LimitedAgeDiskCache.java</h5><p>限制了缓存对象最长存活周期的磁盘缓存，继承自<code>BaseDiskCache</code>。<br>在 get(…) 时判断如果缓存对象存活时间已经超过设置的最长时间，则删除。在 save(…) 时保存当存时间作为对象的创建时间。  </p>
+<h5 id="4-2-41_UnlimitedDiskCache-java">4.2.41 UnlimitedDiskCache.java</h5><p>一个无大小限制的本地图片缓存。与<code>BaseDiskCache</code>无异，只是用了个意思明确的类名。  </p>
+<h5 id="4-2-42_DiskLruCache-java">4.2.42 DiskLruCache.java</h5><p>限制总字节大小的内存缓存，会在缓存满时优先删除最近最少使用的元素。  </p>
+<p>通过缓存目录下名为<code>journal</code>的文件记录缓存的所有操作，并在缓存<code>open</code>时读取<code>journal</code>的文件内容存储到<code>LinkedHashMap&lt;String, Entry&gt; lruEntries</code>中，后面<code>get(String key)</code>获取缓存内容时，会先从<code>lruEntries</code>中得到图片文件名返回文件。  </p>
+<p>LRU 的实现跟上面内存缓存类似，<code>lruEntries</code>为<code>new LinkedHashMap&lt;String, Entry&gt;(0, 0.75f, true)</code>，LinkedHashMap 第三个参数表示是否需要根据访问顺序(accessOrder)排序，true 表示根据<code>accessOrder</code>排序，最近访问的跟最新加入的一样放到最后面，false 表示根据插入顺序排序。这里为 true 且缓存满时<code>trimToSize()</code>函数始终删除第一个元素，即始终删除最近最少访问的文件。  </p>
+<p>来源于 JakeWharton 的开源项目 <a href="https://github.com/JakeWharton/DiskLruCache" target="_blank" rel="external">DiskLruCache</a>，具体分析请等待 <a href="https://github.com/android-cn/android-open-project-analysis/tree/master/disk-lru-cache" target="_blank" rel="external">DiskLruCache 源码解析</a> 完成。  </p>
+<h5 id="4-2-43_LruDiskCache-java">4.2.43 LruDiskCache.java</h5><p>限制总字节大小的内存缓存，会在缓存满时优先删除最近最少使用的元素，实现了<code>DiskCache</code>。<br>内部有个<code>DiskLruCache cache</code>属性，缓存的存、取操作基本都是由该属性代理完成。  </p>
+<h5 id="4-2-44_StrictLineReader-java">4.2.44 StrictLineReader.java</h5><p>通过<code>readLine()</code>函数从<code>InputStream</code>中读取一行，目前仅用于磁盘缓存操作记录文件<code>journal</code>的解析。  </p>
+<h5 id="4-2-45_Util-java">4.2.45 Util.java</h5><p>工具类。<br><code>String readFully(Reader reader)</code>读取 reader 中内容。<br><code>deleteContents(File dir)</code>递归删除文件夹内容。  </p>
+<h5 id="4-2-46_ContentLengthInputStream-java">4.2.46 ContentLengthInputStream.java</h5><p><code>InputStream</code>的装饰者，可通过<code>available()</code>函数得到 InputStream 对应数据源的长度(总字节数)。主要用于计算文件存储进度即图片下载进度时的总进度。  </p>
+<h5 id="4-2-47_FailReason-java">4.2.47 FailReason.java</h5><p>图片下载及显示时的错误原因，目前包括：<br><code>IO_ERROR</code> 网络连接或是磁盘存储错误。<br><code>DECODING_ERROR</code> decode image 为 Bitmap 时错误。<br><code>NETWORK_DENIED</code> 当图片不在缓存中，且设置不允许访问网络时的错误。<br><code>OUT_OF_MEMORY</code> 内存溢出错误。<br><code>UNKNOWN</code> 未知错误。  </p>
+<h5 id="4-2-48_FlushedInputStream-java">4.2.48 FlushedInputStream.java</h5><p>为了解决早期 Android 版本<code>BitmapFactory.decodeStream(…)</code>在慢网络情况下 decode image 异常的 Bug。<br>主要通过重写<code>FilterInputStream</code>的 skip(long n) 函数解决，确保 skip(long n) 始终跳过了 n 个字节。如果返回结果即跳过的字节数小于 n，则不断循环直到 skip(long n) 跳过 n 字节或到达文件尾。  </p>
+<h5 id="4-2-49_ImageScaleType-java">4.2.49 ImageScaleType.java</h5><p>Image 的缩放类型，目前包括：<br><code>NONE</code>不缩放。<br><code>NONE_SAFE</code>根据需要以整数倍缩小图片，使得其尺寸不超过 Texture 可接受最大尺寸。<br><code>IN_SAMPLE_POWER_OF_2</code>根据需要以 2 的 n 次幂缩小图片，使其尺寸不超过目标大小，比较快的缩小方式。<br><code>IN_SAMPLE_INT</code>根据需要以整数倍缩小图片，使其尺寸不超过目标大小。<br><code>EXACTLY</code>根据需要缩小图片到宽或高有一个与目标尺寸一致。<br><code>EXACTLY_STRETCHED</code>根据需要缩放图片到宽或高有一个与目标尺寸一致。  </p>
+<h5 id="4-2-50_ViewScaleType-java">4.2.50 ViewScaleType.java</h5><p><code>ImageAware</code>的 ScaleType。<br>将 ImageView 的 ScaleType 简化为两种<code>FIT_INSIDE</code>和<code>CROP</code>两种。<code>FIT_INSIDE</code>表示将图片缩放到至少宽度和高度有一个小于等于 View 的对应尺寸，<code>CROP</code>表示将图片缩放到宽度和高度都大于等于 View 的对应尺寸。  </p>
+<h5 id="4-2-51_ImageSize-java">4.2.51 ImageSize.java</h5><p>表示图片宽高的类。<br><code>scaleDown(…)</code> 等比缩小宽高。<br><code>scale(…)</code> 等比放大宽高。  </p>
+<h5 id="4-2-52_LoadedFrom-java">4.2.52 LoadedFrom.java</h5><p>图片来源枚举类，包括网络、磁盘缓存、内存缓存。  </p>
+<h5 id="4-2-53_ImageDecoder-java">4.2.53 ImageDecoder.java</h5><p>将图片转换为 Bitmap 的接口，抽象函数：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Bitmap <span class="title">decode</span><span class="params">(ImageDecodingInfo imageDecodingInfo)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure></p>
+<p>表示根据<code>ImageDecodingInfo</code>信息得到图片并根据参数将其转换为 Bitmap。  </p>
+<h5 id="4-2-54_BaseImageDecoder-java">4.2.54 BaseImageDecoder.java</h5><p>实现了<code>ImageDecoder</code>。调用<code>ImageDownloader</code>获取图片，然后根据<code>ImageDecodingInfo</code>或图片 Exif 信息处理图片转换为 Bitmap。  </p>
+<p><strong>主要函数：</strong></p>
+<h5 id="(1)-_decode(ImageDecodingInfo_decodingInfo)">(1). decode(ImageDecodingInfo decodingInfo)</h5><p>调用<code>ImageDownloader</code>获取图片，再调用<code>defineImageSizeAndRotation(…)</code>函数得到图片的相关信息，调用<code>prepareDecodingOptions(…)</code>得到图片缩放的比例，调用<code>BitmapFactory.decodeStream</code>将 InputStream 转换为 Bitmap，最后调用<code>considerExactScaleAndOrientatiton(…)</code>根据参数将图片放大、翻转、旋转为合适的样子返回。  </p>
+<h5 id="(2)-_defineImageSizeAndRotation(InputStream_imageStream,_ImageDecodingInfo_decodingInfo)">(2). defineImageSizeAndRotation(InputStream imageStream, ImageDecodingInfo decodingInfo)</h5><p>得到图片真实大小以及 Exif 信息(设置考虑 Exif 的条件下)。  </p>
+<h5 id="(3)-_defineExifOrientation(String_imageUri)">(3). defineExifOrientation(String imageUri)</h5><p>得到图片 Exif 信息中的翻转以及旋转角度信息。  </p>
+<h5 id="(4)-_prepareDecodingOptions(ImageSize_imageSize,_ImageDecodingInfo_decodingInfo)">(4). prepareDecodingOptions(ImageSize imageSize, ImageDecodingInfo decodingInfo)</h5><p>得到图片缩放的比例。  </p>
+<ol>
+<li>如果<code>scaleType</code>等于<code>ImageScaleType.NONE</code>，则缩放比例为 1；  </li>
+<li>如果<code>scaleType</code>等于<code>ImageScaleType.NONE_SAFE</code>，则缩放比例为 <code>(int)Math.ceil(Math.max((float)srcWidth / maxWidth, (float)srcHeight / maxHeight))</code>；  </li>
+<li>否则，调用<code>ImageSizeUtils.computeImageSampleSize(…)</code>计算缩放比例。<br>在 computeImageSampleSize(…) 中  </li>
+<li>如果<code>viewScaleType</code>等于<code>ViewScaleType.FIT_INSIDE</code>；<br>1.1 如果<code>scaleType</code>等于<code>ImageScaleType.IN_SAMPLE_POWER_OF_2</code>，则缩放比例从 1 开始不断 *2 直到宽或高小于最大尺寸；<br>1.2 否则取宽和高分别与最大尺寸比例中较大值，即<code>Math.max(srcWidth / targetWidth, srcHeight / targetHeight)</code>。  </li>
+<li>如果<code>scaleType</code>等于<code>ViewScaleType.CROP</code>；<br>2.1 如果<code>scaleType</code>等于<code>ImageScaleType.IN_SAMPLE_POWER_OF_2</code>，则缩放比例从 1 开始不断 *2 直到宽和高都小于最大尺寸。<br>2.2 否则取宽和高分别与最大尺寸比例中较小值，即<code>Math.min(srcWidth / targetWidth, srcHeight / targetHeight)</code>。  </li>
+<li>最后判断宽和高是否超过最大值，如果是 *2 或是 +1 缩放。  </li>
+</ol>
+<h5 id="(5)-_considerExactScaleAndOrientatiton(Bitmap_subsampledBitmap,_ImageDecodingInfo_decodingInfo,_int_rotation,_boolean_flipHorizontal)">(5). considerExactScaleAndOrientatiton(Bitmap subsampledBitmap, ImageDecodingInfo decodingInfo, int rotation, boolean flipHorizontal)</h5><p>根据参数将图片放大、翻转、旋转为合适的样子返回。  </p>
+<h5 id="4-2-55_ImageDecodingInfo-java">4.2.55 ImageDecodingInfo.java</h5><p>Image Decode 需要的信息。<br><code>String imageKey</code> 图片。<br><code>String imageUri</code> 图片 uri，可能是缓存文件的 uri。<br><code>String originalImageUri</code> 图片原 uri。<br><code>ImageSize targetSize</code> 图片的显示尺寸。<br><code>imageScaleType</code> 图片的 ScaleType。<br><code>ImageDownloader downloader</code> 图片的下载器。<br><code>Object extraForDownloader</code> 下载器需要的辅助信息。<br><code>boolean considerExifParams</code> 是否需要考虑图片 Exif 信息。<br><code>Options decodingOptions</code> 图片的解码信息，为 BitmapFactory.Options。  </p>
+<h5 id="4-2-56_BitmapDisplayer-java">4.2.56 BitmapDisplayer.java</h5><p>在<code>ImageAware</code>中显示 bitmap 对象的接口。可在实现中对 bitmap 做一些额外处理，比如加圆角、动画效果。  </p>
+<h5 id="4-2-57_FadeInBitmapDisplayer-java">4.2.57 FadeInBitmapDisplayer.java</h5><p>图片淡入方式显示在<code>ImageAware</code>中，实现了<code>BitmapDisplayer</code>接口。  </p>
+<h5 id="4-2-58_RoundedBitmapDisplayer-java">4.2.58 RoundedBitmapDisplayer.java</h5><p>为图片添加圆角显示在<code>ImageAware</code>中，实现了<code>BitmapDisplayer</code>接口。主要通过<code>BitmapShader</code>实现。  </p>
+<h5 id="4-2-59_RoundedVignetteBitmapDisplayer-java">4.2.59 RoundedVignetteBitmapDisplayer.java</h5><p>为图片添加渐变效果的圆角显示在<code>ImageAware</code>中，实现了<code>BitmapDisplayer</code>接口。主要通过<code>RadialGradient</code>实现。  </p>
+<h5 id="4-2-60_SimpleBitmapDisplayer-java">4.2.60 SimpleBitmapDisplayer.java</h5><p>直接将图片显示在<code>ImageAware</code>中，实现了<code>BitmapDisplayer</code>接口。  </p>
+<h5 id="4-2-61_BitmapProcessor-java">4.2.61 BitmapProcessor.java</h5><p>图片处理接口。可用于对图片预处理(Pre-process Bitmap)和后处理(Post-process Bitmap)。抽象函数：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BitmapProcessor</span> </span>&#123;</span><br><span class="line">	<span class="function">Bitmap <span class="title">process</span><span class="params">(Bitmap bitmap)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>用户可以根据自己需求去实现它。比如你想要为你的图片添加一个水印，那么可以自己去实现 BitmapProcessor 接口，在<code>DisplayImageOptions</code>中配置 Pre-process 阶段预处理图片，这样设置后存储在文件系统以及内存缓存中的图片都是加了水印后的。如果只希望在显示时改变不动原图片，可以在<code>BitmapDisplayer</code>中处理。  </p>
+<h5 id="4-2-62_PauseOnScrollListener-java">4.2.62 PauseOnScrollListener.java</h5><p>可在 View 滚动过程中暂停图片加载的 Listener，实现了 OnScrollListener 接口。<br>它的好处是防止滚动中不必要的图片加载，比如快速滚动不希望滚动中的图片加载。在 ListView 或 GridView 中 item 加载图片最好使用它，简单的一行代码:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gridView.setOnScrollListener(<span class="keyword">new</span> PauseOnScrollListener(ImageLoader.getInstance(), <span class="keyword">false</span>, <span class="keyword">true</span>));</span><br></pre></td></tr></table></figure></p>
+<p><strong>主要的成员变量：</strong><br><code>pauseOnScroll</code> 触摸滑动(手指依然在屏幕上)过程中是否暂停图片加载。<br><code>pauseOnFling</code> 甩指滚动(手指已离开屏幕)过程中是否暂停图片加载。<br><code>externalListener</code> 自定义的 OnScrollListener 接口，适用于 View 原来就有自定义 OnScrollListener 情况设置。  </p>
+<p><strong>实现原理：</strong><br>重写<code>onScrollStateChanged(…)</code>函数判断不同的状态下暂停或继续图片加载。<br><code>OnScrollListener.SCROLL_STATE_IDLE</code>表示 View 处于空闲状态，没有在滚动，这时候会加载图片。<br><code>OnScrollListener.SCROLL_STATE_TOUCH_SCROLL</code>表示 View 处于触摸滑动状态，手指依然在屏幕上，通过<code>pauseOnScroll</code>变量确定是否需要暂停图片加载。这种时候大都属于慢速滚动浏览状态，所以建议继续图片加载。<br><code>OnScrollListener.SCROLL_STATE_FLING</code>表示 View 处于甩指滚动状态，手指已离开屏幕，通过<code>pauseOnFling</code>变量确定是否需要暂停图片加载。这种时候大都属于快速滚动状态，所以建议暂停图片加载以节省资源。  </p>
+<h5 id="4-2-63_QueueProcessingType-java">4.2.63 QueueProcessingType.java</h5><p>任务队列的处理类型，包括<code>FIFO</code>先进先出、<code>LIFO</code>后进先出。  </p>
+<h5 id="4-2-64_LIFOLinkedBlockingDeque-java">4.2.64 LIFOLinkedBlockingDeque.java</h5><p>后进先出阻塞队列。重写<code>LinkedBlockingDeque</code>的<code>offer(…)</code>函数如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">offer</span><span class="params">(T e)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">super</span>.offerFirst(e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>让<code>LinkedBlockingDeque</code>插入总在最前，而<code>remove()</code>本身始终删除第一个元素，所以就变为了后进先出阻塞队列。<br>实际一般情况只重写<code>offer(…)</code>函数是不够的，但因为<code>ThreadPoolExecutor</code>默认只用到了<code>BlockingQueue</code>的<code>offer(…)</code>函数，所以这种简单重写后做为<code>ThreadPoolExecutor</code>的任务队列没问题。  </p>
+<p><code>LIFOLinkedBlockingDeque.java</code>包下的<code>LinkedBlockingDeque.java</code>、<code>BlockingDeque.java</code>、<code>Deque.java</code>都是 Java 1.6 源码中的，这里不做分析。  </p>
+<h5 id="4-2-65_DiskCacheUtils-java">4.2.65 DiskCacheUtils.java</h5><p>磁盘缓存工具类，可用于查找或删除某个 uri 对应的磁盘缓存。  </p>
+<h5 id="4-2-66_MemoryCacheUtils-java">4.2.66 MemoryCacheUtils.java</h5><p>内存缓存工具类。可用于根据 uri 生成内存缓存 key，缓存 key 比较，根据 uri 得到所有相关的 key 或图片，删除某个 uri 的内存缓存。<br><code>generateKey(String imageUri, ImageSize targetSize)</code><br>根据 uri 生成内存缓存 key，key 规则为<code>[imageUri]_[width]x[height]</code>。  </p>
+<h5 id="4-2-67_StorageUtils-java">4.2.67 StorageUtils.java</h5><p>得到图片 SD 卡缓存目录路径。<br>缓存目录优先选择<code>/Android/data/[app_package_name]/cache</code>；若无权限或不可用，则选择 App 在文件系统的缓存目录<code>context.getCacheDir()</code>；若无权限或不可用，则选择<code>/data/data/[app_package_name]/cache</code>。  </p>
+<p>如果缓存目录选择了<code>/Android/data/[app_package_name]/cache</code>，则新建<code>.nomedia</code>文件表示不允许类似 Galley 这些应用显示此文件夹下图片。不过在 4.0 系统有 Bug 这种方式不生效。  </p>
+<h5 id="4-2-68_ImageSizeUtils-java">4.2.68 ImageSizeUtils.java</h5><p>用于计算图片尺寸、缩放比例相关的工具类。  </p>
+<h5 id="4-2-69_IoUtils-java">4.2.69 IoUtils.java</h5><p>IO 相关工具类，包括 stream 拷贝，关闭等。  </p>
+<h5 id="4-2-70_L-java">4.2.70 L.java</h5><p>Log 工具类。  </p>
+<h3 id="5-_杂谈">5. 杂谈</h3><h4 id="聊聊_LRU">聊聊 LRU</h4><p>UIL 的内存缓存默认使用了 LRU 算法。<br>LRU: Least Recently Used 近期最少使用算法, 选用了基于链表结构的 LinkedHashMap 作为存储结构。<br>假设情景：内存缓存设置的阈值只够存储两个 bitmap 对象，当 put 第三个 bitmap 对象时，将近期最少使用的 bitmap 对象移除。<br>图1: 初始化 LinkedHashMap, 并按使用顺序来排序, accessOrder = true;<br>图2: 向缓存池中放入 bitmap1 和 bitmap2 两个对象。<br>图3: 继续放入第三个 bitmap3，根据假设情景，将会超过设定缓存池阈值。<br>图4: 释放对 bitmap1 对象的引用。<br>图5: bitmap1 对象被 GC 回收。<br><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/lru_header.png" alt=""><br><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/lru_put.png" alt=""><br><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/lru_put_exceed_maxsize2.png" alt=""><br><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/lru_put_trim.png" alt=""><br><img src="https://github.com/android-cn/android-open-project-analysis/raw/master/universal-image-loader/image/lru_trim_result.png" alt="">  </p>
+<blockquote>
+<p>本文为 <a href="https://github.com/android-cn/android-open-project-analysis" target="_blank" rel="external">Android 开源项目源码解析</a> 中 Android Universal Image Loader 部分<br>项目地址：<a href="https://github.com/nostra13/Android-Universal-Image-Loader" target="_blank" rel="external">Android-Universal-Image-Loader</a>，分析的版本：<a href="https://github.com/nostra13/Android-Universal-Image-Loader/commit/eb794c306c1707a6cce80764b01f52109d5b9056" target="_blank" rel="external">eb794c3</a>，Demo 地址：<a href="https://github.com/android-cn/android-open-project-demo/tree/master/universal-image-loader-demo" target="_blank" rel="external">UIL Demo</a><br>分析者：<a href="https://github.com/huxian99" target="_blank" rel="external">huxian99</a>，校对者：<a href="https://github.com/grumoon" target="_blank" rel="external">Grumoon</a>、<a href="https://github.com/trinea" target="_blank" rel="external">Trinea</a>，校对状态：完成</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_universal-image-loader/" data-id="cibk39tmt005d50fluvlzzsdn" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_universal-image-loader/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_view-pager-indicator/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android 开源项目源码解析之ViewPagerindicator 源码解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_photoview/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 开源项目源码解析之PhotoView 源码解析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/03/android-open-project-analysis_universal-image-loader/" data-title="Android 开源项目源码解析之Universal Image Loader 源码分析" data-url="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_universal-image-loader/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">39</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">40</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project_analysis_holographlibrary/">Android 开源项目源码解析之HoloGraphLibrary 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_event-bus/">Android 开源项目源码解析之EventBus 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/improving-comment-rendering-on-android/">Instagram是如何提升TextView渲染性能的</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_circular-floating-action-menu/">Android 开源项目源码解析之CircularFloatingActionMenu 源码解析</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/03/android-open-project-analysis_dagger/">Android 开源项目源码解析之Dagger 源码解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>
