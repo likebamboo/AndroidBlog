@@ -9,6 +9,14 @@
         android:layout_height="fill_parent"
         android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/webview_progress_bar"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:background="@android:color/transparent"
+            android:progressDrawable="@drawable/webview_progress_bar"/>
+
         <com.likebamboo.osa.android.ui.view.ObservedWebView
             android:id="@+id/common_webview"
             android:layout_width="fill_parent"
@@ -21,9 +29,4 @@
             android:layout_height="@dimen/abc_action_bar_default_height_material"/>
     </LinearLayout>
 
-    <include
-        android:id="@+id/webview_loading_layout"
-        layout="@layout/space_loading_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
 </FrameLayout>

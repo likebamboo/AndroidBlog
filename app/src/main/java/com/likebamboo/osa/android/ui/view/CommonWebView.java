@@ -7,6 +7,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -14,6 +15,7 @@ import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import com.likebamboo.osa.android.R;
 
@@ -36,9 +38,9 @@ public class CommonWebView extends FrameLayout {
     private ObservedWebView mWebview = null;
 
     /**
-     * loading
+     * 进度条
      */
-    private LoadingLayout mLoadingLayout = null;
+    private ProgressBar mProgressBar = null;
 
     /**
      * 工具栏
@@ -56,14 +58,14 @@ public class CommonWebView extends FrameLayout {
     private WebViewClient mWebViewClient = new WebViewClient() {
 
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            mLoadingLayout.showLoading(true);
+            mProgressBar.setVisibility(View.VISIBLE);
             if (mListener != null) {
                 mListener.onPageStarted(url);
             }
         }
 
         public void onPageFinished(WebView view, String url) {
-            mLoadingLayout.showLoading(false);
+            mProgressBar.setVisibility(View.GONE);
             if (mListener != null) {
                 mListener.onPageFinished(url);
             }
@@ -105,6 +107,15 @@ public class CommonWebView extends FrameLayout {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
+            if (newProgress == 100) {
+                mProgressBar.setVisibility(GONE);
+            } else {
+                if (mProgressBar.getVisibility() == GONE) {
+                    mProgressBar.setVisibility(VISIBLE);
+                }
+                mProgressBar.setProgress(newProgress);
+            }
+            super.onProgressChanged(view, newProgress);
         }
 
         @Override
@@ -138,7 +149,7 @@ public class CommonWebView extends FrameLayout {
         mContext = context;
         LayoutInflater.from(context).inflate(R.layout.common_webview, this, true);
         mWebview = (ObservedWebView) findViewById(R.id.common_webview);
-        mLoadingLayout = (LoadingLayout) findViewById(R.id.webview_loading_layout);
+        mProgressBar = (ProgressBar) findViewById(R.id.webview_progress_bar);
         mToolBar = (WebViewToolBar) findViewById(R.id.webview_tool_bar);
 
         initWebViewSettings();
