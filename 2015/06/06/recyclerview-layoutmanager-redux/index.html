@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>创建-RecyclerView-LayoutManager-Redux | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这篇文章是RecyclerView系列文章的结尾篇。当我在写这个系列的最后一篇文章，也就是关于predictIve animation的讨论时，我突然想到几个很有意思的点，并且很有讨论价值。这个系列文章以调查RecyclerView是否能够以简单的方式满足竖向、横向滚动的布局需求以及开发者要定制一个LayoutManager的难度有多大开始。这篇文章中我选择了一个基本的网格布局作为自定义layou">
+<meta property="og:type" content="article">
+<meta property="og:title" content="创建-RecyclerView-LayoutManager-Redux">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/06/06/recyclerview-layoutmanager-redux/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="这篇文章是RecyclerView系列文章的结尾篇。当我在写这个系列的最后一篇文章，也就是关于predictIve animation的讨论时，我突然想到几个很有意思的点，并且很有讨论价值。这个系列文章以调查RecyclerView是否能够以简单的方式满足竖向、横向滚动的布局需求以及开发者要定制一个LayoutManager的难度有多大开始。这篇文章中我选择了一个基本的网格布局作为自定义layou">
+<meta property="og:image" content="https://camo.githubusercontent.com/3595391f951510c51bc3201d2686eb3e279f8cc7/687474703a2f2f692e656d6265642e6c792f312f646973706c61792f726573697a653f75726c3d6874747025334125324625324677697265736172656f62736f6c6574652e636f6d253246776f7264707265737325324677702d636f6e74656e7425324675706c6f6164732532463230313525324630322532464772696457696e646f772e6769662667726f773d74727565266b65793d3932623331313032353238353131653161326563343034306433646335633037266865696768743d343030">
+<meta property="og:updated_time" content="2015-07-11T10:07:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="创建-RecyclerView-LayoutManager-Redux">
+<meta name="twitter:description" content="这篇文章是RecyclerView系列文章的结尾篇。当我在写这个系列的最后一篇文章，也就是关于predictIve animation的讨论时，我突然想到几个很有意思的点，并且很有讨论价值。这个系列文章以调查RecyclerView是否能够以简单的方式满足竖向、横向滚动的布局需求以及开发者要定制一个LayoutManager的难度有多大开始。这篇文章中我选择了一个基本的网格布局作为自定义layou">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-recyclerview-layoutmanager-redux" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/06/recyclerview-layoutmanager-redux/" class="article-date">
+  <time datetime="2015-06-05T16:00:00.000Z" itemprop="datePublished">2015-06-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      创建-RecyclerView-LayoutManager-Redux
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这篇文章是RecyclerView系列文章的结尾篇。<br>当我在写这个系列的最后一篇文章，也就是关于predictIve animation的讨论时，我突然想到几个很有意思的点，并且很有讨论价值。这个系列文章以调查RecyclerView是否能够以简单的方式满足竖向、横向滚动的布局需求以及开发者要定制一个LayoutManager的难度有多大开始。这篇文章中我选择了一个基本的网格布局作为自定义layoutManager的示例。<br><a id="more"></a><br>下面这幅图展示了运用这个自定义LayoutManager到RecyclerView的滚动效果。       </p>
+<p><img src="https://camo.githubusercontent.com/3595391f951510c51bc3201d2686eb3e279f8cc7/687474703a2f2f692e656d6265642e6c792f312f646973706c61792f726573697a653f75726c3d6874747025334125324625324677697265736172656f62736f6c6574652e636f6d253246776f7264707265737325324677702d636f6e74656e7425324675706c6f6164732532463230313525324630322532464772696457696e646f772e6769662667726f773d74727565266b65793d3932623331313032353238353131653161326563343034306433646335633037266865696768743d343030" alt=""></p>
+<h2 id="打破常规设计">打破常规设计</h2><p>无论你打算如何组织Adapter的位置（从左到右，上到下等等）,内容视图的视角都是显示部分不连贯数据集的区域。更确切地说，在第一个和最后一个可视位置之间的Adapter区域的数据项也会在可视区域view的外面。 </p>
+<p>这是一个很重要的点，因为它与在单轴上滚动的布局大相径庭（从而导致与当前框架下提供的默认布局背道而驰）。这些标准小工具显示，数据集是在一个连接块范围内—从第一个到最后一个可视位置之间不间断。</p>
+<p>RecyclerView LayoutManager API会假定有一个可见的数据集合，RecyclerView LayoutManager只会显示数据集合中某个范围内可见的数据项，然后产生一个像上述所展示的网格布局一样的布局效果，这稍微有那么点挑战。在predictive animation里没有什么比这部分更加明显了。为了便于扩展，我感觉在这里指出这些毛病是非常必要的。</p>
+<h2 id="假设1_：_从不可见区域移除一个数据项不会影响当前可见的View">假设1 ： 从不可见区域移除一个数据项不会影响当前可见的View</h2><p>当你考虑到一个Adapter移除一个数据项时LinearLayoutManager或者GridLayoutManager会做何反应时，这两个LayoutManager实际上都处理得非常好。如果被移除的数据项是可见的，一个可用的区域将会空置出来，此时就需要一个周边的View进行填充。这意味着周边显示的View必须被布局到这个位置以填补缺口。然而，并没有一个示例表明当一个移除操作执行时会发送一个隐藏视图的操作，唯一被隐藏的视图是那些被显式移除的。如果被移除的View在可见区域之外，那么对于可见区域的布局不会产生影响。在这个情况之下，你不会看到任何动画，它可能做出的修改是数据项被移到其他位置。</p>
+<p>从上述的情况看，这与文章开头我们提到的一样，LayoutManager显示的是一个不连续的数据项。然而，这一可视区域的不连续本质使得数据项在屏幕外从可视区域内移除！换种说法，它们的位置处于第一个和最后一个位置之间，但是目前数据项view并不在布局中。这导致的结果就是，屏幕外发生的数据项移除可以并且会影响我们在布局动画处理时view的生成和消失。</p>
+<p>在有机会对view的生成进行布局时，预布局是RecyclerView动画的关键阶段。RecyclerView通过其初始位置值将view返回，据此我们可以将内容布局在其初始状态。但是，当view移除与可视区域不相交时。RecyclerView就会通过其最终位置值将view返回。这样一来，在没有附加记账的情况下处理view的生成就变得困难得多。不过话说回来，难是难，也还是可以做到。</p>
+<p>在上一篇文章中我们看到的FixedGridLayoutManager，我们不仅要解析可视view，还要听从onItemsRemoved()的回调来找到移除点，并妥当处理所有生成的view案例。RecyclerView确保我们在需要时，该回调会在预布局之前出现（屏幕外案例），但相反情况下会在预布局之后出现。RecyclerView这么做是为了避免这些事件与你的布局产生冲突—其时间点对我们来说只是一个美丽的意外。</p>
+<p>我们还需要追踪的一个事实就是，可视移除会以一种我们意料之中的方式偏移view的位置，而屏幕外移除则不会。这也是为什么移除会被冠以不同类型的原因。上一篇文章忽略的一点表明，在屏幕外进行移除时，我们会对view生成逻辑提供一个手动偏移。。。所以当移除可视时，位置之间会相互匹配。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">fillGrid</span><span class="params">(<span class="keyword">int</span> direction, <span class="keyword">int</span> emptyLeft, <span class="keyword">int</span> emptyTop, RecyclerView.Recycler recycler,</span><br><span class="line">        <span class="keyword">boolean</span> preLayout, SparseIntArray removedPositions)</span> </span>&#123;</span><br><span class="line">    …</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; getVisibleChildCount(); i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> nextPosition = positionOfIndex(i);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span><br><span class="line">         * When a removal happens out of bounds, the pre-layout positions of items</span><br><span class="line">         * after the removal are shifted to their final positions ahead of schedule.</span><br><span class="line">         * We have to track off-screen removals and shift those positions back</span><br><span class="line">         * so we can properly lay out all current (and appearing) views in their</span><br><span class="line">         * initial locations.</span><br><span class="line">         */</span></span><br><span class="line">        <span class="keyword">int</span> offsetPositionDelta = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (preLayout) &#123;</span><br><span class="line">            <span class="keyword">int</span> offsetPosition = nextPosition;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> offset = <span class="number">0</span>; offset &lt; removedPositions.size(); offset++) &#123;</span><br><span class="line">                <span class="comment">//Look for off-screen removals that are less-than this</span></span><br><span class="line">                <span class="keyword">if</span> (removedPositions.valueAt(offset) == REMOVE_INVISIBLE</span><br><span class="line">                        &amp;&amp; removedPositions.keyAt(offset) &lt; nextPosition) &#123;</span><br><span class="line">                    <span class="comment">//Offset position to match</span></span><br><span class="line">                    offsetPosition--;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            offsetPositionDelta = nextPosition - offsetPosition;</span><br><span class="line">            nextPosition = offsetPosition;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (nextPosition &lt; <span class="number">0</span> || nextPosition &gt;= getItemCount()) &#123;</span><br><span class="line">            <span class="comment">//Item space beyond the data set, don't attempt to add a view</span></span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        …</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (i % mVisibleColumnCount == (mVisibleColumnCount - <span class="number">1</span>)) &#123;</span><br><span class="line">            leftOffset = startLeftOffset;</span><br><span class="line">            topOffset += mDecoratedChildHeight;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//During pre-layout, on each column end, apply any additional appearing views</span></span><br><span class="line">            <span class="keyword">if</span> (preLayout) &#123;</span><br><span class="line">                layoutAppearingViews(recycler, view, nextPosition, removedPositions.size(), offsetPositionDelta);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            leftOffset += mDecoratedChildWidth;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    …</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>之后offsetPositionDelta值会作为我们在预布局中使用到的行/列位置的全局偏移被传递到layoutAppearingViews()。如果不是出于附加记账要求，这一偏移完全可以不必存在。</p>
+<h2 id="假设#2：添加新的数据项只会导致同级view的消失，而不是生成。">假设#2：添加新的数据项只会导致同级view的消失，而不是生成。</h2><p>添加了新的数据项之后，反面为真。如果在添加时数据项为可视，那么标准布局管理器会在屏幕外推开不可视的view以便腾出空间。之前没有出现过关于这种行为会同时触发一个或多个同级view滑向可视子类位置的案例。移除也是同样的道理，在可视区域外添加数据项并不会影响可视view，所以通常来说动画也不会起作用。</p>
+<p>对于FixedGridLayoutManager或其他任何非连贯区域的布局，在可视区域内还是可视区域外进行添加并没有多大差别。两种情况中我们都需要管理可能出现的view生成和消失。而我们在移除中使用的方案在这里则不可行，因为onItemsAdded()总是在预布局之后被调用。。。这一次我们就没那么幸运地再一次能够碰到美丽的意外了。</p>
+<p>缺少了那次回调，关于添加数据项，我们实际上在预布局时就没有多少可做的了。这样一来就变成了布局额外的view以备不时之需，而不布局一定量的额外view就会损害性能这两种情况之间的妥协。FixedGridLayoutManager在添加数据项时不支持预测view生成。</p>
+<h2 id="一切才刚刚开始">一切才刚刚开始</h2><p>RecyclerView APIs是一个新生事物，现有案例中还有非常多的地方需要改进的。同时，它也非常复杂，想要做对并不容易。表面上看起来RecyclerView要求大家付出的努力，背后可能大家要花10倍的精力才能实现。而且这些类型越到后面可能月蛋疼。希望正在尝试这种做法的各位同仁可以视本文为一个预警，不要盲目浪费时间，但同时我们也期待这这个框架的日渐成熟。</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://wiresareobsolete.com/2015/02/recyclerview-layoutmanager-redux/" target="_blank" rel="external">Building A RecyclerView LayoutManager – Redux</a></li>
+<li>原文作者 : <a href="https://github.com/devunwired" target="_blank" rel="external">Dave Smith</a></li>
+<li><a href="http://www.devtf.cn" target="_blank" rel="external">译文出自 :  开发技术前线 www.devtf.cn</a></li>
+<li>译者 : <a href="https://github.com/bboyfeiyu" target="_blank" rel="external">Mr.Simple</a> </li>
+<li>校对者: <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a>  </li>
+<li>状态 :  完成 </li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/06/06/recyclerview-layoutmanager-redux/" data-id="cibyx16ru002isw1i63eadr8i" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/06/06/recyclerview-layoutmanager-redux/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/06/advocating-against-android-fragments/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Square：从今天开始抛弃Fragment吧！
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/06/boosting-the-performance-for-gradle-in-your-android-projects/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">优化android studio编译效率的方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/06/06/recyclerview-layoutmanager-redux/" data-title="创建-RecyclerView-LayoutManager-Redux" data-url="http://likebamboo.com/AndroidBlog/2015/06/06/recyclerview-layoutmanager-redux/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/性能优化/">性能优化</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">64</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/Android架构/">Android架构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/材料设计/">材料设计</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">14</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AndroidStudio/">AndroidStudio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">42</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/06/">六月 2015</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/android-design-support-library/">Android Design Support Library</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/android-design-support-library-part-1-navigation-view/">Design Support Library (I)-Navigation View</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/mvvm-on-android-what-you-need-to-know/">MVVM 模式简介</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/introduction-to-webRTC-on-android/">Android之WebRTC介绍</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/11/google-developing-for-android-part-6/">Google Developing for Android 系列6</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

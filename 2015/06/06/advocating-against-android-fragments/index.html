@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Square：从今天开始抛弃Fragment吧！ | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近我在 Droidcon Paris 上进行了一个技术相关的演讲，我在这次演讲中给大家展示了 Square 使用 Fragment 进行开发时遇到的种种问题，以及其他 Android 开发者是怎么避免在项目中使用 Fragment 的。
+在 2011 年那会，由于下面的原因我们决定使用 Fragment：
+
+在那会，虽然我们很想让应用能在平板设备上被使用，但我们确实没能为平板提供平台支持。而 F">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Square：从今天开始抛弃Fragment吧！">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/06/06/advocating-against-android-fragments/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="最近我在 Droidcon Paris 上进行了一个技术相关的演讲，我在这次演讲中给大家展示了 Square 使用 Fragment 进行开发时遇到的种种问题，以及其他 Android 开发者是怎么避免在项目中使用 Fragment 的。
+在 2011 年那会，由于下面的原因我们决定使用 Fragment：
+
+在那会，虽然我们很想让应用能在平板设备上被使用，但我们确实没能为平板提供平台支持。而 F">
+<meta property="og:image" content="https://camo.githubusercontent.com/ee85363da203d14de689d8df8f9059aed70df00b/68747470733a2f2f636f726e65722e73717561726575702e636f6d2f696d616765732f6e6f2d667261676d656e74732f6c6966656379636c652e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/b9f1bca6508010b61a8e246299d2e8c24c41e3a8/68747470733a2f2f636f726e65722e73717561726575702e636f6d2f696d616765732f6e6f2d667261676d656e74732f636f64652d7175616c6974792e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/976d3e840e060ae6f04aafbf66ebb59d84affb81/68747470733a2f2f636f726e65722e73717561726575702e636f6d2f696d616765732f6e6f2d667261676d656e74732f656469742d646973636f756e74732e706e67">
+<meta property="og:updated_time" content="2015-07-11T10:02:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Square：从今天开始抛弃Fragment吧！">
+<meta name="twitter:description" content="最近我在 Droidcon Paris 上进行了一个技术相关的演讲，我在这次演讲中给大家展示了 Square 使用 Fragment 进行开发时遇到的种种问题，以及其他 Android 开发者是怎么避免在项目中使用 Fragment 的。
+在 2011 年那会，由于下面的原因我们决定使用 Fragment：
+
+在那会，虽然我们很想让应用能在平板设备上被使用，但我们确实没能为平板提供平台支持。而 F">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-advocating-against-android-fragments" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/06/advocating-against-android-fragments/" class="article-date">
+  <time datetime="2015-06-05T16:00:00.000Z" itemprop="datePublished">2015-06-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Square：从今天开始抛弃Fragment吧！
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近我在 Droidcon Paris 上进行了<a href="http://fr.droidcon.com/2014/agenda/detail?title=D%C3%A9fragmentez+vos+apps+avec+Mortar+%21" target="_blank" rel="external">一个技术相关的演讲</a>，我在这次演讲中给大家展示了 Square 使用 Fragment 进行开发时遇到的种种问题，以及其他 Android 开发者是怎么避免在项目中使用 Fragment 的。</p>
+<p>在 2011 年那会，由于下面的原因我们决定使用 Fragment：</p>
+<ul>
+<li><p>在那会，虽然我们很想让应用能在平板设备上被使用，但我们确实没能为平板提供平台支持。而 Fragment 能帮助我们完成这项愿望，建立响应式 UI 界面。</p>
+</li>
+<li><p>Fragment 是视图控制器，它们能够将一大块耦合严重的业务逻辑模块解耦，并使得解耦后的业务逻辑能够被测试。</p>
+</li>
+<li><p>Fragment 的 API 能够进行回退栈管理（例如，它能反射某个 Activity 内 Activity 栈的具体操作）</p>
+</li>
+<li><p>因为 Fragment 处于视图层的顶层，而为 View 设置动画并不麻烦，使得 Fragment 为设置页面切换的过渡效果提供了更好的支持。</p>
+</li>
+<li><p>Google 建议我们使用 Fragment，而我们作为开发者都想让自己的代码符合标准。</p>
+</li>
+</ul>
+<p>在 2011年之后，我们在为 Square 进行开发的过程中发现了比使用 Fragment 更好的方法。<br><a id="more"></a></p>
+<h1 id="关于_Fragment_你不知道的事">关于 Fragment 你不知道的事</h1><h2 id="The_lolcycle">The lolcycle</h2><p>在 Android 中，Context 就像一个<a href="http://en.wikipedia.org/wiki/God_object" target="_blank" rel="external">上帝对象</a>，因为在 Context 类中涵盖了太多 Android 系统的信息和相关的操作，使得 Context 在 Android 系统中相当于一个全知全能的上帝，而 Activity 就是为 Context 添加了生命周期的子类。不过让上帝具有生命周期还是有些讽刺的。虽然 Fragment 不是上帝对象，但 Fragment 为了能够完成 Activity 中能完成的各种操作，使 Fragment 自身的生命周期变得异常复杂。</p>
+<p>Steve Pomeroy 做了一张<a href="https://github.com/xxv/android-lifecycle" target="_blank" rel="external"> Fragment 的完整生命周期图</a>，我相信任谁看到这张图都不会好受：</p>
+<p><img src="https://camo.githubusercontent.com/ee85363da203d14de689d8df8f9059aed70df00b/68747470733a2f2f636f726e65722e73717561726575702e636f6d2f696d616765732f6e6f2d667261676d656e74732f6c6966656379636c652e706e67" alt=""></p>
+<p>这张图由 Steve Pomeroy 完成，图中移除了 Activity 的生命周期，分享这张图需要获得 <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="external">CC BY-SA 4.0</a> 许可。</p>
+<p>整个 Fragment 的生命周期让你很头疼要怎样使用这些回调方法，它们是同步调用的呢，还是只是一次性全部调用呢，还是其它情况……？</p>
+<h2 id="难于调试">难于调试</h2><p>当你的应用出现 Bug，你得用调试工具一步一步地执行代码才能知道到底发生了什么，虽说一般情况下这样做 Bug 都能解决，但如果你在调试的时候发现 Bug 和 FragmentManagerImpl 类存在某种联系，那么我可要好好恭喜你即将中大奖了！</p>
+<p>因为要跟踪 FragmentManagerImpl 类内代码的执行顺序，并进行调试是很困难的，这也使得修复应用中相关的 Bug 也变得异常困难：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> (f.mState) &#123;</span><br><span class="line">    <span class="keyword">case</span> Fragment.INITIALIZING:</span><br><span class="line">        <span class="keyword">if</span> (f.mSavedFragmentState != <span class="keyword">null</span>) &#123;</span><br><span class="line">            f.mSavedViewState = f.mSavedFragmentState.getSparseParcelableArray(</span><br><span class="line">                    FragmentManagerImpl.VIEW_STATE_TAG);</span><br><span class="line">            f.mTarget = getFragment(f.mSavedFragmentState,</span><br><span class="line">                    FragmentManagerImpl.TARGET_STATE_TAG);</span><br><span class="line">            <span class="keyword">if</span> (f.mTarget != <span class="keyword">null</span>) &#123;</span><br><span class="line">                f.mTargetRequestCode = f.mSavedFragmentState.getInt(</span><br><span class="line">                        FragmentManagerImpl.TARGET_REQUEST_CODE_STATE_TAG, <span class="number">0</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            f.mUserVisibleHint = f.mSavedFragmentState.getBoolean(</span><br><span class="line">                    FragmentManagerImpl.USER_VISIBLE_HINT_TAG, <span class="keyword">true</span>);</span><br><span class="line">            <span class="keyword">if</span> (!f.mUserVisibleHint) &#123;</span><br><span class="line">                f.mDeferStart = <span class="keyword">true</span>;</span><br><span class="line">                <span class="keyword">if</span> (newState &gt; Fragment.STOPPED) &#123;</span><br><span class="line">                    newState = Fragment.STOPPED;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你曾经需要解决应用旋转后产生一个与旋转前 UI 相同（方向发生变化）的独立的 Fragment 的需求，我想你应该懂我在说什么。（别给我提嵌套使用的 Fragment！）</p>
+<p>我想下面这张图很好地诠释了这类代码给程序员带来的伤害（由于版权问题我得放出这张图的出处哈：<a href="http://www.osnews.com/story/19266/WTFs_m" target="_blank" rel="external">this cartoon</a>）：</p>
+<p><img src="https://camo.githubusercontent.com/b9f1bca6508010b61a8e246299d2e8c24c41e3a8/68747470733a2f2f636f726e65722e73717561726575702e636f6d2f696d616765732f6e6f2d667261676d656e74732f636f64652d7175616c6974792e706e67" alt=""></p>
+<p>在多年的深度分析中我得出结论：操蛋程度/调试耗费的时间 = 2^m，m 为 Fragment 的个数。</p>
+<h2 id="Fragment_是视图控制器？想太多">Fragment 是视图控制器？想太多</h2><p>因为 Fragment 需要创建、绑定和配置 View，它们包含了许多与 View 关联的结点，这就意味着 View 类代码中的业务逻辑并没有真正地被解耦，正是这个原因使得我们要为 Fragment 实现测试单元将会变得很困难。</p>
+<h2 id="Fragment_transactions">Fragment transactions</h2><p>Fragment 的 transaction 允许你执行一系列的 Fragment 操作，但不幸的是，提交 transaction 是异步操作，并且在 UI 线程的 Handler 队列的队尾被提交。这会在接收多个点击事件或配置发生改变时让你的 App 处在未知的状态。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BackStackRecord</span> <span class="keyword">extends</span> <span class="title">FragmentTransaction</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">commitInternal</span><span class="params">(<span class="keyword">boolean</span> allowStateLoss)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mCommitted)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"commit already called"</span>);</span><br><span class="line">        mCommitted = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (mAddToBackStack) &#123;</span><br><span class="line">            mIndex = mManager.allocBackStackIndex(<span class="keyword">this</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            mIndex = -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mManager.enqueueAction(<span class="keyword">this</span>, allowStateLoss);</span><br><span class="line">        <span class="keyword">return</span> mIndex;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="创建_Fragment_可能带来的问题">创建 Fragment 可能带来的问题</h2><p>Fragment 的实例能够通过 Fragment Manager 创建，例如下面的代码看起来没有什么问题：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">DialogFragment dialogFragment = <span class="keyword">new</span> DialogFragment() &#123;</span><br><span class="line">  <span class="annotation">@Override</span> <span class="function"><span class="keyword">public</span> Dialog <span class="title">onCreateDialog</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123; ... &#125;</span><br><span class="line">&#125;;</span><br><span class="line">dialogFragment.show(fragmentManager, tag);</span><br></pre></td></tr></table></figure>
+<p>然而，当我们需要存储 Activity 实例的状态时，Fragment Manager 可能会通过反射机制重新创建该 Fragment 的实例，又因为这是一个匿名内部类，该类有一个隐藏的构造器的参数正是外部类的引用，如果大家有看过<a href="http://blog.csdn.net/u012403246/article/details/45666369" target="_blank" rel="external">这篇博文</a>的话就会知道，拥有外部引用可能会带来内存泄漏的问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">android.support.v4.app.Fragment$InstantiationException:</span><br><span class="line">    Unable to instantiate fragment com.squareup.MyActivity$<span class="number">1</span>:</span><br><span class="line">    make sure <span class="class"><span class="keyword">class</span> <span class="title">name</span> <span class="title">exists</span>, <span class="title">is</span> <span class="title">public</span>, <span class="title">and</span> <span class="title">has</span> <span class="title">an</span> <span class="title">empty</span></span><br><span class="line">    <span class="title">constructor</span> <span class="title">that</span> <span class="title">is</span> <span class="title">public</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="Fragment_教给我们的思想">Fragment 教给我们的思想</h2><p>尽管 Fragment 有着上面提到的缺点，但也是 Fragment 教给我们许多代码架构的思想：</p>
+<ul>
+<li><p>独立的 Activity 接口：实际上我们并不需要为每一个页面创建一个 Activity，我们大可以将应用切分成许多解耦的视图组件，按照我们的实际需求把它们组装成我们想要的界面。这样做也能简化生命周期和动画设置，因为我们还能将视图组件切分为 view 组件和控制器组件。</p>
+</li>
+<li><p>回退栈不是 Activity 的特有概念，也就意味着你能在 Activity 内部实现回退栈。</p>
+</li>
+<li><p>不需要添加新的 API，我们需要的只是 Activity，View 和 LayoutInflater。</p>
+</li>
+</ul>
+<h1 id="响应式_UI：Fragment_VS_Custom_View">响应式 UI：Fragment VS Custom View</h1><h2 id="Fragment">Fragment</h2><p>我们不妨先来看看一个 Fragment 的<a href="http://developer.android.com/shareables/training/FragmentBasics.zip" target="_blank" rel="external">范例</a>，界面中显示了一个 list。</p>
+<p>HeadlinesFragment 就是显示 List 的简单 Fragment：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HeadlinesFragment</span> <span class="keyword">extends</span> <span class="title">ListFragment</span> </span>&#123;</span><br><span class="line">  OnHeadlineSelectedListener mCallback;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnHeadlineSelectedListener</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onArticleSelected</span><span class="params">(<span class="keyword">int</span> position)</span></span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setListAdapter(</span><br><span class="line">        <span class="keyword">new</span> ArrayAdapter&lt;String&gt;(getActivity(),</span><br><span class="line">            R.layout.fragment_list,</span><br><span class="line">            Ipsum.Headlines));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAttach</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onAttach(activity);</span><br><span class="line">    mCallback = (OnHeadlineSelectedListener) activity;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onListItemClick</span><span class="params">(ListView l, View v, <span class="keyword">int</span> position, <span class="keyword">long</span> id)</span> </span>&#123;</span><br><span class="line">    mCallback.onArticleSelected(position);</span><br><span class="line">    getListView().setItemChecked(position, <span class="keyword">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在有趣的事情来了：ListFragmentActivity 必须控制 list 是否处于同一个页面中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListFragmentActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span></span><br><span class="line">    <span class="keyword">implements</span> <span class="title">HeadlinesFragment</span>.<span class="title">OnHeadlineSelectedListener</span> </span>&#123;</span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.news_articles);</span><br><span class="line">    <span class="keyword">if</span> (findViewById(R.id.fragment_container) != <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (savedInstanceState != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      HeadlinesFragment firstFragment = <span class="keyword">new</span> HeadlinesFragment();</span><br><span class="line">      firstFragment.setArguments(getIntent().getExtras());</span><br><span class="line">      getFragmentManager()</span><br><span class="line">          .beginTransaction()</span><br><span class="line">          .add(R.id.fragment_container, firstFragment)</span><br><span class="line">          .commit();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onArticleSelected</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">    ArticleFragment articleFrag =</span><br><span class="line">        (ArticleFragment) getFragmentManager()</span><br><span class="line">            .findFragmentById(R.id.article_fragment);</span><br><span class="line">    <span class="keyword">if</span> (articleFrag != <span class="keyword">null</span>) &#123;</span><br><span class="line">      articleFrag.updateArticleView(position);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      ArticleFragment newFragment = <span class="keyword">new</span> ArticleFragment();</span><br><span class="line">      Bundle args = <span class="keyword">new</span> Bundle();</span><br><span class="line">      args.putInt(ArticleFragment.ARG_POSITION, position);</span><br><span class="line">      newFragment.setArguments(args);</span><br><span class="line">      getFragmentManager()</span><br><span class="line">          .beginTransaction()</span><br><span class="line">          .replace(R.id.fragment_container, newFragment)</span><br><span class="line">          .addToBackStack(<span class="keyword">null</span>)</span><br><span class="line">          .commit();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="自定义_View">自定义 View</h2><p>我们不妨重新实现一个简化版的只使用了 View 的代码</p>
+<p>首先，我们会引入一个叫作“容器”的概念，“容器”的作用是帮助我们展示一项内容并处理后退操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Container</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">showItem</span><span class="params">(String item)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">boolean</span> <span class="title">onBackPressed</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Acitivity 将假设始终存在容器，并且几乎不会将业务交给容器处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> Container container;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.main_activity);</span><br><span class="line">    container = (Container) findViewById(R.id.container);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Container <span class="title">getContainer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> container;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBackPressed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">boolean</span> handled = container.onBackPressed();</span><br><span class="line">    <span class="keyword">if</span> (!handled) &#123;</span><br><span class="line">      finish();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>要显示的 List 也只是个平凡的 List。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ItemListView</span> <span class="keyword">extends</span> <span class="title">ListView</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">ItemListView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(context, attrs);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onFinishInflate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onFinishInflate();</span><br><span class="line">    <span class="keyword">final</span> MyListAdapter adapter = <span class="keyword">new</span> MyListAdapter();</span><br><span class="line">    setAdapter(adapter);</span><br><span class="line">    setOnItemClickListener(<span class="keyword">new</span> OnItemClickListener() &#123;</span><br><span class="line">      <span class="annotation">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemClick</span><span class="params">(AdapterView&lt;?&gt; parent, View view,</span><br><span class="line">            <span class="keyword">int</span> position, <span class="keyword">long</span> id)</span> </span>&#123;</span><br><span class="line">        String item = adapter.getItem(position);</span><br><span class="line">        MainActivity activity = (MainActivity) getContext();</span><br><span class="line">        Container container = activity.getContainer();</span><br><span class="line">        container.showItem(item);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样做的好处是：能够基于资源文件夹在不同的 XML 布局文件</p>
+<p><code>res/layout/main_activity.xml</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">com.squareup.view.SinglePaneContainer</span></span><br><span class="line">    <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:id</span>=<span class="value">"@+id/container"</span></span><br><span class="line">    &gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">com.squareup.view.ItemListView</span></span><br><span class="line">      <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span></span><br><span class="line">      <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span></span><br><span class="line">      /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">com.squareup.view.SinglePaneContainer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>res/layout-land/main_activity.xml</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">com.squareup.view.DualPaneContainer</span></span><br><span class="line">    <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:orientation</span>=<span class="value">"horizontal"</span></span><br><span class="line">    <span class="attribute">android:id</span>=<span class="value">"@+id/container"</span></span><br><span class="line">    &gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">com.squareup.view.ItemListView</span></span><br><span class="line">      <span class="attribute">android:layout_width</span>=<span class="value">"0dp"</span></span><br><span class="line">      <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span></span><br><span class="line">      <span class="attribute">android:layout_weight</span>=<span class="value">"0.2"</span></span><br><span class="line">      /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">include</span> <span class="attribute">layout</span>=<span class="value">"@layout/detail"</span></span><br><span class="line">      <span class="attribute">android:layout_width</span>=<span class="value">"0dp"</span></span><br><span class="line">      <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span></span><br><span class="line">      <span class="attribute">android:layout_weight</span>=<span class="value">"0.8"</span></span><br><span class="line">      /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">com.squareup.view.DualPaneContainer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>下面是这些容器类的简单实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DualPaneContainer</span> <span class="keyword">extends</span> <span class="title">LinearLayout</span> <span class="keyword">implements</span> <span class="title">Container</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> MyDetailView detailView;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">DualPaneContainer</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(context, attrs);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onFinishInflate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onFinishInflate();</span><br><span class="line">    detailView = (MyDetailView) getChildAt(<span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onBackPressed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showItem</span><span class="params">(String item)</span> </span>&#123;</span><br><span class="line">    detailView.setItem(item);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SinglePaneContainer</span> <span class="keyword">extends</span> <span class="title">FrameLayout</span> <span class="keyword">implements</span> <span class="title">Container</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> ItemListView listView;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">SinglePaneContainer</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(context, attrs);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onFinishInflate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onFinishInflate();</span><br><span class="line">    listView = (ItemListView) getChildAt(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onBackPressed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!listViewAttached()) &#123;</span><br><span class="line">      removeViewAt(<span class="number">0</span>);</span><br><span class="line">      addView(listView);</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showItem</span><span class="params">(String item)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (listViewAttached()) &#123;</span><br><span class="line">      removeViewAt(<span class="number">0</span>);</span><br><span class="line">      View.inflate(getContext(), R.layout.detail, <span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    MyDetailView detailView = (MyDetailView) getChildAt(<span class="number">0</span>);</span><br><span class="line">    detailView.setItem(item);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">listViewAttached</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> listView.getParent() != <span class="keyword">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不难想象：将容器类抽象，并用这种的方式开发 App，不但不需要 Fragment，还能架构出容易理解的代码。</p>
+<h2 id="View_和_Presenter">View 和 Presenter</h2><p>自定义 View 在应用中非常有用，但我们希望将业务逻辑从 View 中剥离，转交给特定的控制器处理，也就是接下来我们所说的 Presenter，引入 Presenter 能提高代码的可读性和可测试性。如果你不信的话，不妨看看重构后的 MyDetailView：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyDetailView</span> <span class="keyword">extends</span> <span class="title">LinearLayout</span> </span>&#123;</span><br><span class="line">  TextView textView;</span><br><span class="line">  DetailPresenter presenter;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">MyDetailView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(context, attrs);</span><br><span class="line">    presenter = <span class="keyword">new</span> DetailPresenter();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="annotation">@Override</span> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onFinishInflate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onFinishInflate();</span><br><span class="line">    presenter.setView(<span class="keyword">this</span>);</span><br><span class="line">    textView = (TextView) findViewById(R.id.text);</span><br><span class="line">    findViewById(R.id.button).setOnClickListener(<span class="keyword">new</span> OnClickListener() &#123;</span><br><span class="line">      <span class="annotation">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">        presenter.buttonClicked();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setItem</span><span class="params">(String item)</span> </span>&#123;</span><br><span class="line">    textView.setText(item);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们来看看 Square 注册界面中编辑账户的页面吧！</p>
+<p><img src="https://camo.githubusercontent.com/976d3e840e060ae6f04aafbf66ebb59d84affb81/68747470733a2f2f636f726e65722e73717561726575702e636f6d2f696d616765732f6e6f2d667261676d656e74732f656469742d646973636f756e74732e706e67" alt=""></p>
+<p>Presenter 将在更高层级中操控 View：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EditDiscountPresenter</span> </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saveDiscount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    EditDiscountView view = getView();</span><br><span class="line">    String name = view.getName();</span><br><span class="line">    <span class="keyword">if</span> (isBlank(name)) &#123;</span><br><span class="line">      view.showNameRequiredWarning();</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (isNewDiscount()) &#123;</span><br><span class="line">      createNewDiscountAsync(name, view.getAmount(), view.isPercentage());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      updateNewDiscountAsync(discountId, name, view.getAmount(),</span><br><span class="line">        view.isPercentage());</span><br><span class="line">    &#125;</span><br><span class="line">    close();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>大家可以看到，为这个 Presenter 实现测试单元犹如一缕春风拂面来，甚是舒心爽快呐～</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Test</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">cannot_save_discount_with_empty_name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  startEditingLoadedPercentageDiscount();</span><br><span class="line">  when(view.getName()).thenReturn(<span class="string">""</span>);</span><br><span class="line">  presenter.saveDiscount();</span><br><span class="line">  verify(view).showNameRequiredWarning();</span><br><span class="line">  assertThat(isSavingInBackground()).isFalse();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="回退栈管理">回退栈管理</h2><p>通过异步处理来管理回退栈实在是牛刀杀鸡，大材小用了……我们只需要用一个超轻量级库——Flow，就可以达到目的。有关 Flow 的介绍 Ray Ryan 已经写过博客了，我就不在此赘述啦。</p>
+<h2 id="我把_UI_相关的代码全都写在_Fragment_里了咋办呀，在线等，急！！！">我把 UI 相关的代码全都写在 Fragment 里了咋办呀，在线等，急！！！</h2><p>别理你的 Fragment，你就一点一点地把 View 相关的代码移到自定义 View 里，然后把涉及到的业务逻辑交给能够与 View 进行交互的 Presenter，然后你就会发现 Fragment 沦为空壳，只有一些初始化自定义 View 和连接 View 和 Presenter 的操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DetailFragment</span> <span class="keyword">extends</span> <span class="title">Fragment</span> </span>&#123;</span><br><span class="line">  <span class="annotation">@Override</span> <span class="function"><span class="keyword">public</span> View <span class="title">onCreateView</span><span class="params">(LayoutInflater inflater,</span><br><span class="line">    ViewGroup container, Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> inflater.inflate(R.layout.my_detail_view, container, <span class="keyword">false</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>事实上到了这一步你已经可以抛弃 Fragment 了。</p>
+<p>抛弃 Fragment 确实得花很大的功夫，但我们已经做到了，感谢<a href="https://twitter.com/dnkoutso" target="_blank" rel="external"> Dimitris Koutsogiorgas </a>和<a href="https://twitter.com/rjrjr" target="_blank" rel="external"> Ray Ryan </a>的伟大贡献！</p>
+<h2 id="Dagger_和_Mortar_是什么？">Dagger 和 Mortar 是什么？</h2><p>Dagger &amp; Mortar 与 Fragment 成正交关系，换句话说，两者间各自的变化不会影响对方，使用 Dagger &amp; Mortar 既可以用 Fragment，也可以不用 Fragment。</p>
+<p><a href="http://square.github.io/dagger/" target="_blank" rel="external">Dagger</a> 能帮你将应用模块化为一张由解耦组件构成的图，它考虑了所有类间的连接关系并简化了抽取依赖的操作，并实现一个与此相关的单例对象。</p>
+<p><a href="https://github.com/square/mortar" target="_blank" rel="external">Mortar</a> 在 Dagger 的顶层进行操作，主要优势有如下两点：</p>
+<ul>
+<li><p>Mortar 为被注入组件提供简单的生命周期回调，使你能实现不会因旋转被销毁的单例 Presenter，不过需要注意的是，Mortar 将当前界面元素的状态储存在 Bundle 中，使数据不会随进程的结束而被清除。</p>
+</li>
+<li><p>Mortar 为你管理 Dagger 的子图，并帮你将它们与 Activity 的生命周期关联在一起，这种功能让你能有效地实现“域”：当一个 View 被添加进来，它的 Presenter 和依赖都会作为子图被创建；当 View 被移除，你能轻易地销毁“域”，并让垃圾回收机制去完成它的工作。</p>
+</li>
+</ul>
+<h2 id="结论">结论</h2><p>我们曾为 Fragment 的诞生满心欢喜，幻想着 Fragment 能为我们带来种种便利，然而这一切不过是场虚空大梦，我们最后发现骑着白马的 Fragment 既不是王子也不是唐僧，只不过是人品爆发捡了只白马的乞丐罢了：</p>
+<ul>
+<li><p>我们遇到的大多数难以解决的 Bug 都与 Fragment 的生命周期有关。</p>
+</li>
+<li><p>我们只需要 View 创建响应式 UI，实现回退栈以及屏幕事件的处理，不用 Fragment 也能满足实际开发的需求。</p>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html" target="_blank" rel="external">Advocating Against Android Fragments</a></li>
+<li>原文作者 : <a href="http://twitter.com/Piwai" target="_blank" rel="external">Pierre-Yves Ricau</a></li>
+<li><a href="http://www.devtf.cn" target="_blank" rel="external">译文出自 :  开发技术前线 www.devtf.cn</a></li>
+<li>译者 : <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a> </li>
+<li>校对者: <a href="www.belial.me">Belial</a></li>
+<li>状态 :  完成</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/06/06/advocating-against-android-fragments/" data-id="cibyx172x00cdsw1ia2n8iuqe" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/06/06/advocating-against-android-fragments/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/08/android-performance-patterns-season-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android性能优化典范第2季
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/06/recyclerview-layoutmanager-redux/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">创建-RecyclerView-LayoutManager-Redux</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/06/06/advocating-against-android-fragments/" data-title="Square：从今天开始抛弃Fragment吧！" data-url="http://likebamboo.com/AndroidBlog/2015/06/06/advocating-against-android-fragments/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/性能优化/">性能优化</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">64</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/Android架构/">Android架构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/材料设计/">材料设计</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">14</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AndroidStudio/">AndroidStudio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">42</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/06/">六月 2015</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/android-design-support-library/">Android Design Support Library</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/android-design-support-library-part-1-navigation-view/">Design Support Library (I)-Navigation View</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/mvvm-on-android-what-you-need-to-know/">MVVM 模式简介</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/introduction-to-webRTC-on-android/">Android之WebRTC介绍</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/11/google-developing-for-android-part-6/">Google Developing for Android 系列6</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>
