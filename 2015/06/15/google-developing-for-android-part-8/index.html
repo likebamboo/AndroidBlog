@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Google Developing for Android 系列8 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="避免过度绘制正如在第一篇Context介绍种关于GPU讨论的部分所说，很多手机的性能有限，如果应用中有严重的过度绘制可能会导致比较糟糕的渲染性能。不透明的View会完全遮盖其它的View的情况下会导致渲染引擎进行多次绘制。你可以通过开启设置中的开发者选项的GPU overdraw来修复相应的问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google Developing for Android 系列8">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/06/15/google-developing-for-android-part-8/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="避免过度绘制正如在第一篇Context介绍种关于GPU讨论的部分所说，很多手机的性能有限，如果应用中有严重的过度绘制可能会导致比较糟糕的渲染性能。不透明的View会完全遮盖其它的View的情况下会导致渲染引擎进行多次绘制。你可以通过开启设置中的开发者选项的GPU overdraw来修复相应的问题。">
+<meta property="og:updated_time" content="2015-07-11T10:44:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Google Developing for Android 系列8">
+<meta name="twitter:description" content="避免过度绘制正如在第一篇Context介绍种关于GPU讨论的部分所说，很多手机的性能有限，如果应用中有严重的过度绘制可能会导致比较糟糕的渲染性能。不透明的View会完全遮盖其它的View的情况下会导致渲染引擎进行多次绘制。你可以通过开启设置中的开发者选项的GPU overdraw来修复相应的问题。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-google-developing-for-android-part-8" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/15/google-developing-for-android-part-8/" class="article-date">
+  <time datetime="2015-06-14T16:00:00.000Z" itemprop="datePublished">2015-06-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Google Developing for Android 系列8
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="避免过度绘制">避免过度绘制</h2><p>正如在第一篇Context介绍种关于GPU讨论的部分所说，很多手机的性能有限，如果应用中有严重的过度绘制可能会导致比较糟糕的渲染性能。不透明的View会完全遮盖其它的View的情况下会导致渲染引擎进行多次绘制。你可以通过开启设置中的开发者选项的GPU overdraw来修复相应的问题。<br><a id="more"></a></p>
+<h2 id="避免无用的背景">避免无用的背景</h2><p>避免过度绘制的一种方式是：移除已经拥有非透明背景View的背景。适用于View的背景不透明而且完全遮住了window背景的情况。</p>
+<p>移除window backgroud的方式是一种很有效的技术，但可能是比较复杂的方式去解决过度绘制，并且在有些情况下还会导致一些奇怪的渲染问题。在manifest中为应用设置一个null backgroud虽然可行，但由于系统不能够正确的绘制starting window，可能会导致一些图形化的问题。更好的方式是在manifest中保留启动时的backgroud，而在Activity的onCreate方法中通过getWindow().setBackgroud(null)将backgroud设置为null。即便是这种方式还是会导致一些问题。比如，键盘或者IME被设置为自适应大小模式，然后以动画的方式进入到一个backgroud设置为null的activity中，因为window manager不会对window的背景进行任何绘制，从而导致一些问题。另外，全屏的ListView在由于滑动时的回弹产生的间隙也会有一些问题（可以通过ListView.setOverscrollFooter/Header来解决）。</p>
+<p>这种情况下正确定位过度绘制的方式是使用starting window。放置想要的背景图片并通过window自身的windowBackgroud主题属性让这些介于容器之间的View保持默认的透明背景，而不是在window 背景和Views之间使用一些带有不透明背景色的容器。</p>
+<h2 id="避免关闭Starting_Window功能">避免关闭Starting Window功能</h2><p>正如在<a href="https://medium.com/google-developers/developing-for-android-iii-2efc140167fd" target="_blank" rel="external">性能</a>篇中提到的如何加快启动速度的问题一样，当应用被加载的时候，通过starting window可以提供一种快速启动的体验。请求系统关闭starting window会失去这种体验（通过windowDisabl<br>ePreview主题属性设置）。一些应用这样做的原因时他们希望启动一个自定义的splash screen或者其它品牌性质的体验。或者因为starting window看上去与启动的activity的初始化内容看上去不搭。这种处理方式就会导致那些app会花费更长的时间启动，并且由于activity没有任何可见反馈，用户就得干等着。</p>
+<p>为了提供最好的体验，你应该开启默认的starting window。如果需要优化，可以选择activity的主题，该主题会被starting window使用，从而更好的适应你的activity。当然你也可以为starting window制定自定义的drawable（通过windowBackgroud主题属性）以便更好的品牌化或者定制启动体验。</p>
+<h2 id="沉浸模式下允许方便的退出">沉浸模式下允许方便的退出</h2><p>应用可以开启全屏幕模式，这种模式下只有滑动屏幕的边缘才会展开导航栏。这种模式只有在沉浸式的游戏中是可以被接受的，因为并不希望用户点击某块屏幕的时候会退出游戏。对于其他类型的app来说，特别是内容浏览的app，比如media player，当用户点击屏幕时应该更容易的退出，而不是滑动方式再去展开导航。更多关于如何正确的使用沉浸模式请参考 (immersive mode develper guide)[<a href="https://developer.android.com/training/system-ui/immersive.html" target="_blank" rel="external">https://developer.android.com/training/system-ui/immersive.html</a>]</p>
+<h2 id="为starting_window设置正确的状态/导航栏的颜色">为starting window设置正确的状态/导航栏的颜色</h2><p>如果你的应用拥有带颜色的状态栏或者导航栏，那么你的主题（用于应用启动时的starting window）应该拥有相同的颜色。为了避免从starting window 到应用内容窗口的切换比较突兀，可以通过android:statusBarColor和android:navigationBarColor属性为starting window设置状态栏或者导航栏的颜色。如果你的activity window需要不同的颜色可以通过getWindow().setStatusBarColor()和getWindow.setNavigationbarColor()方法设置。</p>
+<h2 id="使用适当的Context">使用适当的Context</h2><p>你可以从Application获得Context，但是将它用于创建UI的Context来说是不合适的，因为Application Context没有正确的主题信息，因此你应该使用Activity的Context对象。比如，你正在为activity获取资源，那么你应该使用activity的context而不是Application的。</p>
+<h2 id="避免在异步回调中出现View的相关引用">避免在异步回调中出现View的相关引用</h2><p>避免在网络操作或者长时间的异步交互中引用一个View，Activity，或者Fragment，比如：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="comment">// some activity code</span></span><br><span class="line"><span class="comment">// </span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">    webservice.fetchPosts(<span class="keyword">new</span> Callback() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResult</span><span class="params">(Response repsonse)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// View may not be valid, Activity may be gone</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>View的引用可能导致占用过多资源的Context泄漏（也有可能是对View的间接引用），或者导致应用crash，因为的那个回调时，旧的引用可能已经不存在了。因此，考虑使用事件总线或者依赖性低的 回调并小心的处理attachment和detachement。</p>
+<h2 id="为RTL设计">为RTL设计</h2><p>在API 17中，应用应该使用布局的start/end 而不是left/right属性。比如，你应该使用paddingStart和paddingEnd，而不是paddingLeft和paddingRignt。这样可以保证在从右到左的情况下正确的布局。</p>
+<p>测试应用布局的正确性：开启开发者选项下的<code>Force RTL layout direction</code>设置。</p>
+<h2 id="对数据进行本地缓存">对数据进行本地缓存</h2><p>“本地缓存，全局同步”<br>本地缓存数据对于提高启动速度是很重要的事情之一。除了一些像图片的大文件，也应该保存从服务器获取的数据。如果可以的话，你应该创建一个本地数据库来以一种更有意义的方式来保存这些（不是简单的对服务返回结果的序列化）。</p>
+<p>在Google I/O 2010中有一个<a href="https://www.youtube.com/watch?v=xHXn3Kg2IQE" target="_blank" rel="external">Android Rest Client Application</a>的演讲。这里介绍了一些组件，相比多去，它们可以更好的帮助我们开发（ORM，JobQueue，EventBus），但演讲中谈论的思想和方式仍然是有效的。</p>
+<h2 id="对用户的输入进行本地缓存">对用户的输入进行本地缓存</h2><p>当用户的输入需要转发到服务器时，应该在转发到服务器之前缓存它。可以想象得到，在很多累积的响应情况下，网络交互可能是异步机制的（比如一个网络请求池）。对用户输入进行缓存的主要原因是避免网络失败情况下，用户的输入丢失。缓存输入让应用可以让你在网络状态正常时进行重试。</p>
+<p>在UI中你应该提供一个提示，能够让用户知道自己的请求已经完成了还是延迟了。</p>
+<h2 id="将网络和后台硬盘操作分开">将网络和后台硬盘操作分开</h2><p>当你使用一个线程池维护后台所有的操作时，因为长时间的后台操作（比如网络请求），某些快速任务可能要被迫等待。对于本地的存储操作，考虑使用独立的线程池。这样可以确保本地变化可以立即更新到用户的界面而不是受到长时间的网络请求或者IPC调用的影响。</p>
+<blockquote>
+<p>译文链接：<a href="http://www.lightskystreet.com/2015/06/13/google-for-android-8-user-interface/" target="_blank" rel="external">http://www.lightskystreet.com/2015/06/13/google-for-android-8-user-interface/</a><br>译文作者：<a href="http://www.lightskystreet.com/" target="_blank" rel="external">lightSky</a><br>原文链接：<a href="https://medium.com/google-developers/developing-for-android-viii-e91ced595fac" target="_blank" rel="external">Developing for Android VIII The Rules: User Interface</a></p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/06/15/google-developing-for-android-part-8/" data-id="cibyxespx004pnw1ien53ro6a" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/06/15/google-developing-for-android-part-8/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/15/google-developing-for-android-part-9/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Google Developing for Android 系列9</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/06/15/google-developing-for-android-part-8/" data-title="Google Developing for Android 系列8" data-url="http://likebamboo.com/AndroidBlog/2015/06/15/google-developing-for-android-part-8/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/性能优化/">性能优化</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">66</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/Android架构/">Android架构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/材料设计/">材料设计</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">16</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AndroidStudio/">AndroidStudio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">44</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/06/">六月 2015</a><span class="archive-list-count">22</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/15/google-developing-for-android-part-8/">Google Developing for Android 系列8</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/15/google-developing-for-android-part-9/">Google Developing for Android 系列9</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/mvvm-on-android-what-you-need-to-know/">MVVM 模式简介</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/android-design-support-library-part-1-navigation-view/">Design Support Library (I)-Navigation View</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/06/14/android-design-support-library/">Android Design Support Library</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>
