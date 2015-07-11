@@ -1,0 +1,366 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android Espresso 测试框架介绍 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Espresso 是一个提供了简单 API 的用于 android app UI 测试的测试框架。最新的 2.0 版本发布后已经可以在 Android Support Repository 中下载了，那么在项目中集成它就方便多了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Espresso 测试框架介绍">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/17/an-introduction-to-espresso/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="Espresso 是一个提供了简单 API 的用于 android app UI 测试的测试框架。最新的 2.0 版本发布后已经可以在 Android Support Repository 中下载了，那么在项目中集成它就方便多了。">
+<meta property="og:image" content="https://camo.githubusercontent.com/9dd5f96cf5742551f304606abf64c68a3c59ff99/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f73646b2d6d616e61676572312e706e673f773d35353026683d333033">
+<meta property="og:image" content="https://camo.githubusercontent.com/31ed007bd41bee4646ad1b28388acd32632ad128/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f6573706573736f5f6d61696e5f636f6d706f6e656e74732e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/d441e968f5c167fa198089bccec828317b143ec6/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f73696d706c655f746573745f6f6e766965772e706e673f773d353935">
+<meta property="og:image" content="https://camo.githubusercontent.com/5c14915750ff91ea8a11988a43f4f409249af3b8/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f636c6173732e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/3a44ad1542591759e537767e0de38092fdf8b07f/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f6f6e646174615f73696d706c652e706e673f773d353935">
+<meta property="og:image" content="https://camo.githubusercontent.com/90a05ed775edbd7ab9c76bc5bb72c57a37fa1f7b/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f626f6f6b732d61646170746572312e706e673f773d35393526683d333838">
+<meta property="og:updated_time" content="2015-07-11T08:40:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Espresso 测试框架介绍">
+<meta name="twitter:description" content="Espresso 是一个提供了简单 API 的用于 android app UI 测试的测试框架。最新的 2.0 版本发布后已经可以在 Android Support Repository 中下载了，那么在项目中集成它就方便多了。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-an-introduction-to-espresso" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/17/an-introduction-to-espresso/" class="article-date">
+  <time datetime="2015-05-16T16:00:00.000Z" itemprop="datePublished">2015-05-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android Espresso 测试框架介绍
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Espresso 是一个提供了简单 API 的用于 android app UI 测试的测试框架。最新的 2.0 版本发布后已经可以在 Android Support Repository 中下载了，那么在项目中集成它就方便多了。<br><a id="more"></a><br>但在我们看 Espresso 的 API 之前，让我们来细看下它与其它测试框架的不同：</p>
+<ul>
+<li>你首先会注意到的是，他写出来的代码很像英文，可想而知它是很容易学习的</li>
+<li>API 相当的小，当然也会对扩展开放的</li>
+<li>Espresso 的测试跑起来那是相当的快（没有等待、睡眠）</li>
+<li>Gradle 和 Android Studio 的支持</li>
+</ul>
+<h2 id="在你的项目中添加_Espresso">在你的项目中添加 Espresso</h2><p>1、首先保证你的 Android Support Repository 已经成功安装<br><img src="https://camo.githubusercontent.com/9dd5f96cf5742551f304606abf64c68a3c59ff99/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f73646b2d6d616e61676572312e706e673f773d35353026683d333033" alt="Android Support Repository"></p>
+<p>2、在你程序的 build.gradle 文件中添加依赖</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">   androidTestCompile <span class="string">'com.android.support.test:testing-support-lib:0.1'</span></span><br><span class="line">   androidTestCompile <span class="string">'com.android.support.test.espresso:espresso-core:2.0'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3、最后，在默认配置中指定 test instrumentation runner</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line"> </span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        <span class="comment">// ....</span></span><br><span class="line">        testInstrumentationRunner <span class="string">"android.support.test.runner.AndroidJUnitRunner"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这些基本上就是在你的项目中集成 Espresso 测试框架了（给你的项目一杯浓咖啡提提神~）！</p>
+<h2 id="Espresso_的主要组件">Espresso 的主要组件</h2><p>Espresso 由 3 个主要的组件构成。</p>
+<p>这些组件是：</p>
+<ul>
+<li>ViewMatchers - 在当前的 view 层级中定位一个 view</li>
+<li>ViewActions - 跟你的 view 交互</li>
+<li>ViewAssertions - 给你的 view 设置断言</li>
+</ul>
+<p>更简单的可以用下面的短语来表述它们：</p>
+<ul>
+<li>ViewMatchers – “ <code>找</code> 某些东西“</li>
+<li>ViewActions – “ <code>做</code> 某些事情“</li>
+<li>ViewAssertions – “ <code>检查</code> 某些东西“</li>
+</ul>
+<p>举个例子，当你需要 <code>检查</code> 某些东西（像在屏幕中显示一些文字），你就会知道你需要一个 ViewAssertions 来做这些工作。</p>
+<p>Below is an example of a test in Espresso, and where the main components find their place.</p>
+<p>下面是使用 Espresso 的例子，你会看到那些主要的组件将会在哪里出现使用。</p>
+<p><img src="https://camo.githubusercontent.com/31ed007bd41bee4646ad1b28388acd32632ad128/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f6573706573736f5f6d61696e5f636f6d706f6e656e74732e706e67" alt="main components"></p>
+<h2 id="一个使用_onView()_的简单测试">一个使用 onView() 的简单测试</h2><p>假设我们有一个 app，需要用户输入它的名字。</p>
+<p>输入名字之后，用户按下了“下一步”按钮然后就会跳转到另一个显示问候信息的 activity。</p>
+<p><img src="https://camo.githubusercontent.com/d441e968f5c167fa198089bccec828317b143ec6/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f73696d706c655f746573745f6f6e766965772e706e673f773d353935" alt="scenario"></p>
+<p>如果我们按这个方案来写一个测试的话，它看上去将会这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// locate the view with id "user_name" and type the text "John"</span></span><br><span class="line">onView(withId(R.id.user_name)).perform(typeText(<span class="string">"John"</span>));</span><br><span class="line"> </span><br><span class="line"><span class="comment">// locate the view with id "next" and click on it</span></span><br><span class="line">onView(withId(R.id.next)).perform(click());</span><br><span class="line"> </span><br><span class="line"><span class="comment">// locate the view with id "greeting_message" and check its text is equal with "Hello John!"</span></span><br><span class="line">onView(withId(R.id.greeting_message)).check(matches(withText(<span class="string">"Hello John!"</span>)));</span><br></pre></td></tr></table></figure>
+<p>注意到我们并没有特别指定与其交互的 view 的信息（eg： EditText、Button），我们只是简单的说明了我们要找一个指定 id 的 view。</p>
+<p>同样，当点击“下一步”按钮时然后检测文本时，我们也没有写代码来告诉 Espresso 我们有跳转到其它的 activity。</p>
+<p>现在，如果要跑起这个测试用例，我们需要把这写代码写到一个类中，然后对于在 Gradle 中这个类应该保存的位置：yourApp<code>/src/androidTest/java</code>。</p>
+<p>这个就是测试类的样子和它的主要特征：</p>
+<p><img src="https://camo.githubusercontent.com/5c14915750ff91ea8a11988a43f4f409249af3b8/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f636c6173732e706e67" alt="SimpleNameTest"></p>
+<h2 id="一个使用_onData_的简单测试">一个使用 onData 的简单测试</h2><p>每当你有一个 ListView、GridView、Spinner 或者其它基于 Adapter 的view时，你都必须使用 <code>onData()</code> 来把 item 和 list 的数据联系起来。</p>
+<p><strong>onData()</strong> 是给你的 adapter 提供数据的。这是什么意思呢，接下来你就会知道了。</p>
+<p>在一个假想的程序中我们需要在一个 <strong>Spinner</strong> 中选择一个国家，一旦选定，这个国家的名字就会在 Spinner 的旁边显示出来。</p>
+<p><img src="https://camo.githubusercontent.com/3a44ad1542591759e537767e0de38092fdf8b07f/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f6f6e646174615f73696d706c652e706e673f773d353935" alt="Registration"></p>
+<p>下面的测试就是检查显示出的国家是否与我们选择的相符合，代码长这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// locate the view with id "country_spinner" and click on it</span></span><br><span class="line">onView(withId(R.id.country_spinner)).perform(click());</span><br><span class="line"> </span><br><span class="line"><span class="comment">// match an item that is a String and is equal with whatever value the COUNTRY constant is initialized, then click on it.</span></span><br><span class="line">onData(allOf(is(instanceOf(String.class)), is(COUNTRY))).perform(click());</span><br><span class="line"> </span><br><span class="line"><span class="comment">// locate the view with id "selected_country" and check its text is equal with COUNTRY</span></span><br><span class="line">onView(withId(R.id.selected_country)).check(matches(withText(<span class="string">"selected: "</span> + COUNTRY)));</span><br></pre></td></tr></table></figure>
+<p>上文中你看到的这个 Spinner 的适配数据是一个字符串的简单数组，所以对于我们要找的 item 来说我们也要指定 String 的数据类型。如果不是一个 String 而是一些自定义的对象呢，我们应该指定这些自定义的对象。</p>
+<p>思考下下面这个显示一个 books 的 list 集合数据的例子：</p>
+<p><img src="https://camo.githubusercontent.com/90a05ed775edbd7ab9c76bc5bb72c57a37fa1f7b/68747470733a2f2f616e64726f696472657365617263682e66696c65732e776f726470726573732e636f6d2f323031352f30332f626f6f6b732d61646170746572312e706e673f773d35393526683d333838" alt="AdapterView"></p>
+<p>把 item 的数据改为 Book 后，来看看查询:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">onData(allOf(is(instanceOf(Book.class)), withBookTitle(BOOK_TITLE))).perform(click());</span><br></pre></td></tr></table></figure>
+<h2 id="数据交互">数据交互</h2><p>Espresso 有一些很有用的方法可以用来处理数据间的交互。</p>
+<p><strong>atPosition()</strong> - 在下述的这些情况中会很有用，与相应元素交互的对象是不相关的，或 items 的顺序是特定的所以你知道每个 item 在哪个位置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">onData(...).atPosition(<span class="number">2</span>).perform(click());</span><br></pre></td></tr></table></figure>
+<p><strong>inRoot()</strong> - 在没有默认窗口的情况下使用 inRoot()。这个场景可以应用在测试需自动完成时。这个 list 出现在自动输入填写完成的 view 是属于应用窗口之上的窗口视图。</p>
+<p>这种情况下你必须指定你要查找的数据，而这数据并不在主程序窗口中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onView(withText(<span class="string">"AutoCompleteText"</span>))</span><br><span class="line">        .inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView()))))</span><br><span class="line">        .check(matches(isDisplayed()));</span><br></pre></td></tr></table></figure>
+<p><strong>onChildView()</strong>  - 这个数据交互可以进一步地精取出在一个 list 中的指定的（item） view。</p>
+<p>你有一个集合列表，每一行的 item 上都有一个删除按钮。你想点击指定 item 上的删除按钮：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">onData(withBookTitle(<span class="string">"My Book"</span>))</span><br><span class="line">      .onChildView(withId(R.id.book_delete)).perform(click());</span><br></pre></td></tr></table></figure>
+<p><strong>inAdapterView()</strong> - 可以选择指定一个 adapter view 去操作，默认情况下 Espresso 可以操作任何 adapter view。</p>
+<p>你可能会发现这个在处理 <code>ViewPagers</code> 和 <code>Fragments</code> 时很有用，或者，你想要与当前显示的 AdapterView 交互时，你的 activity 中有多个 adapter view 时。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onData(withBookTitle(<span class="string">"My Book"</span>))</span><br><span class="line">      .inAdapterView(allOf(isAssignableFrom(AdapterView.class), isDisplayed()))</span><br><span class="line">      .perform(click());</span><br></pre></td></tr></table></figure>
+<h2 id="Espresso_和_RecyclerView">Espresso 和 RecyclerView</h2><p><a href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView.html" target="_blank" rel="external">RecyclerView</a> 是一个像 ListView、GridVIew 那样呈现数据集合的 UI 组件，实际上它的目的是要替换掉这两个组件。从测试的角度上来看我们感兴趣的有是 RecyclerView 不是一个 AdapterView，这意味着你不能使用 onData() 去跟你的 list items 交互。</p>
+<p>Fortunately, there is a class called RecyclerViewActions that exposes a small API to operate on a RecyclerView. RecyclerViewActions is part of a separate lib called espresso-contrib, that also should be added to build.gradle:</p>
+<p>幸运的是，有一个叫 <a href="https://developer.android.com/reference/android/support/test/espresso/contrib/RecyclerViewActions.html" target="_blank" rel="external">RecyclerViewActions</a> 的类提供了简单的 API 给我们操作 RecyclerView。RecyclerViewActions 是 <strong>espresso-contrib</strong>库的一部分，这个库的依赖可以在 build.gradle 中添加：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"> </span><br><span class="line">    androidTestCompile(<span class="string">'com.android.support.test.espresso:espresso-contrib:2.0'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为你的项目已经包括 recyclerview 依赖, 所以不妨也加上支持库的，一些依赖关系可能出现的冲突。在这种情况下可以在 espresso-contrib 中 exclude 他们：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"> </span><br><span class="line">    androidTestCompile(<span class="string">'com.android.support.test.espresso:espresso-contrib:2.0'</span>) &#123;</span><br><span class="line">        exclude group: <span class="string">'com.android.support'</span>, module: <span class="string">'appcompat'</span></span><br><span class="line">        exclude group: <span class="string">'com.android.support'</span>, module: <span class="string">'support-v4'</span></span><br><span class="line">        exclude module: <span class="string">'recyclerview-v7'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面就是示例怎么（在RecyclerView）点击指定位置的 item：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">onView(withId(R.id.recyclerView))</span><br><span class="line">      .perform(RecyclerViewActions.actionOnItemAtPosition(<span class="number">0</span>, click()));</span><br></pre></td></tr></table></figure>
+<p>或者怎么点击指定 item 上的 view：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">onView(withId(R.id.recyclerView))</span><br><span class="line">      .perform(RecyclerViewActions.actionOnItem(</span><br><span class="line">                hasDescendant(withText(BOOK_TITLE)), click()));</span><br></pre></td></tr></table></figure>
+<p>更多 Espresso 的例子请戳：<a href="https://github.com/vgrec/EspressoExamples" target="_blank" rel="external">https://github.com/vgrec/EspressoExamples</a></p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="https://androidresearch.wordpress.com/2015/04/04/an-introduction-to-espresso/" target="_blank" rel="external">Introduction to Android Espresso</a></li>
+<li>原文作者 : <a href="https://androidresearch.wordpress.com/author/androidresearch/" target="_blank" rel="external">Veaceslav Grec</a></li>
+<li><a href="http://www.devtf.cn" target="_blank" rel="external">译文出自 :  开发技术前线 www.devtf.cn</a></li>
+<li>译者 : <a href="https://github.com/zhengxiaopeng" target="_blank" rel="external">zhengxiaopeng</a> </li>
+<li>校对者: <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a>  </li>
+<li>状态 :  完成</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/17/an-introduction-to-espresso/" data-id="cibyut6ll009m181i39eck52h" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/17/an-introduction-to-espresso/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/17/grokking-rxjava-part-1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          深入理解RxJava(1)-基础篇
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/17/stream-rtmp-live-android/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 如何直播RTMP流</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/17/an-introduction-to-espresso/" data-title="Android Espresso 测试框架介绍" data-url="http://likebamboo.com/AndroidBlog/2015/05/17/an-introduction-to-espresso/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">47</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/introduction-to-model-view-presenter-on-android/">MVP在Android平台上的应用</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/how-to-make-our-android-apps-unit-testable-pt-2/">Android 进行单元测试难在哪-part4</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/ted_mosby/">Ted Mosby - 软件架构</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/when-Thor-and-Hulk-meet-dagger2-rxjava-1/">当复仇者联盟遇上Dragger2、RxJava和Retrofit的巧妙结合</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/automating-android-development/">自动化 Android 开发</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

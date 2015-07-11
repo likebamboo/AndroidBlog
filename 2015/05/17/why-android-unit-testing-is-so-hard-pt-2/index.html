@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android 进行单元测试难在哪-part2 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在上一篇博文中，我用干货告诉大家：即使是 Google 大牛写出来的代码也无法进行测试。确切地说，我真正告诉大家的是：根本没办法在 SessionDetailActivity 的 onStop() 方法里进行单元测试，而且详细地解释了个中因果：由于无法改变预测试状态，我们无法在 onStop() 方法里完成断言；在 onStop() 方法中进行测试时，获得测试后状态也是无法完成的。在上篇博文的结尾">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 进行单元测试难在哪-part2">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/17/why-android-unit-testing-is-so-hard-pt-2/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="在上一篇博文中，我用干货告诉大家：即使是 Google 大牛写出来的代码也无法进行测试。确切地说，我真正告诉大家的是：根本没办法在 SessionDetailActivity 的 onStop() 方法里进行单元测试，而且详细地解释了个中因果：由于无法改变预测试状态，我们无法在 onStop() 方法里完成断言；在 onStop() 方法中进行测试时，获得测试后状态也是无法完成的。在上篇博文的结尾">
+<meta property="og:updated_time" content="2015-07-11T08:48:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 进行单元测试难在哪-part2">
+<meta name="twitter:description" content="在上一篇博文中，我用干货告诉大家：即使是 Google 大牛写出来的代码也无法进行测试。确切地说，我真正告诉大家的是：根本没办法在 SessionDetailActivity 的 onStop() 方法里进行单元测试，而且详细地解释了个中因果：由于无法改变预测试状态，我们无法在 onStop() 方法里完成断言；在 onStop() 方法中进行测试时，获得测试后状态也是无法完成的。在上篇博文的结尾">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-why-android-unit-testing-is-so-hard-pt-2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/17/why-android-unit-testing-is-so-hard-pt-2/" class="article-date">
+  <time datetime="2015-05-16T16:00:00.000Z" itemprop="datePublished">2015-05-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 进行单元测试难在哪-part2
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在上一篇博文中，我用干货告诉大家：即使是 Google 大牛写出来的代码也无法进行测试。确切地说，我真正告诉大家的是：根本没办法在 SessionDetailActivity 的 onStop() 方法里进行单元测试，而且详细地解释了个中因果：由于无法改变预测试状态，我们无法在 onStop() 方法里完成断言；在 onStop() 方法中进行测试时，获得测试后状态也是无法完成的。在上篇博文的结尾处，我跟大家说：正是 Android SDK 的某些特性，以及 Google 官方推荐的代码模板使得单元测试处于如此尴尬的境地，而且我承诺会在这篇博文中详尽地解释各种因由，那现在就让我来兑现我的诺言吧。<br><a id="more"></a><br>在我开始论述之前，我再说一次：正是标准的 Android 应用架构使测试 Android 应用变得如此困难，这句话是本系列博文的核心论点。这篇博文的意义在于：我们尝试提出理由证明重构 Android 应用的必要性，使得这些 Android 应用不需要明确地依赖于 Android SDK，与此同时，我们也尝试着提出一种健壮的应用架构，以增强 Android 应用的测试性，你会在这篇博文里了解到相关的概述。因此，我接下来将尝试去证明这篇博文的核心论点。</p>
+<p>众所周知，开发 Android 应用有一种标准的架构，在示例代码和开源代码里很常见到应用的业务逻辑被放在 Android 应用的组件类，Activity，Service，Fragment 里执行。而我接下来就要遵循这种架构进行开发。而这篇博文要论述的就是：如果我们遵循这种标准架构进行开发，极有可能写下无法测试的代码，我在上一篇博文里也论证了这样的问题并不是偶然，正是标准的 Android 应用架构让测试变得支离破碎，单元测试几乎不能进行。</p>
+<h2 id="传统的_Android_应用架构让单元测试变得不可能">传统的 Android 应用架构让单元测试变得不可能</h2><p>为了开始论证为什么标准开发架构让应用组件变得无法测试，大家不妨和我一起简要地复习下上篇博文的一些结论。单元测试包含三个步骤：准备，测试，断言。为了完成准备步骤，需要改变测试代码的预测试状态，此外，为了完成单元测试的断言步骤，我们需要获得程序的测试后状态。</p>
+<p>复习了这些知识点后，可以开始进入正题了哈。在某些情况下，依赖注入是实现能够改变预测试状态代码的唯一办法，而且这些代码的测试后状态也是可访问的。我写了一个与 Android 完全无关的示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MathNerd</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> mCalcCache;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> mCalculator;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MathNerd</span><span class="params">(CalculationCache calcCache, Calculator calculator)</span> </span>&#123;</span><br><span class="line">        mCalcCache = calcCache;</span><br><span class="line">        mCalculator = calculator;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doIntenseCalculation</span><span class="params">(Calculation calculation, IntenseCalculationCompletedListener listener)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (!mCalcCache.contains(calculation)) &#123;</span><br><span class="line">            </span><br><span class="line">            mCalculator.doIntenseCalculationInBackground(listener);</span><br><span class="line">            </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            </span><br><span class="line">            Answer answer = mCalcCache.getAnswerFor(calculation);</span><br><span class="line">            listener.onCalculationCompleted(answer);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如上所示，依赖注入确实是对 doIntenseCalculation() 进行单元测试的唯一办法，因为 doIntenseCalculation() 方法根本没有返回值。除此以外，MathNerd 类里也没有判断测试后状态有效性的属性。但通过依赖注入，我们可以通过 mCalcCache 获得单元测试中的测试后状态。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCacheUpdate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//Arrange</span></span><br><span class="line">    CalculationCache calcCache = <span class="keyword">new</span> CalculationCache();</span><br><span class="line">    </span><br><span class="line">    Calculator calculator = <span class="keyword">new</span> Calculator();</span><br><span class="line">    </span><br><span class="line">    MathNerd mathNerd = <span class="keyword">new</span> MathNerd(calcCache, calculator);</span><br><span class="line">    </span><br><span class="line">    Calculation calcualation = <span class="keyword">new</span> Calculation(<span class="string">"e^2000"</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//Act</span></span><br><span class="line">    mathNerd.doIntenseCalculationInBackground(calculation, <span class="keyword">null</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//some smelly Thread.sleep() code...</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//Assert</span></span><br><span class="line">    calcCache.contains(calculation);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们这样做，很遗憾，恐怕是没办法为 MathNerd 类实现一个测试单元了。我们将会实现一个整合测试，用于检查 MathNerd 实际行为以及类是否根据 doIntenseCalculationInBackground() 方法处理后的值更新 CalcCache。</p>
+<p>此外，依赖注入实际上也是验证测试单元测试后状态的唯一办法。我们通过注入验证方法在正确的位置被调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCacheUpdate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">   <span class="comment">//Arrange</span></span><br><span class="line">    CalculationCache calcCache = mock(CalculationCache.class);</span><br><span class="line"> </span><br><span class="line">    when(calcCache.contains()).thenReturn(<span class="keyword">false</span>);</span><br><span class="line"> </span><br><span class="line">    Calculator calculator = mock(Calculator.class);</span><br><span class="line"> </span><br><span class="line">    MathNerd mathNerd = <span class="keyword">new</span> MathNerd(calcCache, calculator);</span><br><span class="line"> </span><br><span class="line">    Calculation calculation = <span class="keyword">new</span> Calculation(<span class="string">"e^2000"</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//Act</span></span><br><span class="line">    mathNerd.doIntenseCalculationInBackground(calculation, <span class="keyword">null</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//Assert should use calculator to perform calcluation because cache was empty</span></span><br><span class="line">    verify(calculator).doIntenseCalculationInBackground(any());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 Android 应用的相关类中进行单元测试涉及的许多测试实例都需要一个东西：依赖注入。但问题来了：核心 Android 类持有我们无法注入的依赖。例如我上次提到的通过 SessionDetailActivity 启动的 SessionCalendarService 就是一个很好的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onHandleIntent</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">final</span> String action = intent.getAction();</span><br><span class="line">    Log.d(TAG, <span class="string">"Received intent: "</span> + action);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">final</span> ContentResolver resolver = getContentResolver();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">boolean</span> isAddEvent = <span class="keyword">false</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (ACTION_ADD_SESSION_CALENDAR.equals(action)) &#123;</span><br><span class="line">        isAddEvent = <span class="keyword">true</span>;</span><br><span class="line"> </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ACTION_REMOVE_SESSION_CALENDAR.equals(action)) &#123;</span><br><span class="line">        isAddEvent = <span class="keyword">false</span>;</span><br><span class="line"> </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ACTION_UPDATE_ALL_SESSIONS_CALENDAR.equals(action) &amp;&amp;</span><br><span class="line">            PrefUtils.shouldSyncCalendar(<span class="keyword">this</span>)) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            getContentResolver().applyBatch(CalendarContract.AUTHORITY,</span><br><span class="line">                    processAllSessionsCalendar(resolver, getCalendarId(intent)));</span><br><span class="line">            sendBroadcast(<span class="keyword">new</span> Intent(</span><br><span class="line">                    SessionCalendarService.ACTION_UPDATE_ALL_SESSIONS_CALENDAR_COMPLETED));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">            LOGE(TAG, <span class="string">"Error adding all sessions to Google Calendar"</span>, e);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (OperationApplicationException e) &#123;</span><br><span class="line">            LOGE(TAG, <span class="string">"Error adding all sessions to Google Calendar"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ACTION_CLEAR_ALL_SESSIONS_CALENDAR.equals(action)) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            getContentResolver().applyBatch(CalendarContract.AUTHORITY,</span><br><span class="line">                    processClearAllSessions(resolver, getCalendarId(intent)));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">            LOGE(TAG, <span class="string">"Error clearing all sessions from Google Calendar"</span>, e);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (OperationApplicationException e) &#123;</span><br><span class="line">            LOGE(TAG, <span class="string">"Error clearing all sessions from Google Calendar"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">   <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SessionCalendarService 的依赖是 ContentResolver，而且 ContentResolver 就是一个无法注入的依赖，所以如果我们并没有办法在 onHandleIntent() 方法里进行注入。而 onHandleIntent() 方法没有返回值，SessionCalendarService 类里也没有能让我们检查测试后状态的可访问的属性。为了验证测试后状态，我们可以通过查询 ContentProvider 检查请求数据是否被插入，但我们不会这样的方式为 SessionCalendarService 实现测试单元。相反，我们用的方法是实现一个整合测试，同时测试 SessionCalendarService 以及受 ContentProvider 操控的日历会议数据。</p>
+<p>所以如果你把业务逻辑放在 Android 类里，而这个类的依赖又无法被注入，那这部分代码铁定没办法进行单元测试了。类似的无法被注入的依赖还有呢，例如：Activity 和 Fragment 的 FragmentManager。因此，至今为止 Google 官方一直鼓励我们使用的标准 Android 应用架构模式，教导我们在开发应用的时候要把业务逻辑放在应用的组件类里，信誓旦旦地说这是为我们好，而我们今天才知道真相竟然是：正是这样的架构让我们写下无法测试的代码。</p>
+<h2 id="标准开发模式让单元测试变得困难重重">标准开发模式让单元测试变得困难重重</h2><p>某些情况下，标准的开发模式使代码的单元测试变得十分困难。如果我们回到上一篇博文提到的 SessionDetailActivity 里的 onStop() 方法，可以看到：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onStop();</span><br><span class="line">    <span class="keyword">if</span> (mInitStarred != mStarred) &#123;</span><br><span class="line">        <span class="keyword">if</span> (UIUtils.getCurrentTime(<span class="keyword">this</span>) &lt; mSessionStart) &#123;</span><br><span class="line">            <span class="comment">// Update Calendar event through the Calendar API on Android 4.0 or new versions.</span></span><br><span class="line">            Intent intent = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">if</span> (mStarred) &#123;</span><br><span class="line">                <span class="comment">// Set up intent to add session to Calendar, if it doesn't exist already.</span></span><br><span class="line">                intent = <span class="keyword">new</span> Intent(SessionCalendarService.ACTION_ADD_SESSION_CALENDAR,</span><br><span class="line">                        mSessionUri);</span><br><span class="line">                intent.putExtra(SessionCalendarService.EXTRA_SESSION_START,</span><br><span class="line">                        mSessionStart);</span><br><span class="line">                intent.putExtra(SessionCalendarService.EXTRA_SESSION_END,</span><br><span class="line">                        mSessionEnd);</span><br><span class="line">                intent.putExtra(SessionCalendarService.EXTRA_SESSION_ROOM, mRoomName);</span><br><span class="line">                intent.putExtra(SessionCalendarService.EXTRA_SESSION_TITLE, mTitleString);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// Set up intent to remove session from Calendar, if exists.</span></span><br><span class="line">                intent = <span class="keyword">new</span> Intent(SessionCalendarService.ACTION_REMOVE_SESSION_CALENDAR,</span><br><span class="line">                        mSessionUri);</span><br><span class="line">                intent.putExtra(SessionCalendarService.EXTRA_SESSION_START,</span><br><span class="line">                        mSessionStart);</span><br><span class="line">                intent.putExtra(SessionCalendarService.EXTRA_SESSION_END,</span><br><span class="line">                        mSessionEnd);</span><br><span class="line">                intent.putExtra(SessionCalendarService.EXTRA_SESSION_TITLE, mTitleString);</span><br><span class="line">            &#125;</span><br><span class="line">            intent.setClass(<span class="keyword">this</span>, SessionCalendarService.class);</span><br><span class="line">            startService(intent);</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">if</span> (mStarred) &#123;</span><br><span class="line">                setupNotification();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>就像你看到的那样，onStop() 方法里压根没有能让我们知道 SessionCalendarService 是否通过正确的参数启动的可访问属性，此外，onStop() 方法是一个受保护的方法，使其返回值是无法修改的。因此，我们访问测试后状态的唯一办法就是检查注入到 onStop() 方法内的注入的状态。</p>
+<p>这样一来，我们就会注意到 onStop() 方法中用于启动 SessionCalendarService 的代码并不属于某一个类。换句话说，onStop() 方法中注入的依赖根本不存在用于检查 SessionCalendarService 是否在正确的情况下通过正确的参数启动的测试单元测试后状态的属性。为了提出能让 onStop() 方法变为可测试的的第三种办法，那我们需要一些这样的东西：</p>
+<figure class="highlight openscad"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void onStop<span class="params">()</span> &#123;</span><br><span class="line">    super.onStop<span class="params">()</span>;</span><br><span class="line">    <span class="keyword">if</span> <span class="params">(mInitStarred != mStarred)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="params">(UIUtils.getCurrentTime<span class="params">(this)</span> &lt; mSessionStart)</span> &#123;</span><br><span class="line">            <span class="comment">// Update Calendar event through the Calendar API on Android 4.0 or new versions.</span></span><br><span class="line">            Intent intent = null;</span><br><span class="line">            <span class="keyword">if</span> <span class="params">(mStarred)</span> &#123;</span><br><span class="line">                </span><br><span class="line">                <span class="comment">// Service launcher sets up intent to add session to Calendar</span></span><br><span class="line">                mServiceLauncher.launchSessionCalendarService<span class="params">(SessionCalendarService.ACTION_ADD_SESSION_CALENDAR, mSessionUri, </span><br><span class="line">                                                            mSessionStart, mSessionEnd, mRoomName, mTitleString)</span>;</span><br><span class="line">                                                            </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                </span><br><span class="line">                <span class="comment">// Set up intent to remove session from Calendar, if exists.</span></span><br><span class="line">                mServiceLauncher.launchSessionCalendarService<span class="params">(SessionCalendarService.ACTION_REMOVE_SESSION_CALENDAR, mSessionUri,</span><br><span class="line">                                                            mSessionStart, mSessionEnd, mTitleString)</span>;</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">if</span> <span class="params">(mStarred)</span> &#123;</span><br><span class="line">                setupNotification<span class="params">()</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>虽然这不是重构 onStop() 方法最简洁的方式，但如果我们按照标准开发方法把业务逻辑写在 Activity 里，并让写下的代码可以进行单元测试，类似的处理就变得必要了。现在不妨想想这种重构方式有多么违反常理：我们没有简单地调用 startService() 方法（startService() 是 Context 的一个方法，我们甚至可以说调用的是 SessionDetailActivity 的方法），而是通过依赖于 Context 的 ServiceLauncher 对象去启动该服务。SesionDetailActivity 作为 Context 的子类也将使用一个持有 Context 的对象去启动 SessionCalendarService。</p>
+<p>不幸的是，即使我们像上面说的那样重构了 onStop() 方法，我们仍然不能保证能为 onStop() 方法实现测试单元。问题在于：ServiceLauncher 没有被注入，使得我们不能对 ServiceLauncher 进行注入，使我们能验证在测试过程中调用了正确的方法。</p>
+<p>要对 ServiceLauncher进行注入，除了刚刚提到的以外，还会因为 ServiceLauncher 自身依赖于 Context 变得复杂，因为 Context 是一个非打包对象。因此，你并不能简单地通过将其传入用于启动  SessionDetailActivity 的 Intent 注入 ServiceLauncher。所以为了注入 ServiceLauncher，你需要开动你的小脑筋，或者使用类似于 Dagger¹ 的注入库。现在你应该也会发现，为了让我们的代码可以进行单元测试，我们确实需要完成许多复杂、繁琐的工作，而且，正如我即将在下篇博文中的论述，就算我们为了进行依赖注入而使用 Dagger 这样的库，在 Activity 内进行单元测试仍然是令人备受煎熬的。</p>
+<p>为了让 onStop() 方法能进行单元测试，标准开发方式强迫我们使用反常理的重构方法，并要求我们在“根据以 Intent 为基础的依赖注入机制想出更好的重构方法”或“使用第三方的依赖注入库”。而标准开发方式为写下可测试代码带来的困难，就像在鼓励我们写下无法进行测试的代码，正是这种困难让我认为：标准开发方式阻碍我们写下可测试代码。</p>
+<h2 id="结论">结论</h2><p>在整个系列博文中，我一直在提出这样的观点：通过反思为什么在 Android 中进行单元测试如此困难，将帮助我们发现重构应用架构的各种好处，使我们的应用不必明确地依赖于 Android SDK。这篇博文论述到这里，我相信大家有足够理由相信完全摆脱 Android SDK 或许是个好提议了。</p>
+<p>我刚刚把业务逻辑放在应用的组件类中，并向大家证明了对其进行单元测试有多么困难，甚至我们可以说对其进行单元测试这是不可能的。在下一篇博文中，我将建议大家将业务逻辑委托给使用了正确的依赖注入姿势的类。如果我们觉得定义这些类很麻烦的话，退而求其次，也能让这些类的依赖成为与 Android 无关的接口。与增强程序测试性的第一步相比，这一步是至关重要的，而完成第二步使我们无需 Android 特有的测试工具（例如：Roboletric，Instrumented Tests）就能写下更高效的测试单元。</p>
+<p><strong>注</strong></p>
+<ol>
+<li>毫无疑问，你在传入 ServiceLauncher 时应该使他变为一个序列化对象。但这并不是一个特别健壮的解决办法，因为只有在你不在乎序列化带来的性能影响时才能使用这个办法。</li>
+</ol>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/" target="_blank" rel="external">Why Android Unit Testing is so hard</a></li>
+<li>原文作者 : <a href="http://philosophicalhacker.com/" target="_blank" rel="external">Matthew Dupree</a></li>
+<li><a href="http://www.devtf.cn" target="_blank" rel="external">译文出自 :  开发技术前线 www.devtf.cn</a></li>
+<li>译者 : <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a> </li>
+<li>校对者: <a href="https://github.com/tiiime" target="_blank" rel="external">tiiime</a>  </li>
+<li>状态 :  完成</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/17/why-android-unit-testing-is-so-hard-pt-2/" data-id="cibyut6940007181i627eeqwz" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/17/why-android-unit-testing-is-so-hard-pt-2/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/17/grokking-rxjava-part-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          深入理解RxJava(2)-操作符
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/17/grokking-rxjava-part-1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">深入理解RxJava(1)-基础篇</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/17/why-android-unit-testing-is-so-hard-pt-2/" data-title="Android 进行单元测试难在哪-part2" data-url="http://likebamboo.com/AndroidBlog/2015/05/17/why-android-unit-testing-is-so-hard-pt-2/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">47</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/introduction-to-model-view-presenter-on-android/">MVP在Android平台上的应用</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/how-to-make-our-android-apps-unit-testable-pt-2/">Android 进行单元测试难在哪-part4</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/ted_mosby/">Ted Mosby - 软件架构</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/when-Thor-and-Hulk-meet-dagger2-rxjava-1/">当复仇者联盟遇上Dragger2、RxJava和Retrofit的巧妙结合</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/automating-android-development/">自动化 Android 开发</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

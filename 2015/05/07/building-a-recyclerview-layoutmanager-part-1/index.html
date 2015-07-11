@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>创建一个 RecyclerView LayoutManager – Part 1 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文是这个系列中的 Part 1，这里是 Part 2 和 Part 3 的链接。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="创建一个 RecyclerView LayoutManager – Part 1">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/07/building-a-recyclerview-layoutmanager-part-1/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="本文是这个系列中的 Part 1，这里是 Part 2 和 Part 3 的链接。">
+<meta property="og:updated_time" content="2015-07-11T08:35:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="创建一个 RecyclerView LayoutManager – Part 1">
+<meta name="twitter:description" content="本文是这个系列中的 Part 1，这里是 Part 2 和 Part 3 的链接。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-building-a-recyclerview-layoutmanager-part-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/07/building-a-recyclerview-layoutmanager-part-1/" class="article-date">
+  <time datetime="2015-05-06T16:00:00.000Z" itemprop="datePublished">2015-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      创建一个 RecyclerView LayoutManager – Part 1
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>本文是这个系列中的 Part 1，这里是 <a href="http://wiresareobsolete.com/2014/09/recyclerview-layoutmanager-2/" target="_blank" rel="external">Part 2</a> 和 <a href="http://wiresareobsolete.com/2015/02/recyclerview-layoutmanager-3/" target="_blank" rel="external">Part 3</a> 的链接。<br><a id="more"></a><br>现如今，如果你是 Android 开发者，你肯定听说过 RecyclerView 这个控件；<br>它是一个即将加入 support library 之中的新组件，<br>通过方便的视图复用轻松实现自定义高效的视图集。<br>已经有很多优秀的文章介绍了 RecyclerView 基础，讲解如何使用<br>RecyclerView 提供的内建部分，包括 item animations。所以，<br>我们就不再重复前人的工作了，下面是一些帮你入门的资料：</p>
+</blockquote>
+<ul>
+<li><a href="http://www.grokkingandroid.com/first-glance-androids-recyclerview/" target="_blank" rel="external">A First Glance at Android’s RecyclerView</a></li>
+<li><a href="http://lucasr.org/2014/07/31/the-new-twowayview/" target="_blank" rel="external">The new TwoWayView</a></li>
+<li><a href="https://github.com/gabrielemariotti/RecyclerViewItemAnimators" target="_blank" rel="external">RecyclerViewItemAnimators</a></li>
+</ul>
+<p>我们的这个系列文章会关注 RecyclerView 底层细节，涉及到创建你自己的<br>LayoutManager，做些比单一的 垂直/水平 滚动列表稍稍复杂的东西。</p>
+<blockquote>
+<p>在我们开始前，你需要知道  LayoutManager API  之所以能够让我们实现<br>强大复杂的布局是因为它只替你做了很少的工作；这就意味着<br>你不得不自己完成数量可观的代码。如果要在一个项目中使用自定义视图，<br>不要陷入过度优化或过度泛化代码之中。你只需要关心<br>在你的用例中需要实现的特性就可以了。</p>
+</blockquote>
+<h1 id="RecyclerView_Playground">RecyclerView Playground</h1><p>这个系列中所有的代码段都取自 <a href="https://github.com/devunwired/recyclerview-playground" target="_blank" rel="external">RecyclerView Playground sample</a> 这个项目，<br>示例应用里包含了各个方面使用 RecyclerView 的实例，从创建简单的 list<br>到自定义 LayoutManagers。</p>
+<p>本文的代码来自 <code>FixedGridLayoutManager</code> ，一个可以垂直和水平<br>滚动的二维的网格布局。</p>
+<blockquote>
+<p>support library 里也有一个自定义的 LayoutManager；本质上<br>是一个自定义 vertical linear list  的实现：<br>[SDK_PATH]/extras/android/compatibility/samples/Support7Demos/src/com/example/android/supportv7/widget/RecyclerViewActivity.java</p>
+<p>同时，Android L 和 新的 support libraries 可能还没加入 AOSP<br>之中，不过 RecyclerView 提供了 <strong>JAR</strong> 资源，可以在这里找到：<br>[SDK_PATH]/extras/android/m2repository/com/android/support/recyclerview-v7/21.0.0-rc1/recyclerview-v7-21.0.0-rc1-sources.jar</p>
+</blockquote>
+<h1 id="The_Recycler">The Recycler</h1><p>首先，了解下 API 的结构。当你需要从一个可能再生的前子视图中<br>回收旧的 view 或者 获取新的 view 时，<br>你的 LayoutManager 可以访问一个 <code>Recycler</code> 实例。</p>
+<p>Recycler 也免掉了直接访问 view 当前适配器方法的麻烦。当你的<br>LayoutManager 需要一个新的子视图时，只要调用 <code>getViewForPosition()</code><br>这个方法，Recycler 会决定到底是从头创建一个新的视图<br>还是重用一个已存在的废弃视图。<br>你的 LayoutManager 需要及时将不再显示的视图传递给 Recycler，<br>避免 Recycler 创建不必要的 view 对象。</p>
+<h2 id="Detach_vs-_Remove">Detach vs. Remove</h2><p>布局更新时有两个方法处理已存在的子视图：detach 和<br>remove (分离和移除)。Detach 是一个轻量的记录 view 操作。<br>被 detach 的视图在你的代码返回前能够重新连接。可以通过 Recycler<br>在不 重新绑定/重新构建 子视图的情况下修改已连接子视图的索引。</p>
+<p>Remove 意味着这个 view 已经不需要了。任何被永久移除的 view 都应该<br>放到 Recycler 中，方便以后重用，不过 API 并没有强制要求。<br>被 remove 的视图是否被回收取决于你。</p>
+<h2 id="Scrap_vs-_Recycle">Scrap vs. Recycle</h2><p>Recycler 有两级视图缓存系统： scrap heap 和 recycle pool (垃圾堆和回收池)，<br>Scrap heap 是一个轻量的集合，视图可以不经过适配器直接返回给<br>LayoutManager 。通常被 detach<br>但会在同一布局重新使用的视图会临时储存在这里。Recycle pool 存放的<br>是那些假定并没有得到正确数据(相应位置的数据)的视图，<br>因此它们都要经过适配器重新绑定后才能返回给 LayoutManager。</p>
+<p>当要给 LayoutManager 提供一个新 view 时，Recycler 首先会<br>检查 scrap heap 有没有对应的 position/id；如果有对应的内容，<br>就直接返回数据不需要通过适配器重新绑定。如果没有的话，<br>Recycler 就会从 recycle pool 里弄一个合适的视图出来，<br>然后用 adapter 给它绑定必要的数据<br>(就是调用 <code>RecyclerView.Adapter.bindViewHolder()</code>) 再返回。<br>如果 recycle pool 中也不存在有效 view ，就会在绑定数据前<br>创建新的 view (就是 <code>RecyclerView.Adapter.createViewHolder()</code>)，<br>最后返回数据。</p>
+<h2 id="经验法则">经验法则</h2><p>只要你原意，LayoutManager 的 API 允许你独立完成所有这些任务，<br>所以可能的组合有点多。通常来说，<br>如果你想要临时整理并且希望稍后在同一布局中重新使用某个 view 的话，<br> 可以对它调用 <code>detachAndScrapView()</code> 。如果基于当前布局<br> 你不再需要某个 view 的话，对其调用 <code>removeAndRecycleView()</code>。</p>
+<h1 id="Building_The_Core">Building The Core</h1><p>LayoutManager 需要实时添加，测量和布局所有它需要的子视图。<br>当用户滚动屏幕时，布局管理器将来决定什么时候添加新的子视图，<br>什么时候可以 detache/scrap (分离/废弃)视图。</p>
+<p>你需要实现下面这些方法创建一个可行的 LayoutManager 最小系统。</p>
+<h4 id="generateDefaultLayoutParams()">generateDefaultLayoutParams()</h4><p>事实上你只要重写这个方法你的 LayoutManager 就能编译通过了。<br>实现也很简单，返回一个你想要默认应用给所有从<br>Recycler 中获得的子视图做参数的 <code>RecyclerView.LayoutParams</code> 实例。<br>这些参数会在对应的 <code>getViewForPosition()</code> 返回前赋值给相应的子视图。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="keyword">public</span> RecyclerView.<span class="function">LayoutParams <span class="title">generateDefaultLayoutParams</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RecyclerView.LayoutParams(</span><br><span class="line">        RecyclerView.LayoutParams.WRAP_CONTENT,</span><br><span class="line">        RecyclerView.LayoutParams.WRAP_CONTENT);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="onLayoutChildren()">onLayoutChildren()</h4><p><code>onLayoutChildren()</code> 是 LayoutManager 的主入口。<br>它会在 view 需要初始化布局时调用，<br>当适配器的数据改变时(或者整个适配器被换掉时)会再次调用。<br><strong>注意！这个方法不是在每次你对布局作出改变时调用的。</strong><br>它是 初始化布局 或者 在数据改变时重置子视图布局的好位置。</p>
+<p>在接下来的部分，我们会分析在适配器更新时<br>是怎样使用它基于当前可见元素刷新布局的。<br>现在，我们将简单地解决这个问题当做子视图布局第一关。<br>下面是 <code>FixedGridLayoutManager</code> 示例的精简版：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLayoutChildren</span><span class="params">(RecyclerView.Recycler recycler, RecyclerView.State state)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//Scrap measure one child</span></span><br><span class="line">    View scrap = recycler.getViewForPosition(<span class="number">0</span>);</span><br><span class="line">    addView(scrap);</span><br><span class="line">    measureChildWithMargins(scrap, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span><br><span class="line">     * We make some assumptions in this code based on every child</span><br><span class="line">     * view being the same size (i.e. a uniform grid). This allows</span><br><span class="line">     * us to compute the following values up front because they</span><br><span class="line">     * won't change.</span><br><span class="line">     */</span></span><br><span class="line">    mDecoratedChildWidth = getDecoratedMeasuredWidth(scrap);</span><br><span class="line">    mDecoratedChildHeight = getDecoratedMeasuredHeight(scrap);</span><br><span class="line">    detachAndScrapView(scrap, recycler);</span><br><span class="line">    </span><br><span class="line">    updateWindowSizing();</span><br><span class="line">    <span class="keyword">int</span> childLeft;</span><br><span class="line">    <span class="keyword">int</span> childTop;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span><br><span class="line">     * Reset the visible and scroll positions</span><br><span class="line">     */</span></span><br><span class="line">    mFirstVisiblePosition = <span class="number">0</span>;</span><br><span class="line">    childLeft = childTop = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//Clear all attached views into the recycle bin</span></span><br><span class="line">    detachAndScrapAttachedViews(recycler);</span><br><span class="line">    <span class="comment">//Fill the grid for the initial layout of views</span></span><br><span class="line">    fillGrid(DIRECTION_NONE, childLeft, childTop, recycler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们会对子视图做一些记录和安排<br>(为了简便，假设来自适配器的所有子视图都是一样大的)，<br>确保所有已存在的视图在 scrap heap 之中。我将<br>大部分工作抽象到 <code>fillGrid()</code> 这个辅助方法中以便重用。<br>我们很快就会看到这个方法在更新可见视图和滚动屏幕中被大量调用。</p>
+<blockquote>
+<p>就像是自定义实现一个 ViewGroup，你负责触发测量和布局每一个<br>从 Recycler 获取到的子视图。API 没有直接完成这项工作 。</p>
+</blockquote>
+<p>通常来说，在这类方法之中你需要完成的主要步骤如下：</p>
+<ol>
+<li>在滚动事件结束后检查所有附加视图当前的偏移位置。</li>
+<li>判断是否需要添加新视图填充由滚动屏幕产生的空白部分。并从<br> Recycler 中获取视图。</li>
+<li>判断当前视图是否不再显示。移除它们并放置到 Recycler 中。</li>
+<li>判断剩余视图是否需要整理。发生上述变化后可能<br> 需要你修改视图的子索引来更好地和它们的适配器位置校准。</li>
+</ol>
+<p>注意我们放进 <code>FixedGridLayoutManager.fillGrid()</code> 里填充 RecyclerView 的主要步骤。<br>当到达最大行数时，这个 manager 将位置从右到左排序，封装。</p>
+<ol>
+<li><p>清点目前我们所有的视图。将他们 Detach 以便稍后重新连接。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">SparseArray&lt;View&gt; viewCache = <span class="keyword">new</span> SparseArray&lt;View&gt;(getChildCount());</span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">if</span> (getChildCount() != <span class="number">0</span>) &#123;</span><br><span class="line">	<span class="comment">//...</span></span><br><span class="line">	<span class="comment">//Cache all views by their existing position, before updating counts</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; getChildCount(); i++) &#123;</span><br><span class="line">		<span class="keyword">int</span> position = positionOfIndex(i);</span><br><span class="line">		<span class="keyword">final</span> View child = getChildAt(i);</span><br><span class="line">		viewCache.put(position, child);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//Temporarily detach all views.</span></span><br><span class="line">	<span class="comment">// Views we still need will be added back at the proper index.</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; viewCache.size(); i++) &#123;</span><br><span class="line">		detachView(viewCache.valueAt(i));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>测量/布局每一个当前可见的子视图。重新连接已有的视图很简单；<br> 新的视图是从 Recycler 之中获取的。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; getVisibleChildCount(); i++) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//Layout this position</span></span><br><span class="line">    View view = viewCache.get(nextPosition);</span><br><span class="line">    <span class="keyword">if</span> (view == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">/*</span><br><span class="line">         * The Recycler will give us either a newly constructed view,</span><br><span class="line">         * or a recycled view it has on-hand. In either case, the</span><br><span class="line">         * view will already be fully bound to the data by the</span><br><span class="line">         * adapter for us.</span><br><span class="line">         */</span></span><br><span class="line">        view = recycler.getViewForPosition(nextPosition);</span><br><span class="line">        addView(view);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span><br><span class="line">         * It is prudent to measure/layout each new view we</span><br><span class="line">         * receive from the Recycler. We don't have to do</span><br><span class="line">         * this for views we are just re-arranging.</span><br><span class="line">         */</span></span><br><span class="line">        measureChildWithMargins(view, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        layoutDecorated(view, leftOffset, topOffset,</span><br><span class="line">                leftOffset + mDecoratedChildWidth,</span><br><span class="line">                topOffset + mDecoratedChildHeight);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//Re-attach the cached view at its new index</span></span><br><span class="line">        attachView(view);</span><br><span class="line">        viewCache.remove(nextPosition);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>最终，所有在第一步中 detach 并且没有被重新连接的视图都不可见。<br> 将它们移入 Recycler 中，以备后用。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; viewCache.size(); i++) &#123;</span><br><span class="line">    recycler.recycleView(viewCache.valueAt(i));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>说明一下，先将所有视图 detach 之后再将需要的视图重新连接是为了<br>保持每一个视图子索引的顺序 (就是  <code>getChildAt()</code> 的索引)。我们希望<br>可见视图从左上到右下的索引从 <code>0</code> 开始，到 <code>getChildCount()-1</code> 结束。<br>当我们上下滑动视图，新的子视图被添加，它的索引顺序会变得不可靠。<br>我们需要保留正确的索引来在任意点上定位每一个视图。在一个简单地<br>LayoutManager (比如 LinearLayoutManager)中，子视图可以轻松地插入<br>list 的两端， 记录层就没有存在的必要了。</p>
+<h1 id="添加用户交互">添加用户交互</h1><p>目前，我们已经有一个非常好的初始布局，但是它并不能动起来。<br>RecyclerView 的关键就在于当用户浏览一组数据时动态提供视图。<br>覆盖一些方法就能实现我们的目的。</p>
+<h4 id="canScrollHorizontally()_&amp;_canScrollVertically()">canScrollHorizontally() &amp; canScrollVertically()</h4><p>这些方法很简单，在你想要滚动方向对应的方法里返回 true ，<br>不想要滚动方向对应的方法里返回 false。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canScrollVertically</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//We do allow scrolling</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="scrollHorizontallyBy()_&amp;_scrollVerticallyBy()">scrollHorizontallyBy() &amp; scrollVerticallyBy()</h4><p>在这里你应该实现 content 移动的逻辑。RecyclerView 已经处理了 scrolling<br>和 <a href="http://www.google.com/design/spec/patterns/gestures.html#gestures-touch-mechanics" target="_blank" rel="external">flinging</a> (注：Fling: Gross gesture, no on-screen target)<br>触摸操作，不需要处理 MotionEvents 或者 GestureDetectors 这些麻烦事。<br>你只需要完成下面这三个任务：</p>
+<ol>
+<li>将所有的子视图移动适当的位置 (对的，你得自己做这个)。</li>
+<li>决定移动视图后 添加/移除 视图。</li>
+<li>返回滚动的实际距离。框架会根据它判断你是否触碰到边界。</li>
+</ol>
+<p>在 FixedGridLayoutManager 里，这两个方法很像。这里是精简后的垂直滚动实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">scrollVerticallyBy</span><span class="params">(<span class="keyword">int</span> dy, RecyclerView.Recycler recycler,</span><br><span class="line">        RecyclerView.State state)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (getChildCount() == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Take top measurements from the top-left child</span></span><br><span class="line">    <span class="keyword">final</span> View topView = getChildAt(<span class="number">0</span>);</span><br><span class="line">    <span class="comment">//Take bottom measurements from the bottom-right child.</span></span><br><span class="line">    <span class="keyword">final</span> View bottomView = getChildAt(getChildCount()-<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Optimize the case where the entire data set is too small to scroll</span></span><br><span class="line">    <span class="keyword">int</span> viewSpan = getDecoratedBottom(bottomView) - getDecoratedTop(topView);</span><br><span class="line">    <span class="keyword">if</span> (viewSpan &lt;= getVerticalSpace()) &#123;</span><br><span class="line">        <span class="comment">//We cannot scroll in either direction</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> delta;</span><br><span class="line">    <span class="keyword">int</span> maxRowCount = getTotalRowCount();</span><br><span class="line">    <span class="keyword">boolean</span> topBoundReached = getFirstVisibleRow() == <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">boolean</span> bottomBoundReached = getLastVisibleRow() &gt;= maxRowCount;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dy &gt; <span class="number">0</span>) &#123; <span class="comment">// Contents are scrolling up</span></span><br><span class="line">        <span class="comment">//Check against bottom bound</span></span><br><span class="line">        <span class="keyword">if</span> (bottomBoundReached) &#123;</span><br><span class="line">            <span class="comment">//If we've reached the last row, enforce limits</span></span><br><span class="line">            <span class="keyword">int</span> bottomOffset;</span><br><span class="line">            <span class="keyword">if</span> (rowOfIndex(getChildCount() - <span class="number">1</span>) &gt;= (maxRowCount - <span class="number">1</span>)) &#123;</span><br><span class="line">                <span class="comment">//We are truly at the bottom, determine how far</span></span><br><span class="line">                bottomOffset = getVerticalSpace() - getDecoratedBottom(bottomView)</span><br><span class="line">                        + getPaddingBottom();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">/*</span><br><span class="line">                 * Extra space added to account for allowing bottom space in the grid.</span><br><span class="line">                 * This occurs when the overlap in the last row is not large enough to</span><br><span class="line">                 * ensure that at least one element in that row isn't fully recycled.</span><br><span class="line">                 */</span></span><br><span class="line">                bottomOffset = getVerticalSpace() - (getDecoratedBottom(bottomView)</span><br><span class="line">                        + mDecoratedChildHeight) + getPaddingBottom();</span><br><span class="line">            &#125;</span><br><span class="line">            delta = Math.max(-dy, bottomOffset);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//No limits while the last row isn't visible</span></span><br><span class="line">            delta = -dy;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; <span class="comment">// Contents are scrolling down</span></span><br><span class="line">        <span class="comment">//Check against top bound</span></span><br><span class="line">        <span class="keyword">if</span> (topBoundReached) &#123;</span><br><span class="line">            <span class="keyword">int</span> topOffset = -getDecoratedTop(topView) + getPaddingTop();</span><br><span class="line">            delta = Math.min(-dy, topOffset);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            delta = -dy;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    offsetChildrenVertical(delta);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dy &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (getDecoratedBottom(topView) &lt; <span class="number">0</span> &amp;&amp; !bottomBoundReached) &#123;</span><br><span class="line">            fillGrid(DIRECTION_DOWN, recycler);</span><br><span class="line">         &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!bottomBoundReached) &#123;</span><br><span class="line">            fillGrid(DIRECTION_NONE, recycler);</span><br><span class="line">         &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (getDecoratedTop(topView) &gt; <span class="number">0</span> &amp;&amp; !topBoundReached) &#123;</span><br><span class="line">            fillGrid(DIRECTION_UP, recycler);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!topBoundReached) &#123;</span><br><span class="line">            fillGrid(DIRECTION_NONE, recycler);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span><br><span class="line">     * Return value determines if a boundary has been reached</span><br><span class="line">     * (for edge effects and flings). If returned value does not</span><br><span class="line">     * match original delta (passed in), RecyclerView will draw</span><br><span class="line">     * an edge effect.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">return</span> -delta;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们获得了滚动距离(dx/dy)的增量来验证。方法的第一部分判断<br>按照所给的距离(标志给了滚动方向)滚动会不会超过边界。如果会，<br>我们需要计算出视图实际滚动的距离。</p>
+<p>在这个方法里，我们需要自己手工移动这些视图。<br><code>offsetChildrenVertical()</code> 和 <code>offsetChildrenHorizontal()</code><br>这两个方法 可以帮助我们处理匀速移动。<br><strong>如果你不实现它，你的视图就不会滚动</strong>。<br>移动视图操作完成后，我们触发另一个填充操作，<br>根据滚动的距离替换视图。</p>
+<p>最后，将实际位移距离应用给子视图。RecyclerView 根据这个值判断是否<br>绘制到达边界的效果。一般意义上，如果返回值不等于传入的值就意味着<br>需要绘制边缘的发光效果了。<br><strong>如果你返回了一个带有错误方向的值，框架的函数会把这个当做一个大的变化<br>你将不能获得正确的边缘发光特效。</strong></p>
+<p>除了用来判断绘制边界特效外，返回值还被用来决定什么时候取消 flings。<br>返回错误的值会让你失去对 content  fling 的控制。框架会认为你已经提前<br>触碰到边缘并取消了 fling。</p>
+<h1 id="热身结束~">热身结束~</h1><p>目前，我们已经实现了基本的功能。它少了很多的细节部分，<br>不过滚动和适当的视图回收已经完成了。<br>关于自定义 LayoutManager 还有很多要说的东西。<br><a href="http://wiresareobsolete.com/2014/09/recyclerview-layoutmanager-2/" target="_blank" rel="external">接下来</a>，我们会细致的介绍 decorations, data set changes<br>还有实现滚动到特定位置。</p>
+<hr>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://wiresareobsolete.com/2014/09/building-a-recyclerview-layoutmanager-part-1/" target="_blank" rel="external">Building a RecyclerView LayoutManager – Part 1</a></li>
+<li>原文作者 : <a href="http://wiresareobsolete.com/" target="_blank" rel="external">Dave Smith</a>  </li>
+<li><a href="http://www.devtf.cn" target="_blank" rel="external">译文出自 :  开发技术前线 www.devtf.cn</a>  </li>
+<li>译者 : <a href="https://github.com/tiiime" target="_blank" rel="external">tiiime</a>   </li>
+<li>校对者: <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a> </li>
+<li>状态 :   完成 </li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/07/building-a-recyclerview-layoutmanager-part-1/" data-id="cibyut6fy004s181i5roreu9t" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/07/building-a-recyclerview-layoutmanager-part-1/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/10/android-studio-settings/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android Studio-1.2版本设置教程
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/07/concurrent-android-ui-automation-jenkins/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">通过Jenkins并行完成UI的自动化测试</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/07/building-a-recyclerview-layoutmanager-part-1/" data-title="创建一个 RecyclerView LayoutManager – Part 1" data-url="http://likebamboo.com/AndroidBlog/2015/05/07/building-a-recyclerview-layoutmanager-part-1/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">47</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/introduction-to-model-view-presenter-on-android/">MVP在Android平台上的应用</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/how-to-make-our-android-apps-unit-testable-pt-2/">Android 进行单元测试难在哪-part4</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/ted_mosby/">Ted Mosby - 软件架构</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/when-Thor-and-Hulk-meet-dagger2-rxjava-1/">当复仇者联盟遇上Dragger2、RxJava和Retrofit的巧妙结合</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/automating-android-development/">自动化 Android 开发</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

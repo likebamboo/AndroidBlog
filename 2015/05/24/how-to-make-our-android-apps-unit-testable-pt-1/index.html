@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android 进行单元测试难在哪-part3 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在 Android 应用中进行单元测试很困难，有时候甚至是不可能的。在之前的两篇博文中，我已经向大家解释了在 Android 中进行单元测试如此困难的原因。而上一篇博文我们通过分析得到的结论是：正是 Google 官方所提倡的应用架构方式使得在 Android 中进行单元测试变成一场灾难。因为在官方提倡的架构方式中，Google 似乎希望我们将业务逻辑都放在应用的组件类中（例如：Activity，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 进行单元测试难在哪-part3">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/24/how-to-make-our-android-apps-unit-testable-pt-1/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="在 Android 应用中进行单元测试很困难，有时候甚至是不可能的。在之前的两篇博文中，我已经向大家解释了在 Android 中进行单元测试如此困难的原因。而上一篇博文我们通过分析得到的结论是：正是 Google 官方所提倡的应用架构方式使得在 Android 中进行单元测试变成一场灾难。因为在官方提倡的架构方式中，Google 似乎希望我们将业务逻辑都放在应用的组件类中（例如：Activity，">
+<meta property="og:updated_time" content="2015-07-11T08:56:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 进行单元测试难在哪-part3">
+<meta name="twitter:description" content="在 Android 应用中进行单元测试很困难，有时候甚至是不可能的。在之前的两篇博文中，我已经向大家解释了在 Android 中进行单元测试如此困难的原因。而上一篇博文我们通过分析得到的结论是：正是 Google 官方所提倡的应用架构方式使得在 Android 中进行单元测试变成一场灾难。因为在官方提倡的架构方式中，Google 似乎希望我们将业务逻辑都放在应用的组件类中（例如：Activity，">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-how-to-make-our-android-apps-unit-testable-pt-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/24/how-to-make-our-android-apps-unit-testable-pt-1/" class="article-date">
+  <time datetime="2015-05-23T16:00:00.000Z" itemprop="datePublished">2015-05-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 进行单元测试难在哪-part3
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Android 应用中进行单元测试很困难，有时候甚至是不可能的。在<a href="https://github.com/bboyfeiyu/android-tech-frontier/blob/master/issue-9/Android%20%E8%BF%9B%E8%A1%8C%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E9%9A%BE%E5%9C%A8%E5%93%AA-part1.md" target="_blank" rel="external">之前的两篇博文</a>中，我已经向大家解释了在 Android 中进行单元测试如此困难的原因。而<a href="https://github.com/bboyfeiyu/android-tech-frontier/blob/master/issue-10/Android%E8%BF%9B%E8%A1%8C%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E9%9A%BE%E5%9C%A8%E5%93%AA-part2.md" target="_blank" rel="external">上一篇博文</a>我们通过分析得到的结论是：正是 Google 官方所提倡的应用架构方式使得在 Android 中进行单元测试变成一场灾难。因为在官方提倡的架构方式中，Google 似乎希望我们将业务逻辑都放在应用的组件类中（例如：Activity，Fragment，Service，等等……）。而这种开发方式也是我们一直以来使用的开发模板。<br><a id="more"></a><br>在这篇博文中，我列举出几种架构 Android 应用的方法，使用这些方法进行开发能让单元测试变得轻松些。但正如我在<a href="https://github.com/bboyfeiyu/android-tech-frontier/blob/master/issue-8/Android%20%E8%BF%9B%E8%A1%8C%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E9%9A%BE%E5%9C%A8%E5%93%AA-%E5%BA%8F.md" target="_blank" rel="external">序</a>中所说，我最推崇的办法始终是<a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html" target="_blank" rel="external"> Square 在他们的应用中抛弃 Fragment </a>所用的通用方法。因为这个方法是由 Square 中的 Android 开发工程师想出来的，所以我会在接下来的博文中将这个办法叫作“Square 大法”。</p>
+<p>Square 大法的核心思想是：把应用组件类中的业务逻辑全部移除（例如：Activity，Fragment，Service，等等……），并且把业务逻辑转移到业务对象，而这些业务对象都是被依赖注入的纯 Java 对象，以及与 Android 无关的接口在此的 Android 特定实现。如果我们在开发应用的时候使用 Square 大法，那进行单元测试就简单多了。在这篇博文中，我会解释 Square 大法是如何帮助我们重构 UI 无关的应用组件（例如我们在之前的博文中讨论的 SessionCalendarService），并让对它进行单元测试变得容易许多。</p>
+<h2 id="用_Square_大法重构_UI_无关的应用组件">用 Square 大法重构 UI 无关的应用组件</h2><p>用 Square 大法重构类似于 Service，ContentProvider，BroadcastReceiver这样的 UI 无关的应用组件相对来说比较容易。我再说一次我们要做的事情吧：把在这些类中的业务逻辑移除，并把它们放到业务对象中。</p>
+<p>由于“业务逻辑”是很容易有歧义的词语，我来解释下我使用“业务逻辑”这个词时，它所代表的含义吧。当我提到“业务逻辑”，它的含义和维基百科上的解释是一致的：程序中根据现实世界中的规则用于决定数据将如何被创建，展示，储存和修改的那部分代码。那么现在我们就可以就“业务逻辑”这个词的含义达成共识了，那就来看看 Square 大法到底是啥吧。</p>
+<p>我们先来看看怎么用 Square 大法实现我在之前的博文中介绍的 SessionCalendarService 吧，具体代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Background &#123;<span class="doctag">@link</span> android.app.Service&#125; that adds or removes session Calendar events through</span><br><span class="line"> * the &#123;<span class="doctag">@link</span> CalendarContract&#125; API available in Android 4.0 or above.</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionCalendarService</span> <span class="keyword">extends</span> <span class="title">IntentService</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = makeLogTag(SessionCalendarService.class);</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SessionCalendarService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(TAG);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onHandleIntent</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> String action = intent.getAction();</span><br><span class="line">        Log.d(TAG, <span class="string">"Received intent: "</span> + action);</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">final</span> ContentResolver resolver = getContentResolver();</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">boolean</span> isAddEvent = <span class="keyword">false</span>;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (ACTION_ADD_SESSION_CALENDAR.equals(action)) &#123;</span><br><span class="line">            isAddEvent = <span class="keyword">true</span>;</span><br><span class="line"> </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ACTION_REMOVE_SESSION_CALENDAR.equals(action)) &#123;</span><br><span class="line">            isAddEvent = <span class="keyword">false</span>;</span><br><span class="line"> </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ACTION_UPDATE_ALL_SESSIONS_CALENDAR.equals(action) &amp;&amp;</span><br><span class="line">                PrefUtils.shouldSyncCalendar(<span class="keyword">this</span>)) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                getContentResolver().applyBatch(CalendarContract.AUTHORITY,</span><br><span class="line">                        processAllSessionsCalendar(resolver, getCalendarId(intent)));</span><br><span class="line">                sendBroadcast(<span class="keyword">new</span> Intent(</span><br><span class="line">                        SessionCalendarService.ACTION_UPDATE_ALL_SESSIONS_CALENDAR_COMPLETED));</span><br><span class="line">            &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">                LOGE(TAG, <span class="string">"Error adding all sessions to Google Calendar"</span>, e);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (OperationApplicationException e) &#123;</span><br><span class="line">                LOGE(TAG, <span class="string">"Error adding all sessions to Google Calendar"</span>, e);</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ACTION_CLEAR_ALL_SESSIONS_CALENDAR.equals(action)) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                getContentResolver().applyBatch(CalendarContract.AUTHORITY,</span><br><span class="line">                        processClearAllSessions(resolver, getCalendarId(intent)));</span><br><span class="line">            &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">                LOGE(TAG, <span class="string">"Error clearing all sessions from Google Calendar"</span>, e);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (OperationApplicationException e) &#123;</span><br><span class="line">                LOGE(TAG, <span class="string">"Error clearing all sessions from Google Calendar"</span>, e);</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">final</span> Uri uri = intent.getData();</span><br><span class="line">        <span class="keyword">final</span> Bundle extras = intent.getExtras();</span><br><span class="line">        <span class="keyword">if</span> (uri == <span class="keyword">null</span> || extras == <span class="keyword">null</span> || !PrefUtils.shouldSyncCalendar(<span class="keyword">this</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            resolver.applyBatch(CalendarContract.AUTHORITY,</span><br><span class="line">                    processSessionCalendar(resolver, getCalendarId(intent), isAddEvent, uri,</span><br><span class="line">                            extras.getLong(EXTRA_SESSION_START),</span><br><span class="line">                            extras.getLong(EXTRA_SESSION_END),</span><br><span class="line">                            extras.getString(EXTRA_SESSION_TITLE),</span><br><span class="line">                            extras.getString(EXTRA_SESSION_ROOM)));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">            LOGE(TAG, <span class="string">"Error adding session to Google Calendar"</span>, e);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (OperationApplicationException e) &#123;</span><br><span class="line">            LOGE(TAG, <span class="string">"Error adding session to Google Calendar"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如你所见，SessionCalendarService 调用了将要在后面定义的 helper 方法。一旦我们将这些 helper 方法和类的字段声明也考虑进来，Service 类的代码就有400多行。要 hold 住这么庞大的类内发生的业务逻辑可不是什么简单的活，而且就像我们在上一篇博文中看到的那样，要在 SessionCalendarService 中进行单元测试简直是天方夜谭。</p>
+<p>那现在来看看用 Square 大法实现它代码会是怎样的。我再强调一次：Square 大法需要我们将 Android 类内的业务逻辑迁移到一个业务对象中。在这里，SessionCalendarService 所对应的业务对象则是 SessionCalendarUpdater，具体代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionCalendarUpdater</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"> </span><br><span class="line">    <span class="keyword">private</span> SessionCalendarDatabase mSessionCalendarDatabase;</span><br><span class="line">    <span class="keyword">private</span> SessionCalendarUserPreferences mSessionCalendarUserPreferences;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SessionCalendarUpdater</span><span class="params">(SessionCalendarDatabase sessionCalendarDatabase,</span><br><span class="line">                                  SessionCalendarUserPreferences sessionCalendarUserPreferences)</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">        mSessionCalendarDatabase = sessionCalendarDatabase;</span><br><span class="line">        mSessionCalendarUserPreferences = sessionCalendarUserPreferences;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateCalendar</span><span class="params">(CalendarUpdateRequest calendarUpdateRequest)</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">boolean</span> isAddEvent = <span class="keyword">false</span>;</span><br><span class="line"> </span><br><span class="line">        String action = calendarUpdateRequest.getAction();</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">long</span> calendarId = calendarUpdateRequest.getCalendarId();</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (ACTION_ADD_SESSION_CALENDAR.equals(action)) &#123;</span><br><span class="line">            isAddEvent = <span class="keyword">true</span>;</span><br><span class="line"> </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ACTION_REMOVE_SESSION_CALENDAR.equals(action)) &#123;</span><br><span class="line">            isAddEvent = <span class="keyword">false</span>;</span><br><span class="line"> </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ACTION_UPDATE_ALL_SESSIONS_CALENDAR.equals(action)</span><br><span class="line">                &amp;&amp; mSessionCalendarUserPreferences.shouldSyncCalendar()) &#123;</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line"> </span><br><span class="line">                mSessionCalendarDatabase.updateAllSessions(calendarId);</span><br><span class="line"> </span><br><span class="line">            &#125; <span class="keyword">catch</span> (RemoteException | OperationApplicationException e) &#123;</span><br><span class="line"> </span><br><span class="line">                LOGE(TAG, <span class="string">"Error adding all sessions to Google Calendar"</span>, e);</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ACTION_CLEAR_ALL_SESSIONS_CALENDAR.equals(action)) &#123;</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line"> </span><br><span class="line">                mSessionCalendarDatabase.clearAllSessions(calendarId);</span><br><span class="line"> </span><br><span class="line">            &#125; <span class="keyword">catch</span> (RemoteException | OperationApplicationException e) &#123;</span><br><span class="line"> </span><br><span class="line">                LOGE(TAG, <span class="string">"Error clearing all sessions from Google Calendar"</span>, e);</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (!shouldUpdateCalendarSession(calendarUpdateRequest, mSessionCalendarUserPreferences)) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"> </span><br><span class="line">            CalendarSession calendarSessionToUpdate = calendarUpdateRequest.getCalendarSessionToUpdate();</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">if</span> (isAddEvent) &#123;</span><br><span class="line"> </span><br><span class="line">                mSessionCalendarDatabase.addCalendarSession(calendarId, calendarSessionToUpdate);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"> </span><br><span class="line">                mSessionCalendarDatabase.removeCalendarSession(calendarId, calendarSessionToUpdate);</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException | OperationApplicationException e) &#123;</span><br><span class="line">            LOGE(TAG, <span class="string">"Error adding session to Google Calendar"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">shouldUpdateCalendarSession</span><span class="params">(CalendarUpdateRequest calendarUpdateRequest, </span><br><span class="line">                                                SessionCalendarUserPreferences sessionCalendarUserPreferences)</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> calendarUpdateRequest.getCalendarSessionToUpdate() == <span class="keyword">null</span> || !sessionCalendarUserPreferences.shouldSyncCalendar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我想要强调其中的一些要点：首先，需要注意，我们完全不需要用到任何新的关键字，因为业务对象的依赖都被注入了，它根本不会使用新的关键字，而这正是让类可单元测试的关键。其次，你会注意到类没有确切地依赖于 Android SDK，因为业务对象的依赖都是 Android 无关接口的 Android 特定实现，因此它不需要依赖于 Android SDK。</p>
+<p>那么这些依赖是怎么添加到　SessionCalendarUpdater　类中的呢？是通过　SessionCalendarService　类注入进去的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Background &#123;<span class="doctag">@link</span> android.app.Service&#125; that adds or removes session Calendar events through</span><br><span class="line"> * the &#123;<span class="doctag">@link</span> CalendarContract&#125; API available in Android 4.0 or above.</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionCalendarService</span> <span class="keyword">extends</span> <span class="title">IntentService</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = makeLogTag(SessionCalendarService.class);</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SessionCalendarService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(TAG);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onHandleIntent</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> String action = intent.getAction();</span><br><span class="line">        Log.d(TAG, <span class="string">"Received intent: "</span> + action);</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">final</span> ContentResolver resolver = getContentResolver();</span><br><span class="line"> </span><br><span class="line">        Broadcaster broadcaster = <span class="keyword">new</span> AndroidBroadcaster(<span class="keyword">this</span>);</span><br><span class="line"> </span><br><span class="line">        SessionCalendarDatabase sessionCalendarDatabase = <span class="keyword">new</span> AndroidSessionCalendarDatabase(resolver,</span><br><span class="line">                                                                                             broadcaster);</span><br><span class="line"> </span><br><span class="line">        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(<span class="keyword">this</span>);</span><br><span class="line"> </span><br><span class="line">        SessionCalendarUserPreferences sessionCalendarUserPreferences = <span class="keyword">new</span> AndroidSessionCalendarUserPreferences(defaultSharedPreferences);</span><br><span class="line"> </span><br><span class="line">        SessionCalendarUpdater sessionCalendarUpdater</span><br><span class="line">                                    = <span class="keyword">new</span> SessionCalendarUpdater(sessionCalendarDatabase,</span><br><span class="line">                                                                 sessionCalendarUserPreferences);</span><br><span class="line"> </span><br><span class="line">        AccountNameRepository accountNameRepository = <span class="keyword">new</span> AndroidAccountNameRepository(intent, <span class="keyword">this</span>);</span><br><span class="line"> </span><br><span class="line">        String accountName = accountNameRepository.getAccountName();</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">long</span> calendarId = sessionCalendarDatabase.getCalendarId(accountName);</span><br><span class="line">        CalendarSession calendarSessionToUpdate = CalendarSession.fromIntent(intent);</span><br><span class="line"> </span><br><span class="line">        CalendarUpdateRequest calendarUpdateRequest = <span class="keyword">new</span> CalendarUpdateRequest(action, calendarId, calendarSessionToUpdate);</span><br><span class="line"> </span><br><span class="line">        sessionCalendarUpdater.updateCalendar(calendarUpdateRequest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>值得注意的是，修改后的 SessionCalendarService 到处都是新的关键字，但这些关键字在类中并不会引起什么问题。如果我们花几秒时间略读一下要点就会明白这一点：SessionCalendarService 类中已经没有任何业务逻辑，因此 SessionCalendarService 类不再需要进行单元测试。只要我们确定在 SessionCalendarService 调用的是  SessionCalendarUpdater 类中的 updateCalendar() 方法，在 SessionCalendarService 唯一可能出现的就是编译时错误。我们完全不需要为此实现测试单元，因为这是编译器的工作，与我们无关。</p>
+<p>由于我在前两篇博文中提到的相关原因，将我们的 Service 类拆分成这样会使对业务逻辑进行单元测试变得非常简单，例如我们对 SessionCalendarUpdater 类进行单元测试的代码可以写成下面的样子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionCalendarUpdaterTests</span> <span class="keyword">extends</span> <span class="title">TestCase</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testShouldClearAllSessions</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException, OperationApplicationException </span>&#123;</span><br><span class="line"> </span><br><span class="line">        SessionCalendarDatabase sessionCalendarDatabase = mock(SessionCalendarDatabase.class);</span><br><span class="line"> </span><br><span class="line">        SessionCalendarUserPreferences sessionCalendarUserPreferences = mock(SessionCalendarUserPreferences.class);</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">        SessionCalendarUpdater sessionCalendarUpdater = <span class="keyword">new</span> SessionCalendarUpdater(sessionCalendarDatabase,</span><br><span class="line">                                                                                   sessionCalendarUserPreferences);</span><br><span class="line"> </span><br><span class="line">        CalendarUpdateRequest calendarUpdateRequest = <span class="keyword">new</span> CalendarUpdateRequest(SessionCalendarUpdater.ACTION_CLEAR_ALL_SESSIONS_CALENDAR,</span><br><span class="line">                                                                                <span class="number">0</span>,</span><br><span class="line">                                                                                <span class="keyword">null</span>);</span><br><span class="line">        </span><br><span class="line">        sessionCalendarUpdater.updateCalendar(calendarUpdateRequest);</span><br><span class="line"> </span><br><span class="line">        verify(sessionCalendarDatabase).clearAllSessions(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="结论">结论</h2><p>为了能够进行单元测试，我认为修改后的代码变得更易读和更易维护了。可以肯定的是，我们还有许多办法能让代码变得更好，但在让代码能够进行单元测试的过程中，我想让修改后的代码尽可能与修改前风格相似，所以我没有进行其他修改。在下一篇博文中，我将会教大家如何使用 Square 大法重构应用的 UI 组件（例如：Fragment 和 Activity）。</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/" target="_blank" rel="external">HOW TO MAKE OUR ANDROID APPS UNIT TESTABLE (PT. 1)</a></li>
+<li>原文作者 : <a href="http://philosophicalhacker.com/" target="_blank" rel="external">Matthew Dupree</a></li>
+<li><a href="http://www.devtf.cn" target="_blank" rel="external">译文出自 :  开发技术前线 www.devtf.cn</a></li>
+<li>译者 : <a href="https://github.com/chaossss" target="_blank" rel="external">chaossss</a> </li>
+<li>校对者: <a href="https://github.com/tiiime" target="_blank" rel="external">tiiime</a> </li>
+<li>状态 :  完成 </li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/24/how-to-make-our-android-apps-unit-testable-pt-1/" data-id="cibyut6du0033181int627d8c" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/24/how-to-make-our-android-apps-unit-testable-pt-1/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/29/automating-android-screenshots/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android 自动截屏工具
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/24/code-review-best-practices/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Code Review最佳实践</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/24/how-to-make-our-android-apps-unit-testable-pt-1/" data-title="Android 进行单元测试难在哪-part3" data-url="http://likebamboo.com/AndroidBlog/2015/05/24/how-to-make-our-android-apps-unit-testable-pt-1/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">47</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/introduction-to-model-view-presenter-on-android/">MVP在Android平台上的应用</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/how-to-make-our-android-apps-unit-testable-pt-2/">Android 进行单元测试难在哪-part4</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/ted_mosby/">Ted Mosby - 软件架构</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/when-Thor-and-Hulk-meet-dagger2-rxjava-1/">当复仇者联盟遇上Dragger2、RxJava和Retrofit的巧妙结合</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/automating-android-development/">自动化 Android 开发</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

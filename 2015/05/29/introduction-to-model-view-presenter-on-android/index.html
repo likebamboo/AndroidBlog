@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>MVP在Android平台上的应用 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这篇文章向你介绍Android平台上的MVP模式，从一个简浅的例子开始实践之路。文章也会介绍一个一个库让你在Android平台上轻松的实现MVP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MVP在Android平台上的应用">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/05/29/introduction-to-model-view-presenter-on-android/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="这篇文章向你介绍Android平台上的MVP模式，从一个简浅的例子开始实践之路。文章也会介绍一个一个库让你在Android平台上轻松的实现MVP">
+<meta property="og:image" content="http://konmik.github.io/images/mvp_everything_is_connected_with_everything.png">
+<meta property="og:image" content="http://konmik.github.io/images/mvp_a_god_object.png">
+<meta property="og:image" content="http://konmik.github.io/images/mvp_mvp.png">
+<meta property="og:updated_time" content="2015-07-11T09:10:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MVP在Android平台上的应用">
+<meta name="twitter:description" content="这篇文章向你介绍Android平台上的MVP模式，从一个简浅的例子开始实践之路。文章也会介绍一个一个库让你在Android平台上轻松的实现MVP">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-introduction-to-model-view-presenter-on-android" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/29/introduction-to-model-view-presenter-on-android/" class="article-date">
+  <time datetime="2015-05-28T16:00:00.000Z" itemprop="datePublished">2015-05-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      MVP在Android平台上的应用
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这篇文章向你介绍Android平台上的MVP模式，从一个简浅的例子开始实践之路。文章也会介绍一个一个库让你在Android平台上轻松的实现MVP<br><a id="more"></a></p>
+<h2 id="简单吗？我怎么才能从中受益？">简单吗？我怎么才能从中受益？</h2><h3 id="什么是MVP？">什么是MVP？</h3><ul>
+<li><strong>View</strong>层主要是用于展示数据并对用户行为做出反馈。在Android平台上，他可以对应为Activity, Fragment,View或者对话框。</li>
+<li><strong>Model</strong>是数据访问层，往往是数据库接口或者服务器的API。</li>
+<li><strong>Presenter</strong>层可以想View层提供来自数据访问层的数据，除此以外，他也会处理一些后台事务。</li>
+</ul>
+<p>在Android平台上，MVP可以将后台事务从Activity/View/Fragment中分离出来，让它们独立于大部分生命周期事件。这样，一个应用将会变得简单， 整个应用可靠性可以提高10倍，应用的代码将会变短, 代码的可维护性提高，开发者也为此感到高兴。</p>
+<h3 id="Android为什么需要MVP">Android为什么需要MVP</h3><h4 id="理由1：尽量简单">理由1：尽量简单</h4><p>如果你还有读过这篇文章，请阅读它：<a href="https://people.apache.org/~fhanik/kiss.html" target="_blank" rel="external">Kiss原则</a>（Keep It Stupid Simple）</p>
+<ul>
+<li>大部分的安卓应用只使用View-Model结构</li>
+<li>程序员现在更多的是和复杂的View打交道而不是解决业务逻辑。</li>
+</ul>
+<p>当你在应用中只使用Model-View时，到最后，你会发现“所有的事物都被连接到一起”。<br><img src="http://konmik.github.io/images/mvp_everything_is_connected_with_everything.png" alt=""></p>
+<p>如果这张图看上去还不是很复杂，那么请你想象一下以下情况：每一个View在任意一个时刻都有可能出现或者消失。不要忘记View的保存和恢复，在临时的view上挂载一个后台任务。</p>
+<p>“所有的事物都被连接到一起”的替代品是一个万能对象(god object)。</p>
+<p><img src="http://konmik.github.io/images/mvp_a_god_object.png" alt=""></p>
+<p>god object是十分复杂的，他的每一个部分都不能重复利用，无法轻易的测试、或者调试和重构。</p>
+<h3 id="With_MVP">With MVP</h3><h3 id="使用MVP">使用MVP</h3><p><img src="http://konmik.github.io/images/mvp_mvp.png" alt=""></p>
+<p>复杂的任务被分成细小的任务，并且很容易解决。越小的东西，bug越少，越容易debug，更好测试。在MVP模式下的View层将会变得简单，所以即便是他请求数据的时候也不需要回调函数。View逻辑变成十分直接。</p>
+<p>理由2：后台任务</p>
+<p>当你编写一个Actviity、Fragment、自定义View的时候，你会把所有的和后台任务相关的方法写在一个静态类或者外部类中。这样，你的Task不再和Activity联系在一起，这既不会导致内存泄露，也不依赖于Activity的重建。</p>
+<p>这里有若干种方法处理后台任务，但是它们的可靠性都不及MVP。</p>
+<h3 id="为什么它是可行的？">为什么它是可行的？</h3><p>这里有一张表格，用于展示在configuration改变、Activity 重启、Out-Of-Memory时，不同的应用部分会发生什么？</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">情景 1</th>
+<th style="text-align:center">情景 2</th>
+<th style="text-align:center">情景 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">配置改变</td>
+<td style="text-align:center">Activity 重启</td>
+<td style="text-align:center">进程重启</td>
+</tr>
+<tr>
+<td style="text-align:center">对话框</td>
+<td style="text-align:center">重置</td>
+<td style="text-align:center">重置</td>
+<td style="text-align:center">重置</td>
+</tr>
+<tr>
+<td style="text-align:center">Activity, View, Fragment</td>
+<td style="text-align:center">保存/恢复</td>
+<td style="text-align:center">保存/恢复</td>
+<td style="text-align:center">保存/恢复</td>
+</tr>
+<tr>
+<td style="text-align:center">Fragment with setRetainInstance(true)</td>
+<td style="text-align:center">无变化</td>
+<td style="text-align:center">保存/恢复</td>
+<td style="text-align:center">保存/恢复</td>
+</tr>
+<tr>
+<td style="text-align:center">Static variables and threads</td>
+<td style="text-align:center">无变化</td>
+<td style="text-align:center">无变化</td>
+<td style="text-align:center">重置</td>
+</tr>
+</tbody>
+</table>
+<p>情景 1: 当用户切换屏幕、更改语言设置或者链接外部的模拟器时，往往意味着设置改变。 相关更多请阅读<a href="http://developer.android.com/reference/android/R.attr.html#configChanges" target="_blank" rel="external">这里</a>。</p>
+<p>情景 2:Activity的重启发生在当用户在开发者选项中选中了“Don’t keep activities”（“中文下为 不保留活动”）的复选框，然后另一个Activity在最顶上的时候。</p>
+<p>情景 3: 进程的重启发生在应用运行在后台，但是这个时候内存不够的情况下。</p>
+<h3 id="总结">总结</h3><p>现在你可以发现，一个调用了setRetainInstance(true)的Fragment也不奏效，我们还是需要保存/恢复fragment的状态，所以为简化问题，我们暂不考虑上述情况的Fragment。<a href="http://en.wikipedia.org/wiki/Occam&#39;s_razor" target="_blank" rel="external">Occam’s razor</a></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">配置改变,   Activity重启</th>
+<th style="text-align:center">进程重启</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Activity, View, Fragment, DialogFragment</td>
+<td style="text-align:center">保存/恢复</td>
+<td style="text-align:center">保存/恢复</td>
+</tr>
+<tr>
+<td style="text-align:center">Static variables and threads</td>
+<td style="text-align:center">无变化</td>
+<td style="text-align:center">重置</td>
+</tr>
+</tbody>
+</table>
+<p>现在，看上去更舒服了，我们只需要写两段代码为了恢复应用：</p>
+<ul>
+<li><p>保存/恢复 for Activity, View, Fragment, DialogFragment;</p>
+</li>
+<li><p>重启后台请求由于进程重启</p>
+</li>
+</ul>
+<p>第一个部分,用Android的API可以实现。第二个部分，就是Presenter的作用了。Presenter将会记住有哪些请求需要执行，当进程在执行过程中重启时，Presenter将会出现执行它们。</p>
+<h5 id="一个简单的例子(no_MVP)">一个简单的例子(no MVP)</h5><p>这个例子用于从远程服务器加载数据并呈现，当发生异常时，会通过Toast提示。</p>
+<p>我推荐使用<a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="external">RxJava</a>构建Presenter，因为这个库更容易控制数据流。</p>
+<p>我想对创造如此简单的API的伙计说声谢谢，我把它用于<a href="http://www.icndb.com/" target="_blank" rel="external">The Internet Chuck Norris Database</a></p>
+<p>无MVP的<a href="https://github.com/konmik/MVPExamples/tree/master/example00" target="_blank" rel="external">例子00</a>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_NAME = <span class="string">"Chuck Norris"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ArrayAdapter&lt;ServerAPI.Item&gt; adapter;</span><br><span class="line">    <span class="keyword">private</span> Subscription subscription;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        ListView listView = (ListView)findViewById(R.id.listView);</span><br><span class="line">        listView.setAdapter(adapter = <span class="keyword">new</span> ArrayAdapter&lt;&gt;(<span class="keyword">this</span>, R.layout.item));</span><br><span class="line">        requestItems(DEFAULT_NAME);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy();</span><br><span class="line">        unsubscribe();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">requestItems</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        unsubscribe();</span><br><span class="line">        subscription = App.getServerAPI()</span><br><span class="line">            .getItems(name.split(<span class="string">"\\s+"</span>)[<span class="number">0</span>], name.split(<span class="string">"\\s+"</span>)[<span class="number">1</span>])</span><br><span class="line">            .delay(<span class="number">1</span>, TimeUnit.SECONDS)</span><br><span class="line">            .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">            .subscribe(<span class="keyword">new</span> Action1&lt;ServerAPI.Response&gt;() &#123;</span><br><span class="line">                <span class="annotation">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(ServerAPI.Response response)</span> </span>&#123;</span><br><span class="line">                    onItemsNext(response.items);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, <span class="keyword">new</span> Action1&lt;Throwable&gt;() &#123;</span><br><span class="line">                <span class="annotation">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(Throwable error)</span> </span>&#123;</span><br><span class="line">                    onItemsError(error);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemsNext</span><span class="params">(ServerAPI.Item[] items)</span> </span>&#123;</span><br><span class="line">        adapter.clear();</span><br><span class="line">        adapter.addAll(items);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemsError</span><span class="params">(Throwable throwable)</span> </span>&#123;</span><br><span class="line">        Toast.makeText(<span class="keyword">this</span>, throwable.getMessage(), Toast.LENGTH_LONG).show();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">unsubscribe</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (subscription != <span class="keyword">null</span>) &#123;</span><br><span class="line">            subscription.unsubscribe();</span><br><span class="line">            subscription = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有经验的开发者会注意到这个例子有以下不妥：</p>
+<p>当用户翻转屏幕时候会开始请求，应用发起了过多的请求，将会是屏幕在切换的时候呈现空白的界面。</p>
+<p>当用户频繁的切换屏幕，这将会造成内存泄露，请求运行时，每一个回调将会持有MainActivity的引用，让其保存在内存中。因此引起的OOM和应用反应迟缓，会引发应用的Crash。</p>
+<p>MVP模式下的<a href="https://github.com/konmik/MVPExamples/tree/master/example01" target="_blank" rel="external">例子 01</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainPresenter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_NAME = <span class="string">"Chuck Norris"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ServerAPI.Item[] items;</span><br><span class="line">    <span class="keyword">private</span> Throwable error;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> MainActivity view;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainPresenter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        App.getServerAPI()</span><br><span class="line">            .getItems(DEFAULT_NAME.split(<span class="string">"\\s+"</span>)[<span class="number">0</span>], DEFAULT_NAME.split(<span class="string">"\\s+"</span>)[<span class="number">1</span>])</span><br><span class="line">            .delay(<span class="number">1</span>, TimeUnit.SECONDS)</span><br><span class="line">            .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">            .subscribe(<span class="keyword">new</span> Action1&lt;ServerAPI.Response&gt;() &#123;</span><br><span class="line">                <span class="annotation">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(ServerAPI.Response response)</span> </span>&#123;</span><br><span class="line">                    items = response.items;</span><br><span class="line">                    publish();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, <span class="keyword">new</span> Action1&lt;Throwable&gt;() &#123;</span><br><span class="line">                <span class="annotation">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(Throwable throwable)</span> </span>&#123;</span><br><span class="line">                    error = throwable;</span><br><span class="line">                    publish();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTakeView</span><span class="params">(MainActivity view)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.view = view;</span><br><span class="line">        publish();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">publish</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (items != <span class="keyword">null</span>)</span><br><span class="line">                view.onItemsNext(items);</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (error != <span class="keyword">null</span>)</span><br><span class="line">                view.onItemsError(error);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从严格意义上来说，MainPresenter有三个事件处理线程： <em>onNext</em>, <em>onError</em>, <em>onTakeView</em>。他们调用了<code>publish()</code>方法，<em>onNext</em> 或 <em>onError</em>的值将会在MainActivity中发布，而不是由onTakeView提供。      </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ArrayAdapter&lt;ServerAPI.Item&gt; adapter;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> MainPresenter presenter;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">        ListView listView = (ListView)findViewById(R.id.listView);</span><br><span class="line">        listView.setAdapter(adapter = <span class="keyword">new</span> ArrayAdapter&lt;&gt;(<span class="keyword">this</span>, R.layout.item));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (presenter == <span class="keyword">null</span>)</span><br><span class="line">            presenter = <span class="keyword">new</span> MainPresenter();</span><br><span class="line">        presenter.onTakeView(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onDestroy();</span><br><span class="line">        presenter.onTakeView(<span class="keyword">null</span>);</span><br><span class="line">        <span class="keyword">if</span> (isFinishing())</span><br><span class="line">            presenter = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemsNext</span><span class="params">(ServerAPI.Item[] items)</span> </span>&#123;</span><br><span class="line">        adapter.clear();</span><br><span class="line">        adapter.addAll(items);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemsError</span><span class="params">(Throwable throwable)</span> </span>&#123;</span><br><span class="line">        Toast.makeText(<span class="keyword">this</span>, throwable.getMessage(), Toast.LENGTH_LONG).show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>MainActivty构建了MainPresenter，将其维持在onCreate/onDestroy周期外，MainActivity持有MainPresenter的静态引用，所以每一个进程由于OOM重启时，MainActivity可以确认Presenter是否仍然存在，必要时创建。</p>
+<p>当然，确认和使用静态变量可能是代码变得臃肿，稍后我们会告诉你如何好看些：。:)</p>
+<h4 id="重要思路：">重要思路：</h4><ul>
+<li>示例程序不会在每次切换屏幕的时候都开始一个新的请求</li>
+<li>当进程重启时，示例程序将会重新加载数据。</li>
+<li>当MainActivity销毁时，MainPresenter不会持有MainActivity的引用，因此不会在切换屏幕的时候发生内存泄漏，而且没必要去unsubscribe请求。</li>
+</ul>
+<h3 id="Nucleus"><a href="https://github.com/konmik/nucleus" target="_blank" rel="external">Nucleus</a></h3><p>Nucleus是我从<a href="https://github.com/square/mortar" target="_blank" rel="external">Mortar</a>和 Keep It Stupid Simple 这篇文章得到的灵感而建立的库。</p>
+<p>它有以下特征：</p>
+<ul>
+<li><p>它支持在View/Fragment/Activity的Bundle中保存/恢复Presenter的状态，一个Presenter可以保存请求参数，以便之后重启它们</p>
+</li>
+<li><p>只需要一行代码，它就可以直接将请求结果或者错误反馈给View，所以你不需要写<code>!= null</code>之类的核对代码。</p>
+</li>
+<li><p>它允许你可以有多个持有Presenter的实例。 不过你不能在用<a href="http://square.github.io/dagger/" target="_blank" rel="external">Dagger</a>实例化的presenter中这样使用(传统方法).</p>
+</li>
+<li><p>它可以用一行代码快速的将View和Presenter绑定。</p>
+</li>
+<li><p>它提供一些现成的基类，例如: <code>NucleusView</code>, <code>NucleusFragment</code>, <code>NucleusSupportFragment</code>, <code>NucleusActivity</code>. 你可以将他们的代码拷贝出来改造出一个自己的类以利用Nucleus的presenter。</p>
+</li>
+<li><p>支持在进程重启后，自动重新发起请求，在<code>onDestroy</code>方法中，自动的退订RxJava的订阅。</p>
+</li>
+<li><p>最后，它简洁明了，每一个开发者都会理解，Presenter的驱动只用了180行代码，RxJava用了230行代码。</p>
+</li>
+</ul>
+<p>使用了<a href="https://github.com/konmik/nucleus" target="_blank" rel="external">Nucleus</a> 的<a href="https://github.com/konmik/MVPExamples/tree/master/example02" target="_blank" rel="external">例 02</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainPresenter</span> <span class="keyword">extends</span> <span class="title">RxPresenter</span>&lt;<span class="title">MainActivity</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_NAME = <span class="string">"Chuck Norris"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedState);</span><br><span class="line"></span><br><span class="line">        App.getServerAPI()</span><br><span class="line">            .getItems(DEFAULT_NAME.split(<span class="string">"\\s+"</span>)[<span class="number">0</span>], DEFAULT_NAME.split(<span class="string">"\\s+"</span>)[<span class="number">1</span>])</span><br><span class="line">            .delay(<span class="number">1</span>, TimeUnit.SECONDS)</span><br><span class="line">            .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">            .compose(<span class="keyword">this</span>.&lt;ServerAPI.Response&gt;deliverLatestCache())</span><br><span class="line">            .subscribe(<span class="keyword">new</span> Action1&lt;ServerAPI.Response&gt;() &#123;</span><br><span class="line">                <span class="annotation">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(ServerAPI.Response response)</span> </span>&#123;</span><br><span class="line">                    getView().onItemsNext(response.items);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, <span class="keyword">new</span> Action1&lt;Throwable&gt;() &#123;</span><br><span class="line">                <span class="annotation">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">call</span><span class="params">(Throwable throwable)</span> </span>&#123;</span><br><span class="line">                    getView().onItemsError(throwable);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="annotation">@RequiresPresenter</span>(MainPresenter.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">NucleusActivity</span>&lt;<span class="title">MainPresenter</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ArrayAdapter&lt;ServerAPI.Item&gt; adapter;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">        ListView listView = (ListView)findViewById(R.id.listView);</span><br><span class="line">        listView.setAdapter(adapter = <span class="keyword">new</span> ArrayAdapter&lt;&gt;(<span class="keyword">this</span>, R.layout.item));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemsNext</span><span class="params">(ServerAPI.Item[] items)</span> </span>&#123;</span><br><span class="line">        adapter.clear();</span><br><span class="line">        adapter.addAll(items);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemsError</span><span class="params">(Throwable throwable)</span> </span>&#123;</span><br><span class="line">        Toast.makeText(<span class="keyword">this</span>, throwable.getMessage(), Toast.LENGTH_LONG).show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>正如你看到的，跟上一个代码相比，这个例子十分简洁。Nucleus 可以构造/销毁/变成 Presenter, 向Presenter中添加/分离 View ，并且自动向附加的view发送请求。。</p>
+<p><code>MainPresenter</code>的代码比较短，因为它使用<code>deliverLatestCache（）</code>的操作，延迟了由一个数据源发出所有的数据和错误，直到View可用。它还把数据缓存在内存中，以便它可以在Configuration change时可以被重用。</p>
+<p><code>MainActivity</code>的代码比较短，因为主Presenter的创作由<code>NucleusActivity</code>管理。当你需要绑定一个Presenter的时候，只需要添加注解<code>@RequiresPresenter（MainPresenter.class）</code>。</p>
+<p>警告！注释！在Android中，如果你使用注解，这是最好检查以下这么做会不会降低性能。以我使用的’Galaxy S`（2010年设备）为例，处理此批注耗时不超过0.3毫秒。只在实例化view的时候才会发生，因此注解在这里对性能的影响可以忽略。</p>
+<h4 id="更多例子">更多例子</h4><p>一个扩展的例子,带有请求参数的Presenter：<a href="https://github.com/konmik/nucleus/tree/master/nucleus-example" target="_blank" rel="external">Nucleus Example</a>。</p>
+<p>带有单元测试的例子： <a href="https://github.com/konmik/nucleus/tree/master/nucleus-example-with-tests" target="_blank" rel="external">Nucleus Example With Tests</a></p>
+<h4 id="deliverLatestCache()_方法"><code>deliverLatestCache()</code> 方法</h4><p>这个RxPresenter的工具方法有三个变种：</p>
+<ul>
+<li><p><code>deliver()</code> will just delay all onNext, onError and onComplete emissions until a View becomes available. Use it for cases when you’re doing a one-time request, like logging in to a web service. <a href="http://konmik.github.io/nucleus/nucleus/presenter/Presenter.html#onCreate(android.os.Bundle" target="_blank" rel="external">Javadoc</a>)</p>
+</li>
+<li><p><code>deliver()</code>只是推迟onNext、onError、onComplete的调用，直到视图有效。使用它，你只需要一次请求，就像发起登陆web服务一样。<a href="http://konmik.github.io/nucleus/nucleus/presenter/Presenter.html#onCreate(android.os.Bundle" target="_blank" rel="external">Javadoc</a>)</p>
+</li>
+<li><p><code>deliverLatest（）</code>当有新的的onNext值，将会舍弃原有的值，如果你有可更新的数据源，这将让你去除那些不需要的数据。<a href="http://konmik.github.io/nucleus/nucleus/presenter/RxPresenter.html#deliverLatest" target="_blank" rel="external">Javadoc</a></p>
+</li>
+<li><p><code>deliverLatestCache（）</code>，和<code>deliverLatest（）</code>一样，但除了它会在内存中保存最新的结果外，当View的另一个实例可用（例如：在配置更改的时候）时，还是会触发一次。如果你不想组织请求在你的View中的保存/恢复事务（比方说，结果太大或者不能很容易地保存在Bundle中），这个方法可以让用户体验更好。<a href="http://konmik.github.io/nucleus/nucleus/presenter/RxPresenter.html#deliverLatestCache" target="_blank" rel="external">Javadoc</a></p>
+</li>
+</ul>
+<h4 id="Presenter的生命周期">Presenter的生命周期</h4><p>相比Android组件，Presenter的生命周期更加简短。</p>
+<ul>
+<li><p><code>void onCreate(Bundle savedState)</code> - 每一个Presenter构造时 .  <a href="http://konmik.github.io/nucleus/nucleus/presenter/Presenter.html#onCreate(android.os.Bundle" target="_blank" rel="external">Javadoc</a>)</p>
+</li>
+<li><p><code>void onDestroy()</code> - 用户离开View时调用 . <a href="http://konmik.github.io/nucleus/nucleus/presenter/Presenter.html#onDestroy(" target="_blank" rel="external">Javadoc</a>)</p>
+</li>
+<li><p><code>void onSave(Bundle state)</code> - 在View的<code>onSaveInstanceState</code>方法中调用，用于持有Presenter的状态.  <a href="http://konmik.github.io/nucleus/nucleus/presenter/Presenter.html#onSave(android.os.Bundle" target="_blank" rel="external">Javadoc</a>)</p>
+</li>
+<li><p><code>void onTakeView(ViewType view)</code> - 在Activity或者Fragment的<code>onResume()</code>方法中或者<code>android.view.View#onAttachedToWindow()</code>调用.  <a href="http://konmik.github.io/nucleus/nucleus/presenter/Presenter.html#onTakeView(ViewType" target="_blank" rel="external">Javadoc</a>)</p>
+</li>
+<li><p><code>void onTakeView(ViewType view)</code> - 在Activity或者Fragment的<code>onResume()</code>方法中或者<code>android.view.View#onAttachedToWindow()</code>调用.  <a href="http://konmik.github.io/nucleus/nucleus/presenter/Presenter.html#onTakeView(ViewType" target="_blank" rel="external">Javadoc</a>)</p>
+</li>
+<li><p><code>void onDropView()</code> -  在Activity或者Fragment的<code>onPause()</code>方法中或者<code>android.view.View#onDetachedFromWindow()</code>调用. <a href="http://konmik.github.io/nucleus/nucleus/presenter/Presenter.html#onDropView" target="_blank" rel="external">Javadoc</a></p>
+</li>
+</ul>
+<h4 id="View的回收与View栈">View的回收与View栈</h4><p>通常来说,你的view（比如fragment或者自定义的view）在用户的交互过程中挂载与解挂（attached and detached）都是随机发生的。 这倒是不让presenter在view每次解挂（detached）的时候都销毁的一个启发。你可以在任何时候挂载与解挂view，但是presenter可以在这些行为中幸存下来，继续后台的工作。</p>
+<p>这里还存在着一个关于View回收的问题：一个Fragment在Configuration change或者从stack中弹出的情况下，不知道自身有没有解挂（detached）。</p>
+<p>默认只在Activity处于finish时，才在调用View的<code>onDetachedFromWindow()</code>/<code>onDestroy()</code> 销毁Presenter。</p>
+<p>所以，当你在常规的Activity生命周期内，销毁View，你需要给给View一个销毁Presenter的信号。在这里，公有方法<code>NucleusLayout.destroyPresenter()</code> and <code>NucleusFragment.destroyPresenter()</code>就派上用场了。</p>
+<p>例如，在我的项目中，下面的是我如何进行FragmentManager的<code>pop()</code>操作:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fragment = fragmentManager.findFragmentById(R.id.fragmentStackContainer);</span><br><span class="line">fragmentManager.popBackStackImmediate();</span><br><span class="line"><span class="keyword">if</span> (fragment <span class="keyword">instanceof</span> NucleusFragment)</span><br><span class="line">    ((NucleusFragment)fragment).destroyPresenter();</span><br></pre></td></tr></table></figure>
+<p>在进行<em>replace</em>Fragment栈和对处于底部的Fragment进行<em>push</em>操作时，你可能需要进行相同的操作。</p>
+<p>在View从Activity解挂（detached）时，您可能会选择摧毁Presenter来避免问题的发生，但是，这将意味着当View解挂（detached）时，后台任务无法继续进行。</p>
+<p>所以这一节的 “view recycling”完全留你你自己考虑，也许有一天我会找到更好的解决办法，如果你有一个办法，请告诉我。</p>
+<h4 id="最佳实践">最佳实践</h4><p>在Presenter中保存你的请求参数。</p>
+<p>规则很简单：Presenter的主要作用是管理请求。所以，View不应该自己处理或者重启请求。从View中，我们可以看见，后台事务不会消失，总是会返回结果或者错误，<em>而不是通过回调的方式</em>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainPresenter</span> <span class="keyword">extends</span> <span class="title">RxPresenter</span>&lt;<span class="title">MainActivity</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name = DEFAULT_NAME;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedState);</span><br><span class="line">        <span class="keyword">if</span> (savedState != <span class="keyword">null</span>)</span><br><span class="line">            name = savedState.getString(NAME_KEY);</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onSave</span><span class="params">(@NonNull Bundle state)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onSave(state);</span><br><span class="line">        state.putString(NAME_KEY, name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我推荐使用一个很棒的库<a href="https://github.com/frankiesardo/icepick" target="_blank" rel="external">Icepick</a>。在不使用运行时注解的前提下，它可以减少代码量，并简化应用程序逻辑 - 所有的事都在编译过程中已经处理好了。这个库和<a href="http://jakewharton.github.io/butterknife" target="_blank" rel="external">ButterKnife</a>搭配是个不错的选择。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainPresenter</span> <span class="keyword">extends</span> <span class="title">RxPresenter</span>&lt;<span class="title">MainActivity</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Icicle</span> String name = DEFAULT_NAME;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedState);</span><br><span class="line">        Icepick.restoreInstanceState(<span class="keyword">this</span>, savedState);</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onSave</span><span class="params">(@NonNull Bundle state)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onSave(state);</span><br><span class="line">        Icepick.saveInstanceState(<span class="keyword">this</span>, state);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你有不止一对请求参数，这个库在不使用运行时注解的前提下。您可以创建<code>BasePresenter</code>并把<em>Icepick</em>到该类中，所有的子类将会自动保存标有<code>@Icicle</code>这一注解的变量，而你将不再需要去实现<code>OnSave</code>。这也适用于保存Activity，Fragment，View的状态。</p>
+<h4 id="在主线程中调用onTakeView进行即时查询Javadoc)">在主线程中调用<code>onTakeView</code>进行即时查询<a href="http://konmik.github.io/nucleus/nucleus/presenter/Presenter.html#onTakeView(ViewType" target="_blank" rel="external">Javadoc</a>)</h4><p>有时候，你要进行少量的数据查询，如从数据库中读取少量的数据。虽然你可以很容易地用Nucleus创建一个可重启的请求，你不必到处使用这个强大的工具。如果你在fragment创建的时候初始化一个后台请求，即使只有几毫秒，用户也会看到一会儿的空白屏。因此，为了使代码更短，用户体验更好，可以使用主线程。</p>
+<h4 id="不要让Presenter控制你的View">不要让Presenter控制你的View</h4><p>这不是很好的工作方式 - 由于这种不自然的方式，应用程序逻辑变得太复杂。</p>
+<p>自然的方式是操作流由用户发起，通过View，Presenter和Model，最后流向数据。毕竟，用户将使用应用,用户是控制应用程序的源头。因此，控制应该从用户开始而不是一些应用的内部结构。</p>
+<p>从view，到presenter到model是很直接的形式，很容易书写这样的代码。你将得到以下序列： <strong>user -&gt; view -&gt; presenter -&gt; model -&gt; data</strong> 。但是，当控制流变成这样时: <strong>user -&gt; view -&gt; presenter -&gt; view -&gt; presenter -&gt; model -&gt; data</strong>，它只是违反KISS原则.</p>
+<p>Fragments？不好意思它是违背了这种自然操作流程的。它们太复杂。这里是一个非常好讲诉Fragment的文章：<a href="http://corner.squareup.com/2014/10/advocating-against-android-fragments.html" target="_blank" rel="external">抨击Android的Fragment</a>。fragment的替代者<a href="https://github.com/square/flow" target="_blank" rel="external">Flow</a> 并没有简化多少东西。</p>
+<h4 id="MVC">MVC</h4><p>如果你对MVC（模型-View-控制器）-不要去使用。模型-View-控制器和MVP完全不同，不能解决接口开发者面对的问题。</p>
+<h4 id="What_is_MVC?">What is MVC?</h4><h4 id="什么是MVC?">什么是MVC?</h4><ul>
+<li><p><strong>Model</strong>代表着应用程序的内部状态。它可以负责存储，当然也可以不考虑。</p>
+</li>
+<li><p><strong>View</strong>是唯一的与MVP相同的部分 - 它用于将模型呈现在屏幕上，应用程序的一部分。</p>
+</li>
+<li><p><strong>Controller</strong>表示输入装置，如键盘，鼠标或操纵杆。</p>
+</li>
+</ul>
+<p>MVC在过去以键盘为驱动的应用中（比如游戏），是比较好的模式。没有窗口和图形用户界面的交互——应用接受输入(Controller),维持状态（Model），产生输出（View）。同样，数据和控制的关系是这样的。<strong>controller -&gt; model -&gt; view</strong>。这种模式是在Android绝对无用。</p>
+<p>这里有一些关于MVC的困惑。人们（Web开发人员）觉得他们使用MVC，而实际上，他们使用的MVP。许多Android开发者认为Controller是用于控制View的，所以他们试图在创建View时，从视图（View）中提取视图逻辑，交由专门的控制器控制。我个人是没有看出这种架构的好处。</p>
+<h4 id="在数据复杂的项目中使用固定的数据结构">在数据复杂的项目中使用固定的数据结构</h4><p>在这方面，<a href="https://github.com/google/auto/tree/master/value" target="_blank" rel="external">AutoValue</a>是十分好的库，在它的描述中，你会发现一大堆好处，我建议你阅读它。Android平台上还有一个接口：<a href="https://github.com/frankiesardo/auto-parcel" target="_blank" rel="external">AutoParcel</a>。其主要原因是，你可以四处传递，而不用关心是否在程序的某个地方被修改了。而且他们也是线程安全的。</p>
+<h3 id="总结-1">总结</h3><p>试试MVP吧，然后告诉你的朋友。:)</p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://konmik.github.io/introduction-to-model-view-presenter-on-android.html" target="_blank" rel="external">Introduction to Model-View-Presenter on Android</a></li>
+<li>原文作者 : <a href="http://konmik.github.io/" target="_blank" rel="external">konmik</a></li>
+<li>译文出自 : <a href="http://konmik.github.io/introduction-to-model-view-presenter-on-android.html" target="_blank" rel="external">  其他  http://konmik.github.io/introduction-to-model-view-presenter-on-android.html</a></li>
+<li>译者 : <a href="https://github.com/MiJack" target="_blank" rel="external">MiJack</a>  </li>
+<li>校对者: <a href="https://github.com/MiJack" target="_blank" rel="external">MiJack</a>  </li>
+<li>状态 : 校对完成</li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/05/29/introduction-to-model-view-presenter-on-android/" data-id="cibyut6cv002n181icena01w9" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/05/29/introduction-to-model-view-presenter-on-android/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/05/29/how-to-make-our-android-apps-unit-testable-pt-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 进行单元测试难在哪-part4</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/05/29/introduction-to-model-view-presenter-on-android/" data-title="MVP在Android平台上的应用" data-url="http://likebamboo.com/AndroidBlog/2015/05/29/introduction-to-model-view-presenter-on-android/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">47</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/introduction-to-model-view-presenter-on-android/">MVP在Android平台上的应用</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/how-to-make-our-android-apps-unit-testable-pt-2/">Android 进行单元测试难在哪-part4</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/ted_mosby/">Ted Mosby - 软件架构</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/when-Thor-and-Hulk-meet-dagger2-rxjava-1/">当复仇者联盟遇上Dragger2、RxJava和Retrofit的巧妙结合</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/05/29/automating-android-development/">自动化 Android 开发</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

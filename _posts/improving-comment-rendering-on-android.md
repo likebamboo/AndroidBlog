@@ -4,8 +4,6 @@ tags: [基础]
 categories: [翻译]
 ---
 
-# [译]Instagram是如何提升TextView渲染性能的
-
 > 原文链接: [Improving Comment Rendering on Android](http://instagram-engineering.tumblr.com/post/114508858967/improving-comment-rendering-on-android)
 
 上周，成千上万来自全世界的IG用户齐聚在社区组织的先下聚会 Worldwide InstaMeet11上。WWIM11 是历史上最大，最具地域多样性的Instagram聚会，从Muscat到Bushwick，成千上万用户分享了大约10万张照片。
