@@ -1,0 +1,405 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android内存优化之一：MAT使用入门 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="MAT简介MAT介绍MAT(Memory Analyzer Tool)，一个基于Eclipse的内存分析工具，是一个快速、功能丰富的JAVA heap分析工具，它可以帮助我们查找内存泄漏和减少内存消耗。使用内存分析工具从众多的对象中进行分析，快速的计算出在内存中对象的占用大小，看看是谁阻止了垃圾收集器的回收工作，并可以通过报表直观的查看到可能造成这种结果的对象。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android内存优化之一：MAT使用入门">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/06/22/androidmemory-usage-of-mat-part-1/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="MAT简介MAT介绍MAT(Memory Analyzer Tool)，一个基于Eclipse的内存分析工具，是一个快速、功能丰富的JAVA heap分析工具，它可以帮助我们查找内存泄漏和减少内存消耗。使用内存分析工具从众多的对象中进行分析，快速的计算出在内存中对象的占用大小，看看是谁阻止了垃圾收集器的回收工作，并可以通过报表直观的查看到可能造成这种结果的对象。">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_Intro.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_Download.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_Eclipse_Install.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_DDMS_ExportFile.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_OpenFile.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_Report.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_Overview.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_Histogram.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_DominatorTree.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_TopConsumers.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_Retained_objects.gif">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_Retained_objects_2.gif">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_ThreadOverView.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_Group.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_PathToGCRoot.png">
+<meta property="og:image" content="http://androidperformance.com/images/MAT/MAT_PathToGCRoot_Detail.png">
+<meta property="og:updated_time" content="2015-07-11T15:41:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android内存优化之一：MAT使用入门">
+<meta name="twitter:description" content="MAT简介MAT介绍MAT(Memory Analyzer Tool)，一个基于Eclipse的内存分析工具，是一个快速、功能丰富的JAVA heap分析工具，它可以帮助我们查找内存泄漏和减少内存消耗。使用内存分析工具从众多的对象中进行分析，快速的计算出在内存中对象的占用大小，看看是谁阻止了垃圾收集器的回收工作，并可以通过报表直观的查看到可能造成这种结果的对象。">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-androidmemory-usage-of-mat-part-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/22/androidmemory-usage-of-mat-part-1/" class="article-date">
+  <time datetime="2015-06-21T16:00:00.000Z" itemprop="datePublished">2015-06-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a>►<a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/连载/性能优化/">性能优化</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android内存优化之一：MAT使用入门
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="MAT简介">MAT简介</h2><h3 id="MAT介绍">MAT介绍</h3><p>MAT(Memory Analyzer Tool)，一个基于Eclipse的内存分析工具，是一个快速、功能丰富的JAVA heap分析工具，它可以帮助我们查找内存泄漏和减少内存消耗。使用内存分析工具从众多的对象中进行分析，快速的计算出在内存中对象的占用大小，看看是谁阻止了垃圾收集器的回收工作，并可以通过报表直观的查看到可能造成这种结果的对象。<br><a id="more"></a><br><img src="http://androidperformance.com/images/MAT/MAT_Intro.png" alt="image"></p>
+<p>当然MAT也有独立的不依赖Eclipse的版本，只不过这个版本在调试Android内存的时候，需要将DDMS生成的文件进行转换，才可以在独立版本的MAT上打开。不过Android SDK中已经提供了这个Tools，所以使用起来也是很方便的。</p>
+<h3 id="MAT工具的下载安装">MAT工具的下载安装</h3><p>这里是MAT的下载地址：<a href="https://eclipse.org/mat/ downloads.php" target="_blank" rel="external">https://eclipse.org/mat/downloads.php</a>，下载时会提供三种选择的方式：</p>
+<p><img src="http://androidperformance.com/images/MAT/MAT_Download.png" alt="image"></p>
+<ul>
+<li>Update Site 这种方式后面会有一个网址：比如<a href="http://download.eclipse.org/mat/1.4/update-site/" target="_blank" rel="external">http://download.eclipse.org/mat/1.4/update-site/</a> ，安装过Eclipse插件的同学应该知道，只要把这段网址复制到对应的Eclipse的Install New Software那里，就可以进行在线下载了。</li>
+</ul>
+<p><img src="http://androidperformance.com/images/MAT/MAT_Eclipse_Install.png" alt="image"></p>
+<ul>
+<li>Archived Update Site 这种方式安装的位置和上一种差不多，只不过第一种是在线下载，这一种是使用离线包进行更新，这种方式劣势是当这个插件更新后，需要重新下载离线包，而第一种方式则可以在线下载更新。</li>
+<li>Stand-alone Eclipse RCP Applications 这种方式就是把MAT当成一个独立的工具使用，不再依附于Eclipse，适合不使用Eclipse而使用Android Studio的同学。这种方式有个麻烦的地方就是DDMS导出的文件，需要进行转换才可以在MAT中打开。</li>
+</ul>
+<p>下载安装好之后，就可以使用MAT进行实际的操作了。</p>
+<h2 id="Android(Java)中常见的容易引起内存泄露的不良代码">Android(Java)中常见的容易引起内存泄露的不良代码</h2><h3 id="Android内存">Android内存</h3><p>使用MAT工具之前，要对Android的内存分配方式有基本的了解，对容易引起内存泄露的代码也要保持敏感，在代码级别对内存泄露的排查，有助于内存的使用。</p>
+<p>Android主要应用在嵌入式设备当中，而嵌入式设备由于一些众所周知的条件限制，通常都不会有很高的配置，特别是内存是比较有限的。如果我们编写的代码当中有太多的对内存使用不当的地方，难免会使得我们的设备运行缓慢，甚至是死机。为了能够使得Android应用程序安全且快速的运行，Android的每个应用程序都会使用一个专有的Dalvik虚拟机实例来运行，它是由Zygote服务进程孵化出来的，也就是说每个应用程序都是在属于自己的进程中运行的。一方面，如果程序在运行过程中出现了内存泄漏的问题，仅仅会使得自己的进程被kill掉，而不会影响其他进程（如果是system_process等系统进程出问题的话，则会引起系统重启）。另一方面Android为不同类型的进程分配了不同的内存使用上限，如果应用进程使用的内存超过了这个上限，则会被系统视为内存泄漏，从而被kill掉。</p>
+<h3 id="常见的内存使用不当的情况">常见的内存使用不当的情况</h3><h4 id="查询数据库没有关闭游标">查询数据库没有关闭游标</h4><p>描述：<br>程序中经常会进行查询数据库的操作，但是经常会有使用完毕Cursor后没有关闭的情况。如果我们的查询结果集比较小，对内存的消耗不容易被发现，只有在常时间大量操作的情况下才会复现内存问题，这样就会给以后的测试和问题排查带来困难和风险。<br>示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Cursor cursor = getContentResolver().query(uri ...);</span><br><span class="line">	<span class="keyword">if</span> (cursor.moveToNext()) &#123;</span><br><span class="line"> 	... ... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修正示例代码:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Cursor cursor = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  	cursor = getContentResolver().query(uri ...);</span><br><span class="line">	<span class="keyword">if</span> (cursor != <span class="keyword">null</span> &amp;&amp; cursor.moveToNext()) &#123;</span><br><span class="line">	... ... </span><br><span class="line">	&#125;</span><br><span class="line">	&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (cursor != <span class="keyword">null</span>) &#123;</span><br><span class="line">	<span class="keyword">try</span> &#123; </span><br><span class="line">		cursor.close();</span><br><span class="line">	&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">		<span class="comment">//ignore this</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="构造Adapter时，没有使用缓存的_convertView">构造Adapter时，没有使用缓存的 convertView</h4><p>描述：以构造ListView的BaseAdapter为例，在BaseAdapter中提供了方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> View <span class="title">getView</span><span class="params">(<span class="keyword">int</span> position, View convertView, ViewGroup parent)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>来向ListView提供每一个item所需要的view对象。初始时ListView会从BaseAdapter中根据当前的屏幕布局实例化一定数量的view对象，同时ListView会将这些view对象缓存起来。当向上滚动ListView时，原先位于最上面的list item的view对象会被回收，然后被用来构造新出现的最下面的list item。这个构造过程就是由getView()方法完成的，getView()的第二个形参 View convertView就是被缓存起来的list item的view对象(初始化时缓存中没有view对象则convertView是null)。<br>由此可以看出，如果我们不去使用convertView，而是每次都在getView()中重新实例化一个View对象的话，即浪费资源也浪费时间，也会使得内存占用越来越大。ListView回收list item的view对象的过程可以查看:android.widget.AbsListView.java —&gt; void addScrapView(View scrap) 方法。</p>
+<p>示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> View <span class="title">getView</span><span class="params">(<span class="keyword">int</span> position, View convertView, ViewGroup parent)</span> </span>&#123;</span><br><span class="line"> View view = <span class="keyword">new</span> Xxx(...);</span><br><span class="line"> ... ...</span><br><span class="line"> <span class="keyword">return</span> view;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>示例修正代码： </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> View <span class="title">getView</span><span class="params">(<span class="keyword">int</span> position, View convertView, ViewGroup parent)</span> </span>&#123;</span><br><span class="line"> View view = <span class="keyword">null</span>;</span><br><span class="line"> <span class="keyword">if</span> (convertView != <span class="keyword">null</span>) &#123;</span><br><span class="line"> view = convertView;</span><br><span class="line"> populate(view, getItem(position));</span><br><span class="line"> ...</span><br><span class="line"> &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"> view = <span class="keyword">new</span> Xxx(...);</span><br><span class="line"> ...</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">return</span> view;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于ListView的使用和优化，可以参考这两篇文章：</p>
+<ul>
+<li><a href="http://www.vogella.com/tutorials/AndroidListView/article.html" target="_blank" rel="external">Using lists in Android (ListView) - Tutorial</a></li>
+<li><a href="http://developer.android.com/training/improving-layouts/smooth-scrolling.html#ViewHolder" target="_blank" rel="external">Making ListView Scrolling Smooth</a></li>
+</ul>
+<h4 id="Bitmap对象不在使用时调用recycle()释放内存">Bitmap对象不在使用时调用recycle()释放内存</h4><p>描述：有时我们会手工的操作Bitmap对象，如果一个Bitmap对象比较占内存，当它不在被使用的时候，可以调用Bitmap.recycle()方法回收此对象的像素所占用的内存。<br>另外在最新版本的Android开发时，使用下面的方法也可以释放此Bitmap所占用的内存<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Bitmap bitmap ;</span><br><span class="line"> ...</span><br><span class="line"> bitmap初始化以及使用</span><br><span class="line"> ...</span><br><span class="line">bitmap = <span class="keyword">null</span>;</span><br></pre></td></tr></table></figure></p>
+<h4 id="释放对象的引用">释放对象的引用</h4><p>描述：这种情况描述起来比较麻烦，举两个例子进行说明。</p>
+<p>示例A：<br>假设有如下操作<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line">	... ...</span><br><span class="line">	<span class="keyword">private</span> Handler mHandler = ...</span><br><span class="line">	<span class="keyword">private</span> Object obj;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	 obj = initObj();</span><br><span class="line">	 ...</span><br><span class="line">	 [Mark]</span><br><span class="line">	 mHandler.post(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">	        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	         useObj(obj);</span><br><span class="line">	        &#125;</span><br><span class="line">	 &#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们有一个成员变量 obj，在operation()中我们希望能够将处理obj实例的操作post到某个线程的MessageQueue中。在以上的代码中，即便是mHandler所在的线程使用完了obj所引用的对象，但这个对象仍然不会被垃圾回收掉，因为DemoActivity.obj还保有这个对象的引用。所以如果在DemoActivity中不再使用这个对象了，可以在[Mark]的位置释放对象的引用，而代码可以修改为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	obj = initObj();</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">final</span> Object o = obj;</span><br><span class="line">	obj = <span class="keyword">null</span>;</span><br><span class="line">	mHandler.post(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">	    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	        useObj(o);</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>示例B：<br>假设我们希望在锁屏界面(LockScreen)中，监听系统中的电话服务以获取一些信息(如信号强度等)，则可以在LockScreen中定义一个PhoneStateListener的对象，同时将它注册到TelephonyManager服务中。对于LockScreen对象，当需要显示锁屏界面的时候就会创建一个LockScreen对象，而当锁屏界面消失的时候LockScreen对象就会被释放掉。</p>
+<p>但是如果在释放LockScreen对象的时候忘记取消我们之前注册的PhoneStateListener对象，则会导致LockScreen无法被垃圾回收。如果不断的使锁屏界面显示和消失，则最终会由于大量的LockScreen对象没有办法被回收而引起OutOfMemory,使得system_process进程挂掉。</p>
+<p>总之当一个生命周期较短的对象A，被一个生命周期较长的对象B保有其引用的情况下，在A的生命周期结束时，要在B中清除掉对A的引用。</p>
+<h4 id="其他">其他</h4><p>Android应用程序中最典型的需要注意释放资源的情况是在Activity的生命周期中，在onPause()、onStop()、onDestroy()方法中需要适当的释放资源的情况。由于此情况很基础，在此不详细说明，具体可以查看官方文档对Activity生命周期的介绍，以明确何时应该释放哪些资源。</p>
+<p>另外一些其他的例子，将会在补充版本加入。</p>
+<h2 id="使用MAT进行内存调试">使用MAT进行内存调试</h2><h3 id="获取HPROF文件">获取HPROF文件</h3><p>HPROF文件是MAT能识别的文件，HPROF文件存储的是特定时间点，java进程的内存快照。有不同的格式来存储这些数据，总的来说包含了快照被触发时java对象和类在heap中的情况。由于快照只是一瞬间的事情，所以heap dump中无法包含一个对象在何时、何地（哪个方法中）被分配这样的信息。<br>这个文件可以使用DDMS导出：</p>
+<ol>
+<li><p>DDMS中在Devices上面有一排按钮，选择一个进程后（即在Devices下面列出的列表中选择你要调试的应用程序的包名），点击Dump HPROF file 按钮：</p>
+<p><img src="http://androidperformance.com/images/MAT/MAT_DDMS_ExportFile.png" alt="image"></p>
+</li>
+</ol>
+<p>选择存储路径保存后就可以得到对应进程的HPROF文件。eclipse插件可以把上面的工作一键完成。只需要点击Dump HPROF file图标，然后MAT插件就会自动转换格式，并且在eclipse中打开分析结果。eclipse中还专门有个Memory Analysis视图</p>
+<ol>
+<li>得到对应的文件后，如果安装了Eclipse插件，那么切换到Memory Analyzer视图。使用独立安装的，要使用Android SDK自带的的工具（hprof-conv 位置在sdk/platform-tools/hprof-conv）进行转换<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hprof-conv xxx<span class="class">.xxx</span><span class="class">.xxx</span><span class="class">.hprof</span> xxx<span class="class">.xxx</span><span class="class">.xxx</span><span class="class">.hprof</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>转换过后的.hprof文件即可使用MAT工具打开了。</p>
+<h3 id="MAT主界面介绍">MAT主界面介绍</h3><p>这里介绍的不是MAT这个工具的主界面，而是导入一个文件之后，显示OverView的界面。</p>
+<ul>
+<li>打开经过转换的hprof文件：<br><img src="http://androidperformance.com/images/MAT/MAT_OpenFile.png" alt="image"></li>
+</ul>
+<p>如果选择了第一个，则会生成一个报告。这个无大碍。</p>
+<p><img src="http://androidperformance.com/images/MAT/MAT_Report.png" alt="image"></p>
+<ul>
+<li><p>选择OverView界面：</p>
+<p><img src="http://androidperformance.com/images/MAT/MAT_Overview.png" alt="Image"></p>
+</li>
+</ul>
+<p>我们需要关注的是下面的Actions区域</p>
+<ul>
+<li><p>Histogram：列出内存中的对象，对象的个数以及大小</p>
+<p><img src="http://androidperformance.com/images/MAT/MAT_Histogram.png" alt="image"></p>
+</li>
+<li><p>Dominator Tree：列出最大的对象以及其依赖存活的Object （大小是以Retained Heap为标准排序的）</p>
+<p><img src="http://androidperformance.com/images/MAT/MAT_DominatorTree.png" alt="image"></p>
+</li>
+<li><p>Top Consumers ： 通过图形列出最大的object</p>
+<p><img src="http://androidperformance.com/images/MAT/MAT_TopConsumers.png" alt="image"></p>
+</li>
+<li><p>Duplicate Class：通过MAT自动分析泄漏的原因</p>
+</li>
+</ul>
+<p>一般Histogram和 Dominator Tree是最常用的。</p>
+<h3 id="MAT中一些概念介绍">MAT中一些概念介绍</h3><p>要看懂MAT的列表信息，Shallow heap、Retained Heap、GC Root这几个概念一定要弄懂。</p>
+<h4 id="3-3-1_Shallow_heap">3.3.1 Shallow heap</h4><p>Shallow size就是对象本身占用内存的大小，不包含其引用的对象。</p>
+<ul>
+<li>常规对象（非数组）的Shallow size有其成员变量的数量和类型决定。</li>
+<li>数组的shallow size有数组元素的类型（对象类型、基本类型）和数组长度决定</li>
+</ul>
+<p>因为不像c++的对象本身可以存放大量内存，java的对象成员都是些引用。真正的内存都在堆上，看起来是一堆原生的byte[], char[], int[]，所以我们如果只看对象本身的内存，那么数量都很小。所以我们看到Histogram图是以Shallow size进行排序的，排在第一位第二位的是byte，char 。</p>
+<h4 id="3-3-2_Retained_Heap">3.3.2 Retained Heap</h4><p>Retained Heap的概念，它表示如果一个对象被释放掉，那会因为该对象的释放而减少引用进而被释放的所有的对象（包括被递归释放的）所占用的heap大小。于是，如果一个对象的某个成员new了一大块int数组，那这个int数组也可以计算到这个对象中。相对于shallow heap，Retained heap可以更精确的反映一个对象实际占用的大小（因为如果该对象释放，retained heap都可以被释放）。</p>
+<p>这里要说一下的是，Retained Heap并不总是那么有效。例如我在A里new了一块内存，赋值给A的一个成员变量。此时我让B也指向这块内存。此时，因为A和B都引用到这块内存，所以A释放时，该内存不会被释放。所以这块内存不会被计算到A或者B的Retained Heap中。为了纠正这点，MAT中的Leading Object（例如A或者B）不一定只是一个对象，也可以是多个对象。此时，(A, B)这个组合的Retained Set就包含那块大内存了。对应到MAT的UI中，在Histogram中，可以选择Group By class, superclass or package来选择这个组。</p>
+<p>为了计算Retained Memory，MAT引入了Dominator Tree。加入对象A引用B和C，B和C又都引用到D（一个菱形）。此时要计算Retained Memory，A的包括A本身和B，C，D。B和C因为共同引用D，所以他俩的Retained Memory都只是他们本身。D当然也只是自己。我觉得是为了加快计算的速度，MAT改变了对象引用图，而转换成一个对象引用树。在这里例子中，树根是A，而B，C，D是他的三个儿子。B，C，D不再有相互关系。把引用图变成引用树，计算Retained Heap就会非常方便，显示也非常方便。对应到MAT UI上，在dominator tree这个view中，显示了每个对象的shallow heap和retained heap。然后可以以该节点位树根，一步步的细化看看retained heap到底是用在什么地方了。要说一下的是，这种从图到树的转换确实方便了内存分析，但有时候会让人有些疑惑。本来对象B是对象A的一个成员，但因为B还被C引用，所以B在树中并不在A下面，而很可能是平级。</p>
+<p>为了纠正这点，MAT中点击右键，可以List objects中选择with outgoing references和with incoming references。这是个真正的引用图的概念，</p>
+<ul>
+<li>outgoing references ：表示该对象的出节点（被该对象引用的对象）。</li>
+<li>incoming references ：表示该对象的入节点（引用到该对象的对象）。</li>
+</ul>
+<p>为了更好地理解Retained Heap，下面引用一个例子来说明：</p>
+<p>把内存中的对象看成下图中的节点，并且对象和对象之间互相引用。这里有一个特殊的节点GC Roots，这就是reference chain(引用链)的起点:<br><img src="http://androidperformance.com/images/MAT/MAT_Retained_objects.gif" alt="image"><br><img src="http://androidperformance.com/images/MAT/MAT_Retained_objects_2.gif" alt="image"></p>
+<p>从obj1入手，上图中蓝色节点代表仅仅只有通过obj1才能直接或间接访问的对象。因为可以通过GC Roots访问，所以左图的obj3不是蓝色节点；而在右图却是蓝色，因为它已经被包含在retained集合内。<br>所以对于左图，obj1的retained size是obj1、obj2、obj4的shallow size总和；<br>右图的retained size是obj1、obj2、obj3、obj4的shallow size总和。<br>obj2的retained size可以通过相同的方式计算。</p>
+<h4 id="GC_Root">GC Root</h4><p>GC发现通过任何reference chain(引用链)无法访问某个对象的时候，该对象即被回收。名词GC Roots正是分析这一过程的起点，例如JVM自己确保了对象的可到达性(那么JVM就是GC Roots)，所以GC Roots就是这样在内存中保持对象可到达性的，一旦不可到达，即被回收。通常GC Roots是一个在current thread(当前线程)的call stack(调用栈)上的对象（例如方法参数和局部变量），或者是线程自身或者是system class loader(系统类加载器)加载的类以及native code(本地代码)保留的活动对象。所以GC Roots是分析对象为何还存活于内存中的利器。</p>
+<h3 id="MAT中的一些有用的视图">MAT中的一些有用的视图</h3><h4 id="Thread_OvewView">Thread OvewView</h4><p>Thread OvewView可以查看这个应用的Thread信息：<br><img src="http://androidperformance.com/images/MAT/MAT_ThreadOverView.png" alt="image"></p>
+<h4 id="Group">Group</h4><p>在Histogram和Domiantor Tree界面，可以选择将结果用另一种Group的方式显示（默认是Group by Object），切换到Group by package，可以更好地查看具体是哪个包里的类占用内存大，也很容易定位到自己的应用程序。<br><img src="http://androidperformance.com/images/MAT/MAT_Group.png" alt="image"></p>
+<h4 id="Path_to_GC_Root">Path to GC Root</h4><p>在Histogram或者Domiantor Tree的某一个条目上，右键可以查看其GC Root Path：<br><img src="http://androidperformance.com/images/MAT/MAT_PathToGCRoot.png" alt="image"></p>
+<p>这里也要说明一下Java的引用规则：<br>从最强到最弱，不同的引用（可到达性）级别反映了对象的生命周期。</p>
+<ul>
+<li>Strong Ref(强引用)：通常我们编写的代码都是Strong Ref，于此对应的是强可达性，只有去掉强可达，对象才被回收。</li>
+<li>Soft Ref(软引用)：对应软可达性，只要有足够的内存，就一直保持对象，直到发现内存吃紧且没有Strong Ref时才回收对象。一般可用来实现缓存，通过java.lang.ref.SoftReference类实现。</li>
+<li>Weak Ref(弱引用)：比Soft Ref更弱，当发现不存在Strong Ref时，立刻回收对象而不必等到内存吃紧的时候。通过java.lang.ref.WeakReference和java.util.WeakHashMap类实现。</li>
+<li>Phantom Ref(虚引用)：根本不会在内存中保持任何对象，你只能使用Phantom Ref本身。一般用于在进入finalize()方法后进行特殊的清理过程，通过 java.lang.ref.PhantomReference实现。</li>
+</ul>
+<p>点击Path To GC Roots —&gt; with all references<br><img src="http://androidperformance.com/images/MAT/MAT_PathToGCRoot_Detail.png" alt="image"></p>
+<h2 id="参考文档">参考文档</h2><ol>
+<li><a href="http://www.yourkit.com/docs/java/help/sizes.jsp" target="_blank" rel="external">Shallow and retained sizes</a></li>
+<li>MAT的wiki：<a href="http://wiki.eclipse.org/index.php/MemoryAnalyzer" target="_blank" rel="external">http://wiki.eclipse.org/index.php/MemoryAnalyzer</a></li>
+</ol>
+<blockquote>
+<p>原文链接：<a href="http://androidperformance.com/2015/04/11/AndroidMemory-Usage-Of-MAT/" target="_blank" rel="external">Android内存优化之一：MAT使用入门</a><br>原文作者：<a href="http://androidperformance.com/" target="_blank" rel="external">Gracker</a></p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/06/22/androidmemory-usage-of-mat-part-1/" data-id="cibz9kc9y00ab0s1ir8vv5wep" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/06/22/androidmemory-usage-of-mat-part-1/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/22/the-product-war-in-the-eyes-of-developers-android-ui-design/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          向产品宣战——开发者眼中的Android UI Design
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/22/androidmemory-usage-of-mat-part-3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android内存优化之三：打开MAT中的Bitmap原图</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/06/22/androidmemory-usage-of-mat-part-1/" data-title="Android内存优化之一：MAT使用入门" data-url="http://likebamboo.com/AndroidBlog/2015/06/22/androidmemory-usage-of-mat-part-1/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/其他/">其他</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/性能优化/">性能优化</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">80</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/Android架构/">Android架构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/性能优化/">性能优化</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/材料设计/">材料设计</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">20</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">19</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/性能优化/">性能优化</a><span class="category-list-count">3</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AndroidStudio/">AndroidStudio</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava/">RxJava</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/数据绑定/">数据绑定</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">51</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/07/">七月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/06/">六月 2015</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/11/welcome-snackbar-goodbye-toast/">还在用Toast？你Out啦，试试Snackbar吧！</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/10/how-to-improve-quality-and-syntax-of-your-android-code/">如何提高你的代码质量</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/09/Composition-over-Inheritance-What-it-means-for-your-Activities/">用组合代替继承能为 Activity 带来什么</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/08/automating-user-interface-testing-on-android/">Android UI 自动化测试</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/07/developing-for-android-iii-rules-and-performance/">Android开发III=规范-性能</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

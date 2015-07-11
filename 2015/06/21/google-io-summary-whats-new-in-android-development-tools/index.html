@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>2015 Google IO带来的新 Android 开发工具 | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="每年我们都非常期待 Youtube 中Google IO上那些关于 Android 的精彩讲解。然而，观看这些视频太耗费时间了。因此我们做了撰写了总结性的文字，来介绍这次的 Google IO 带来了哪些新的 Android 开发工具。（对应的讲演视频）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2015 Google IO带来的新 Android 开发工具">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/06/21/google-io-summary-whats-new-in-android-development-tools/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="每年我们都非常期待 Youtube 中Google IO上那些关于 Android 的精彩讲解。然而，观看这些视频太耗费时间了。因此我们做了撰写了总结性的文字，来介绍这次的 Google IO 带来了哪些新的 Android 开发工具。（对应的讲演视频）">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 10.18.10-OI2RFWPbn6.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 10.24.57-nwuvL0kS8W.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 10.30.01-Grz81dvubp.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 10.42.57-cl8MWwzzYC.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 10.46.01-KoHuJyeq0F.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/testing_device.jpeg">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.03.20-c1DKPt2w8Y.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.13.41-NPAwYYVN8B.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.15.21-WL33x5ckez.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.25.52-zEtMZXmuok.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.34.27-cSn9mmzu7x.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.37.27-Mz8F5wmRnK.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.39.04-fWLlwnIlHC.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.41.57-iWXIUx6z6S.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.46.16-xrH2DGgL94.png">
+<meta property="og:image" content="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.48.28-98HlY6FuwA.png">
+<meta property="og:updated_time" content="2015-07-11T15:45:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2015 Google IO带来的新 Android 开发工具">
+<meta name="twitter:description" content="每年我们都非常期待 Youtube 中Google IO上那些关于 Android 的精彩讲解。然而，观看这些视频太耗费时间了。因此我们做了撰写了总结性的文字，来介绍这次的 Google IO 带来了哪些新的 Android 开发工具。（对应的讲演视频）">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-google-io-summary-whats-new-in-android-development-tools" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/21/google-io-summary-whats-new-in-android-development-tools/" class="article-date">
+  <time datetime="2015-06-20T16:00:00.000Z" itemprop="datePublished">2015-06-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      2015 Google IO带来的新 Android 开发工具
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>每年我们都非常期待 Youtube 中Google IO上那些关于 Android 的精彩讲解。然而，观看这些视频太耗费时间了。因此我们做了撰写了总结性的文字，来介绍这次的 Google IO 带来了哪些新的 Android 开发工具。（<a href="https://www.youtube.com/watch?v=f7ihSQ44WO0" target="_blank" rel="external">对应的讲演视频</a>）<br><a id="more"></a></p>
+<h2 id="便于设计">便于设计</h2><p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 10.18.10-OI2RFWPbn6.png" alt="image">  </p>
+<p>Android Design Support Library 帮助我们遵循最新的最杰出的 material design 特性。这个库还附带了好几个 material design 组件诸如 navigation drawer, <a href="http://arjunu.com/2015/05/floating-labels-for-edittext/" target="_blank" rel="external">floating labels for editing text</a>(这个简单来说就是edittext 在获得焦点后，hint 会有个上升动画变成一个放置在 edittext上方的 textview 作为 label)，floating action buttons(Android L时代推出的产物，总算有了官方的低版本兼容支持)以及 支持Android 2.1及其以上版本的snackbar。   </p>
+<p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 10.24.57-nwuvL0kS8W.png" alt="image"> </p>
+<p>Android L 介绍了对 vector drawables 的支持。而通过 Android Studio 1.3+给 Android Gradle plugin 带来的新功能，我们可以让编译打包系统通过 开发者提供的SVG图 或者 vector drawables 生成不同 dpi 的光栅图。<br>最后，整个开发团队开始重写了所有的可视化设计编辑器。从而支持开发者所见即所得的编辑与设计而不是被 XML 文件搞的无比心烦。下面会有更详细的内容。   </p>
+<h2 id="提升_Gradle_插件以及编译打包系统">提升 Gradle 插件以及编译打包系统</h2><p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 10.30.01-Grz81dvubp.png" alt="image"></p>
+<p>Android Gradle plugin  有的时候给人一种靠不住的感觉，特别是它的依赖管理。处理测试依赖时一些极端情况带来的问题现在已经被修复。同样，可选依赖 Gradle 还没有做到真正的支持。然而在 Android Gradle plugin 上已经解决了这一问题。      </p>
+<p>开发者对 Android Gradle plugin 抱怨最多的就是它居高不下的打包消耗时间了。开发团队从多个层级入手追踪这个问题。       </p>
+<p><a href="http://tools.android.com/tech-docs/jackandjill" target="_blank" rel="external">Jack</a> , Java Android Compiler Kit 的缩写，可以将 Java 源码直接编译并转换为 Dex 文件。Jack 基于 Eclipse Java 编译器。缩减了打 Dex 之前把 Java 源码编译成 JVM 字节码的步骤。 额外的，Jack 还支持增量编译打包。     </p>
+<p>缩减 PNG 图片是另外一个考虑来缩减打包时间的步骤。开发团队提高了它的性能，将500张 PNG 图片和.9 图的缩减时间从 4秒 降低到了 400ms。     </p>
+<p>aapt, 打包应用的dex 和 资源文件的工具同样得到了提升。     </p>
+<p>另外一个影响打包时间的因素是 Gradle 本身的巨大开销。当 Gradle 开始它的打包任务时，它必须先创建描述模型比如 variant (flavor + build type)，解决所有 variants 的依赖关系（即使你只有一个）以及执行开发者自定义的逻辑。开发团队和 Gradle Ware 紧密合作工作从而提高这些步骤的性能。以下是最后的结果：   </p>
+<p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 10.42.57-cl8MWwzzYC.png" alt="image"></p>
+<p>这还没完。目前开发者团队正在为了一个新的  Android Gradle plugin 而工作, 它基于 Gradle Ware 正在研发的新API  。而这些新的 API 允许这些模型被 Gradle 直接管理，从而可以做诸如缓存，并发以及增量构建这些事。下面是尚未完成的新 Android Gradle plugin 的结果数据：</p>
+<p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 10.46.01-KoHuJyeq0F.png" alt="image"></p>
+<p>以上的数据并没有算上用上缓存的带来的提升，目前缓存的特性还没有提供出来。新插件有一个小瑕疵，因为它使用了全新的 DSL 所以无法做到完全的向后兼容。新插件的预览版会在几周内开放，最后的正式版会在今年晚一点的时候开放。   </p>
+<p>开发者团队还介绍了一个新的东西，叫做 <a href="https://developer.android.com/tools/data-binding/guide.html" target="_blank" rel="external">Data Binding Library</a>。这个库需要编译构建系统的支持，因为它会通过XML中特殊声明的一些代码去生成对应的 Java 代码。老版本和新版本的 Android Gradle plugin 都能支持它。下面会有更详细的内容。   </p>
+<p>最后，我们实现了对 NDK C以及C++完整的支持。这是基于Gradle native 代码的支持，所以只会在新版本中提供，它重写了Android Gradle plugin。NDK支持也带入到了Android Studio中，同时还打包了<a href="https://www.jetbrains.com/clion/" target="_blank" rel="external">CLion</a>（JetBrain旗下的C,C++ IDE）, 并免费提供。下面会有更详细的内容。   </p>
+<h2 id="测试有关">测试有关</h2><p><img src="http://7xiegl.com1.z0.glb.clouddn.com/testing_device.jpeg" alt="image">  </p>
+<p>今年Android 测试最大的亮点便是最近公布的 <a href="https://developers.google.com/cloud-test-lab/" target="_blank" rel="external">Cloud Test Lab</a> 。它可以帮助开发者使用 Google 测试云平台上的虚拟设备以及真机设备测试他们开发的应用。无论是虚拟设备还是真机设备，测试实验室(test lab)都支持机器爬虫遍历应用而不需要手动的去写测试用例。就当作是有一只猴子在各种设备上玩你的应用吧=w=。当然，你还是可以自己写测试用例的。     </p>
+<p>到目前为止，单元测试主要还是用于跑在 JVM 上老的Junit 测试。虽然那样可以提高测试的迭代速度，但是它并不能测试到 Android 中一些特定的代码，若没有类似的Android 库的支持的话（Roboelectric就是为此而生的）。      </p>
+<p>为了支持在虚拟机或者设备上的集成测试，开发团队增加了对外部测试工程的支持。他们就在你的应用程序工程边上，引用它以及它的依赖然后进行集成测试。   </p>
+<h2 id="模拟器">模拟器</h2><p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.03.20-c1DKPt2w8Y.png" alt="image"></p>
+<p>并没有大的进展。开发团队主要工作集中在稳定性，正确性以及配置上。 Android Studio 会下载安装 <a href="https://01.org/zh/android-ia/q-and-a/what-haxm" target="_blank" rel="external">HAXM</a>（Intel 为 Android x86平台提供的硬件加速执行管理器） 并且为你配置好它。同时，还有大量的用于OpenGL ES 模拟器的提升，相信它会给开发者带来更好的更接近于真机的模拟器表现。<a href="http://www.droid-life.com/2015/05/28/google-announces-native-fingerprint-support-in-android-m/" target="_blank" rel="external">指纹识别支持</a>以及一个特殊的 <a href="http://www.android.com/auto/" target="_blank" rel="external">Android Auto</a> 模拟器也已有提供。  </p>
+<h2 id="Android_Studio对C以及C++的支持">Android Studio对C以及C++的支持</h2><p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.13.41-NPAwYYVN8B.png" alt="image"></p>
+<p>除了在打包系统中集成了 NDK 的支持，开发团队还与 <a href="http://robovm.com/google-io-summary-whats-new-in-android-development-tools/jetbrains.comhttp://robovm.com/google-io-summary-whats-new-in-android-development-tools/jetbrains.com" target="_blank" rel="external">JetBrains</a> 合作，将他们新的C/C++ IDE <a href="https://www.jetbrains.com/clion/" target="_blank" rel="external">CLion</a> 直接集成在了Android Studio 。并且这一切都是免费的。     </p>
+<p>这次结合满足了你对一个 JetBrains的产品抱有的所有期待: 强大的重构能力，代码分析工具，代码导航，语义查询代码用例遗迹更多的特性。除此以外，还有两个能改变游戏规则的重量级功能来给native 层的开发带来便捷。     </p>
+<p>Android Studio 现在支持使用 <a href="http://www.gnu.org/software/gdb/" target="_blank" rel="external">GDB</a> 或者 <a href="http://lldb.llvm.org/" target="_blank" rel="external">LLDB</a> 来debug代码。Debug native 的代码在以前是一件非常麻烦的事情，而现在，耳目一新的感觉吧？      </p>
+<p>更为称道的消息是 C/C++代码 和 Java/JNI 代码的紧密融合。为了让 C/C++ 代码可以与 Java 代码相互调用。你需要为它们创建连接的桥梁。这便要通过 Java Native Interface（即JNI来实现），本质上就是一个可以让我们从Java 代码调用 C/C++代码的 C/C++ API，反之亦然。你可以在声明 Java 方法时，带上 native 的 修饰词，这样就意味着该方法是在C/C++ 层面去实现的。而对应的方法则需要按照严格的规范命名，并规定管理好传参的规则。    </p>
+<p>而现在， Android Studio 帮助你用简单的方式完成以上所有工作。你可以在 Java 层声明好方法，然后 Android Studio 就会自动的帮你生成 JNI 代码。还包括了一些预定义类型的处理，比如 string，arrays。更令人印象深刻的是， 重构以及查找用例都如你所想要的可以使用。在某个文件上做重构，另外一侧的文件也会被修改到。    </p>
+<p>JNI 层的开发依然十分烦杂，但这些改变可以让它变得好受一点。   </p>
+<h2 id="新支持的Annotations">新支持的Annotations</h2><p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.15.21-WL33x5ckez.png" alt="image"> </p>
+<p>Java annotations（注解，即使@后面的那个）可以让开发者在编译期以及运行时做一些神奇的事情。开发者团队新增了13个 annotations 来帮助开发者避免一些特定类型的 bug 。    </p>
+<p>举个例子，@WorkerThread 这个 annotation, 带有该 annotation 的方法会自动检查该方法中是否有代码职能在UI线程上执行的。Android Studio 会高亮出类似错误，比如设置一个按钮的文字，在一个worker 线程执行了。 开发团队已经将很多 Android 运行库中的方法标记了该 annotation 所以开发者并不需要自己去动手添加。   </p>
+<p>另外一个例子就是@RequiresPermission。和@WorkerThread 一样，大多数的Android 运行库方法已经被注解过了。这是防止开发者使用了一个需要特定权限的API，但是却没有在 manifest 文件中声明权限，Android Studio 会弹框告诉你问题并为你提供插入对应权限的选项。在 Android M 中，权限管理有一定的修改，用户可以在应用运行时决定给予或禁止一些权限。这就意味着，你的应用需要处理无权限的情况。对于这种情况，Android Studio 也会自动的插入处理代码的框架。        </p>
+<p>还有一些 annotations 是用于 debug 中将标志值对应标志名的问题，或者识别 编码过的颜色，资源或者view id的问题。   </p>
+<p>这个讲解新 annotations 的文档目前还没有完全完工，你应该可以很快在<a href="https://developer.android.com/reference/android/support/annotation/package-summary.html" target="_blank" rel="external">这里</a>看到它们。</p>
+<h2 id="数据绑定">数据绑定</h2><p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.25.52-zEtMZXmuok.png" alt="image"></p>
+<p>当开发UI界面时，通常会将布局和视图从代码中分离到 xml 文件中然后写一些简单Java 对象(POJOs) 以及 一些 Java 代码。例如使用 findViewById() 在布局被加载后去获取对应的UI 视图的对象。   </p>
+<p>Data Binding 库可以帮助开发者更简单的完成工作。不需要手动的去处理数据和视图的合作，而是声明一些简单的对象，通过一系列简单对象引用一些值并且在 布局 XML 文件中去监听这些值。这个很像 .NET里<a href="https://msdn.microsoft.com/en-us/library/ms752059%28v=vs.110%29.aspx" target="_blank" rel="external">XAML</a>的做法。    </p>
+<p>为了调解 Java 类和布局 xml 文件，编译打包系统会编译期生成一个捆绑 Java 类。这个可以帮助开发者debug 调试问题。   </p>
+<p>你还可以将这变成一个双向的过程，通过让你的简单 Java 对象实现 android.databings.Observable 接口，改变简单对象的值会 影响 UI展现，反之亦然。（setText 后，bind的值也会变化的意思）   </p>
+<p>data binding 库目前还处于 beta 阶段，需要 Android Studio 1.3.0-beta1 以及最新的Android Gradle plugin.<br>点击<a href="https://developer.android.com/tools/data-binding/guide.html" target="_blank" rel="external">这里</a>查看更多信息。   </p>
+<h2 id="分析工具">分析工具</h2><p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.34.27-cSn9mmzu7x.png" alt="image">   </p>
+<p>内存和性能分析工具得到了全面的改变。现在你可以在Android Studio中通过简单的图形界面操作直接获取并保存堆栈以及方法调用情况(method traces)的快照并且找出问题原因了。新的分析工具还具备了可视化视图查询的功能。你再也不需要手动的去转换 <a href="http://docs.oracle.com/javase/7/docs/technotes/samples/hprof.html" target="_blank" rel="external">HPROF</a> 文件了。   </p>
+<p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.37.27-Mz8F5wmRnK.png" alt="image"></p>
+<p>新的内存快照具备简洁明了的向下钻能力（drill down我理解是一层一层的点下去。。）。它提供了对象调试视图，从而让你可以查看到还在堆内存中的对象们。它还允许你顺着引用链一直找到最近的GC 节点从而轻松的找到是什么被持有住了。   </p>
+<h2 id="开发者服务">开发者服务</h2><p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.39.04-fWLlwnIlHC.png" alt="image"></p>
+<p>Google 提供了广告，数据分析等服务。而如今 Android Studio 1.3 可以帮助你通过一系列定制 UI 更容易的使用这些服务，比如API Keys等。这个新功能同样会帮助添加所需要的依赖，权限以及模版类从而可以花最少的时间使用这些服务。   </p>
+<h2 id="即将发布的新功能">即将发布的新功能</h2><p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.41.57-iWXIUx6z6S.png" alt="image"> </p>
+<p>新的可视化设计视图暂时还没有被集入到Android Studio 1.3中。尽管如此，它们还是非常令人兴奋的，因为可以为开发者减轻创建UI界面的负担。<br>上面的截图展示了新的主题编辑器。它让你可以可视化的检查以及修改主题文件。它还可以展示使用该主题的控件的预览。   </p>
+<p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.46.16-xrH2DGgL94.png" alt="image"></p>
+<p>而布局编辑器则被完全的重写，多了很多新功能。上述截图展示了蓝图模式，这可以让你专注于你的布局，字体风格等。它还与设计库集成，从而可以通过拖拉直接添加设计元素到布局中。   </p>
+<p><img src="http://7xiegl.com1.z0.glb.clouddn.com/Screen Shot 2015-05-30 at 11.48.28-98HlY6FuwA.png" alt="image"></p>
+<p>而 XML 文件预览模式现在有能力展示系统Preference了(以前是无法预览Preference的)。更重要的一个功能是完全的对布局文件预览窗口直接操作的所见即所得编辑，包括一些控件的拖动。   </p>
+<h2 id="Q&amp;A">Q&amp;A</h2><p>很不幸，Q&amp;A环节十分的短暂。而在其中最有意思的问题是 Android 什么时候支持 Java 8。而回答则是，“这是一个平台性问题”(“that’s a platform issue”)。   </p>
+<blockquote>
+<ul>
+<li>原文链接 : <a href="http://robovm.com/google-io-summary-whats-new-in-android-development-tools/" target="_blank" rel="external">Google I/O Summary: What’s new in Android Development Tools</a></li>
+<li>原文作者 : <a href="http://robovm.com/author/mario/" target="_blank" rel="external">Mario Zechner</a></li>
+<li>译文出自 : <a href="http://www.devtf.cn" target="_blank" rel="external">开发技术前线 www.devtf.cn</a></li>
+<li>译者 : <a href="http://reondz.github.io/" target="_blank" rel="external">ReonDz</a> </li>
+</ul>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/06/21/google-io-summary-whats-new-in-android-development-tools/" data-id="cibz9kc4u00670s1iv5xyj2pr" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/06/21/google-io-summary-whats-new-in-android-development-tools/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/22/androidmemory-usage-of-mat-part-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android内存优化之二：MAT使用进阶
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/21/open-sourcing-facebook-infer-identify-bugs-befor-you-ship/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">facebook开源项目Facebook Infer-静态代码检查工具</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/06/21/google-io-summary-whats-new-in-android-development-tools/" data-title="2015 Google IO带来的新 Android 开发工具" data-url="http://likebamboo.com/AndroidBlog/2015/06/21/google-io-summary-whats-new-in-android-development-tools/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/其他/">其他</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/性能优化/">性能优化</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">80</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/Android架构/">Android架构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/性能优化/">性能优化</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/材料设计/">材料设计</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">20</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">19</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/性能优化/">性能优化</a><span class="category-list-count">3</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AndroidStudio/">AndroidStudio</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava/">RxJava</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/数据绑定/">数据绑定</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">51</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/07/">七月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/06/">六月 2015</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/11/welcome-snackbar-goodbye-toast/">还在用Toast？你Out啦，试试Snackbar吧！</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/10/how-to-improve-quality-and-syntax-of-your-android-code/">如何提高你的代码质量</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/09/Composition-over-Inheritance-What-it-means-for-your-Activities/">用组合代替继承能为 Activity 带来什么</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/08/automating-user-interface-testing-on-android/">Android UI 自动化测试</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/07/developing-for-android-iii-rules-and-performance/">Android开发III=规范-性能</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

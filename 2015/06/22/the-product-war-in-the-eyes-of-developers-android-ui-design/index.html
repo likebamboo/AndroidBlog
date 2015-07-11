@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>向产品宣战——开发者眼中的Android UI Design | Android博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="准备了半个月，思考产品设计、交互设计，见证了公司的产品、UE和开发的撕逼，将自己的思考、感悟，整理成下文，谨代表广大程序猿，向设计狮、产品X开战。希望广大程序猿能够坚持贯彻Google的Material Design，切实认真负责的执行Android的设计思想，将MD设计带到产品中去，不做中国特色的App，将Android的开发风气带到正轨，树立正确的开发观、设计观。
+希望广大程序猿朋友在博客后面">
+<meta property="og:type" content="article">
+<meta property="og:title" content="向产品宣战——开发者眼中的Android UI Design">
+<meta property="og:url" content="http://likebamboo.com/AndroidBlog/2015/06/22/the-product-war-in-the-eyes-of-developers-android-ui-design/index.html">
+<meta property="og:site_name" content="Android博客">
+<meta property="og:description" content="准备了半个月，思考产品设计、交互设计，见证了公司的产品、UE和开发的撕逼，将自己的思考、感悟，整理成下文，谨代表广大程序猿，向设计狮、产品X开战。希望广大程序猿能够坚持贯彻Google的Material Design，切实认真负责的执行Android的设计思想，将MD设计带到产品中去，不做中国特色的App，将Android的开发风气带到正轨，树立正确的开发观、设计观。
+希望广大程序猿朋友在博客后面">
+<meta property="og:image" content="http://img.blog.csdn.net/20150609140523025">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531204743348">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531210007267">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531213506678">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531220210291">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531220225657">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531210449337">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531213746297">
+<meta property="og:image" content="http://img.blog.csdn.net/20150609102841931">
+<meta property="og:image" content="http://img.blog.csdn.net/20150609103025244">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531214450681">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531214549228">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531214826610">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531214755588">
+<meta property="og:image" content="http://img.blog.csdn.net/20150531214936270">
+<meta property="og:image" content="http://devstorepic.qiniudn.com/Fl915mir3LQa8xvdW750PuTemjTi">
+<meta property="og:image" content="http://devstorepic.qiniudn.com/Fk3F-w1QHwIZh9X0fczWzVCuIAbq">
+<meta property="og:image" content="http://devstorepic.qiniudn.com/FvRkvMkFhe3JKAZhpoqT3QkgVpzP">
+<meta property="og:image" content="http://devstorepic.qiniudn.com/Fow8JvJNsi7DNdNUxk5a5BTE41ba">
+<meta property="og:image" content="http://devstorepic.qiniudn.com/FqgWo0w1NqNQ_wMYhutsH56dty15">
+<meta property="og:image" content="http://devstorepic.qiniudn.com/FinQM09e2MjvkPp-lKg5ih3nxAoB">
+<meta property="og:image" content="http://devstorepic.qiniudn.com/FpenmErH3pDUZt3ZmPxMR1b3IU2T">
+<meta property="og:image" content="http://devstorepic.qiniudn.com/Fgwlzgme2SOT79KlhKQ3Of_vcsIc">
+<meta property="og:image" content="http://devstorepic.qiniudn.com/FruRrX7vysWdLBbbbvHCDBKZevSp">
+<meta property="og:image" content="http://devstorepic.qiniudn.com/FvwjU8Yn4KYzOXimq_EB_LixRAPW">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201506/09/1433829705_2637.gif">
+<meta property="og:image" content="http://img.blog.csdn.net/20150609135927891">
+<meta property="og:image" content="http://img.blog.csdn.net/20150609140057725">
+<meta property="og:image" content="http://img.blog.csdn.net/20150609133225987">
+<meta property="og:image" content="http://img.blog.csdn.net/20150609133040416">
+<meta property="og:updated_time" content="2015-07-11T15:47:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="向产品宣战——开发者眼中的Android UI Design">
+<meta name="twitter:description" content="准备了半个月，思考产品设计、交互设计，见证了公司的产品、UE和开发的撕逼，将自己的思考、感悟，整理成下文，谨代表广大程序猿，向设计狮、产品X开战。希望广大程序猿能够坚持贯彻Google的Material Design，切实认真负责的执行Android的设计思想，将MD设计带到产品中去，不做中国特色的App，将Android的开发风气带到正轨，树立正确的开发观、设计观。
+希望广大程序猿朋友在博客后面">
+  
+    <link rel="alternative" href="/AndroidBlog/atom.xml" title="Android博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="http://likebamboo.com/AndroidBlog/css/style.css" type="text/css">
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="http://likebamboo.com/AndroidBlog/" id="logo">Android博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="http://likebamboo.com/AndroidBlog/" id="subtitle">读万卷书</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/index.html">首页</a>
+        
+          <a class="main-nav-link" href="http://likebamboo.com/AndroidBlog/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/AndroidBlog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="http://www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="likebamboo.com/AndroidBlog">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-the-product-war-in-the-eyes-of-developers-android-ui-design" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/22/the-product-war-in-the-eyes-of-developers-android-ui-design/" class="article-date">
+  <time datetime="2015-06-21T16:00:00.000Z" itemprop="datePublished">2015-06-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="http://likebamboo.com/AndroidBlog/categories/其他/">其他</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      向产品宣战——开发者眼中的Android UI Design
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>准备了半个月，思考产品设计、交互设计，见证了公司的产品、UE和开发的撕逼，将自己的思考、感悟，整理成下文，谨代表广大程序猿，向设计狮、产品X开战。希望广大程序猿能够坚持贯彻Google的Material Design，切实认真负责的执行Android的设计思想，将MD设计带到产品中去，不做中国特色的App，将Android的开发风气带到正轨，树立正确的开发观、设计观。</p>
+<p><strong>希望广大程序猿朋友在博客后面留言、签名，规范Android设计、树立Android开发风气，需要你们的力量——Android need YOU。</strong></p>
+<p><img src="http://img.blog.csdn.net/20150609140523025" alt="这里写图片描述"></p>
+</blockquote>
+<a id="more"></a>
+<h2 id="基本元素">基本元素</h2><p>移动端的App界面，不论是iOS还是Android，一般由四个元素组成，分别是：状态栏(status bar)、导航栏(navigation)、主菜单栏(submenu)、内容区域(content)。</p>
+<ul>
+<li>状态栏：显示信号、运营商、电量等显示手机状态的区域</li>
+<li>导航栏：显示当前界面的名称，包含相应的功能或者页面间的跳转按钮</li>
+<li>主菜单栏：类似于页面的主菜单，提供整个应用的分类内容的快速跳转</li>
+<li>内容区域：展示应用提供的相应内容</li>
+</ul>
+<p>不同的是，由于Android在4.0之后移除了实体键而使用屏幕下方的虚拟键，所以，Android将iOS中的主菜单从下方移动到了上方，从而避免误操作虚拟键。</p>
+<blockquote>
+<p>其实很多Android、iOS的UI差异性，都是由于iOS的闭源导致的，由于它的商业化，导致很多设计被申请了专利，Android在很多地方都必须有所不同，说的最多的就是iOS的弹性滚动，其实Android的ScrollView要实现这样的效果，只需要修改一个参数的值即可，但是由于这个效果iOS申请的专利，所以Android就无法使用了。</p>
+</blockquote>
+<h2 id="布局差异性">布局差异性</h2><h3 id="导航栏位置与风格">导航栏位置与风格</h3><p><strong>iOS</strong><br>iOS通常使用经典的Tab页面来进行页面的布局，也是最早最经典的布局方式。<br><strong>Android</strong><br>Android官方提供了两种页面切换方式：Actionbar和可滑动的Tab。Actiobar给用户提供了导航标题和触控按钮，如下：<br><img src="http://img.blog.csdn.net/20150531204743348" alt="这里写图片描述"><br>或者：<br><img src="http://img.blog.csdn.net/20150531210007267" alt="这里写图片描述"><br>通过滑动的方式来展示Tab页面。</p>
+<p><strong>展示数据</strong></p>
+<p>当一个选项具有多种数据可选信息的适合，Android通常使用spinner的方式来展示可选数据项，而iOS则喜欢使用segments：</p>
+<p><img src="http://img.blog.csdn.net/20150531213506678" alt="这里写图片描述"></p>
+<p><img src="http://img.blog.csdn.net/20150531220210291" alt="这里写图片描述"></p>
+<p><img src="http://img.blog.csdn.net/20150531220225657" alt="这里写图片描述"></p>
+<h3 id="Back键">Back键</h3><p><strong>iOS</strong><br>从iOS的布局上我们可以发现，由于iOS设备没有返回键，所以页面不得不在一页中显示或者在页面上提供返回按钮。<br><strong>Android</strong><br>Android的返回操作相比iOS就更加丰富，它不仅可以返回上个页面，更可以返回上一次的操作，例如打开、收起键盘。<br>另外，从Android 4.0开始，Google也提出了一个“向上”的概念：<br><img src="http://img.blog.csdn.net/20150531210449337" alt="这里写图片描述"><br>就是导航栏标题前面的一个小箭头，点击这个箭头，是回到该页面的上一个层级，而不是单纯的向上一页返回。</p>
+<h3 id="搜索">搜索</h3><p>iOS中的搜索通常以控件的形式展现出来。而Android中的搜索，大多以search widget的形式展现，在点击后显示搜索框：<br><img src="http://img.blog.csdn.net/20150531213746297" alt="这里写图片描述"></p>
+<h3 id="按钮">按钮</h3><p>iOS中的按钮基本会带有明显的边框，而在Android MD中，按钮通常不需要边框，并带以涟漪效果来展示边界。</p>
+<hr>
+<h2 id="平台差异性">平台差异性</h2><h3 id="交互架构">交互架构</h3><p>iOS的标准交互架构是第一层导航在底部，左上角返回，右上角操作，右进左出，默认垂直滚动。不得不说，这套架构运用得到成熟，很彻底，最后在这套架构上和各种进化也很优秀。</p>
+<p>Android标准交互架构的混乱很多，但是，不好用的自然会消失，看看G1的实体按键还有几个。search没了，menu越来越少用了，顶部导航少了。各种移植现象也让交互越来越iOS化。但是Android的特点在back上。iOS的优秀在于app内部，缺点却是app外部，app之间的切换非常弱。而android，因为back物理按钮的存在，应用之间的接口非常灵活。以栈的方式来管理活动，而不是以应用来管理活动，这就让开发者对全局的把握更加轻松。</p>
+<h3 id="widget">widget</h3><p>两个系统都包含主屏幕，但iOS的主屏幕只能显示应用列表，而Android的主屏幕不仅可以显示应用列表，还可以自定义各种widget，这是很好的入口。不光是主屏幕上，甚至是锁屏界面上，Android也可以自定义widget，这个功能，是Android相比iOS最闪光的UI元素。</p>
+<h3 id="Notification">Notification</h3><p>Notification同样是Android UI元素中非常重要的一环，适当的使用，会给用户提供非常便利的应用入口。但是，如果滥用通知，同样会让用户非常反感。</p>
+<h3 id="ScreenLock交互界面">ScreenLock交互界面</h3><p>与iOS不同，Android的锁屏界面可以显示的元素更加丰富。也支持锁屏控件的自定义，通知的自定义、显示级别的自定义。</p>
+<p><img src="http://img.blog.csdn.net/20150609102841931" alt="这里写图片描述"></p>
+<p>这里的显示效果与通知的显示风格基本相同。</p>
+<p><img src="http://img.blog.csdn.net/20150609103025244" alt="这里写图片描述"></p>
+<h2 id="设计建议">设计建议</h2><p>很多人把用户体验看成是单纯的设计或可用性问题，过于狭隘。用户体验的组成是多个方面的，产品基础功能、新技术、内容、交互体验、UI视觉、性能其实都是体验的构成。有时候产品的成功不是一两处就能决定的，甚至牺牲其中一些关键环节，如果能保证满足其它更好的需求，也是值得的。</p>
+<p>而对于开发者, 尤其是跨平台开发者而言, 分别遵循不同平台的设计规范会为设计带来更大的压力 —— 对于大部分应用而言, 需要设计多一套视觉样式 (对于很多设计师/开发者而言, 还需要重新设计一套交互逻辑 —— 尽管这是毫无必要的), 必然会增加工作量. 但是, 遵循平台设计规范能够让开发者更好的发挥一个平台的实力 (调用自带标准控件节省性能, 不需调用外部库实现模仿 iOS 的视觉/交互效果, 标准布局更容易实现, 等等)。</p>
+<h3 id="针对平台特性去设计同一功能的不同元素">针对平台特性去设计同一功能的不同元素</h3><blockquote>
+<p>创建一个跨平台的设计，最需要考虑的方案就是这两个平台上展现同一功能的元素是不同的。所以设计应当尊重原生UI的标准，让用户保持同一的操作习惯。</p>
+</blockquote>
+<p><img src="http://img.blog.csdn.net/20150531214450681" alt="这里写图片描述"></p>
+<p><img src="http://img.blog.csdn.net/20150531214549228" alt="这里写图片描述"></p>
+<p><img src="http://img.blog.csdn.net/20150531214826610" alt="这里写图片描述"></p>
+<p><img src="http://img.blog.csdn.net/20150531214755588" alt="这里写图片描述"></p>
+<p><img src="http://img.blog.csdn.net/20150531214936270" alt="这里写图片描述"></p>
+<p>最需要遵循的就是不要刻意模仿其他平台的显示特性。</p>
+<h3 id="最好不要共用一套UI">最好不要共用一套UI</h3><p>现在在开发中，大多使用一套UI来设计Android和iOS两个平台的主要原因，其实还是因为移动互联网的版本节奏太快，两套UI设计与维护的成本过大会导致效率降低，这是采取两平台完全一致的最关键因素。同一个产品在两个终端并行，设计资源会严重紧缺，两平台功能同步设计不同步的情况使得项目进行得相当缓慢。从团队的效率看这么做确实无可厚非，其实也就是在争取时间成本。</p>
+<p>但是，设计师应该把自己的设计当做自己的儿子，比如乔布斯，他肯定希望自己的儿子像自己，如果长得像爱因斯坦一样，虽然绝顶聪明，但是却显得和父亲格格不入，设计也是这样，保持系统本身的特点，是对系统本身最起码的尊重。</p>
+<p>如果说Android的设计风格不完美，但这肯定不是使用iOS风格的理由，因为iOS风格的Android应用只会让界面看起来更差劲，不伦不类，Android Design 就算再怎么不完美，总比iOS风格要适合Android。如果说Android Design 不完美，或者是不够漂亮，那么Android Play上面那么多界面精美的应用都是怎么做出来的呢？</p>
+<p>如果说两个平台用同一个界面是为了提升效率，节省时间，那为什么Windows Phone 又是另外的界面？为了一个占有率80%的平台你去“节省时间”，为了一个占有率2%的平台你去“花费时间“，说得通？Windows Phone 之所以不是iOS风格的，是因为微软压根就让你做不成iOS风格的，要能照搬你会不照搬吗？所以，大部分的App以2%为理由，拒不支持WP。</p>
+<h3 id="UI可以一样，但是操作方式绝对不能一样">UI可以一样，但是操作方式绝对不能一样</h3><p>即使我们退一步，UI做成一套，这个很多人也还可以接受，但是最无法忍受的是整个操作都是以iOS方式进行、并且Android的优点都全部去掉的设计。举个例子，很多人认为Android左上角也有返回，但是那只是看起来像返回，实际上是向上，用过Windows资源管理器的人都知道，虽然有时候返回和向上都是回到同一个文件夹，但是很多时候又是不一样的，那么你在左上角做返回，能不能把功能改成向上？Android 4.1支持富通知，为什么微信来了多条消息还是只能显示发来XX条消息，而不能直接显示消息内容？</p>
+<p>这也是官方制定规范的意义之一，让各个开发团队了解系统生态的初衷和导向，让用户在同一个系统生态下能得到尽可能一致的体验；同时也减少独立开发者的工作成本。<br>而现状是 Android 上经常出现 iOS 式操作，让人觉得非常混乱……</p>
+<h3 id="不要以用户的学习成本为借口">不要以用户的学习成本为借口</h3><p>说到用户的学习成本，有多少用户是两个平台都用的？恐怕远小于只用一个平台的。一个Android手机用户，大多数软件都是Android Design 的，他用习惯了，然后装了一个微信，突然发现是肾6风格的，这要不要学习成本？有多少用户是在不同的平台间来回切换的？请问是一个用惯了Android Design 应用然后安装了一个肾风格的微信的用户多，还是用惯了肾机换到Android的用户多？明显是前者多，难道腾讯只照顾后者的学习成本，不照顾前者？何况用惯了肾机，反过来用Android，没了返回就不会用了？用户都是弱智？返回在上面会用，在下面就不会用了？这种智商，基本也就不会聊天了，还用微信干什么。既然Android用户转到肾机，能学会按上面的返回，肾机转到Android，反而学不会按下面的返回，这是什么道理？歧视肾机用户智商？</p>
+<p>真正好的设计，是两个平台看起来差不多，操作基本上一样，但是又能把不同平台的特色体现出来，界面布局基本相同，iOS平台用圆角矩形，Android平台用直角矩形，既可以触摸切换标签，又可以滑动切换标签，一个人来了消息能显示，两个人来了消息也可以显示，不再是只显示数量了，把上面的返回改成看似返回实则向上的按钮，这样操作起来也差不多，现在微信如果要回到主界面，需要点多次返回，并且配上时间很长的过渡动画，操作极其繁琐，把返回按钮改成向上，不仅符合规范了，操作也大大方便了。</p>
+<h3 id="不要以Google放浪形骸为借口">不要以Google放浪形骸为借口</h3><p>在天朝，各种应用坚持不按照Material Design设计标准的原因，还是在于Google 对于生态环境的放任自流，不想管，也管不了，即使不让上架Google Play，虽然我们现在也上不了，但是还有那么多play商店，91、豌豆荚、百度、360，所以，Google无法控制App的设计和质量。</p>
+<p>而且，对应手机ROM厂商，更是为了自己的利益、让自己的ROM能够跟其他ROM有所区分，提出各种所谓的设计主题，什么三星的touchwizard，HTC的Sense，试问有哪个所谓的主题在体验上比的过原生系统，算了不说了，怒气值要满了，大招不能白放。</p>
+<h2 id="设计思想">设计思想</h2><p>不得不说，有太多的设计师误把技术当艺术、把漂亮当设计了，真正重要的交互部分反而被忽略，你可以看看，一大批的产品都是近乎静态的，许多操作诡异至极，诸如你想添加一个条目到列表里，它就生硬的出现在那;你想删除，它就直接消失。这样的产品设计，你们到底有没有考虑过用户的感受，有没有考虑过产品的感受。</p>
+<p>交互真正革命性的意义在于，它把时间这一魔幻般的属性带入静态的产品之中，通过对动作、速度、显现等等的定义，让产品的操作体现出真实感，使得用户能自然而然的理解每一个动作的含义。</p>
+<h3 id="动效、动效、动效">动效、动效、动效</h3><p>App的动效设计，不管是在iOS还是在Android上，都是系统极力推崇的。特别是在Material Design中，如何利用时间特性来设计合理的动效，是一门非常大的学问。</p>
+<p>下面我们看一个动效的设计图：</p>
+<p><img src="http://devstorepic.qiniudn.com/Fl915mir3LQa8xvdW750PuTemjTi" alt="这里写图片描述"></p>
+<p>这是一个线性的动画实例，线性的动画虽然给出了交互，但是却是非常生硬的交互。</p>
+<p><img src="http://devstorepic.qiniudn.com/Fk3F-w1QHwIZh9X0fczWzVCuIAbq" alt="这里写图片描述"></p>
+<p><img src="http://devstorepic.qiniudn.com/FvRkvMkFhe3JKAZhpoqT3QkgVpzP" alt="这里写图片描述"></p>
+<p>非线性的动画更加真实的模拟了动画的运行效果，让用户的体验，更加真实。这就是使用时间特性来改变交互特性的最简单实例。</p>
+<p>下面这个例子也是一样，我们模拟一个简单的插入、删除效果：</p>
+<p><img src="http://devstorepic.qiniudn.com/Fow8JvJNsi7DNdNUxk5a5BTE41ba" alt="这里写图片描述"></p>
+<p>这个例子没有经过任何动效处理。生硬的展示，粗糙的交互设计。</p>
+<p><img src="http://devstorepic.qiniudn.com/FqgWo0w1NqNQ_wMYhutsH56dty15" alt="这里写图片描述"></p>
+<p><img src="http://devstorepic.qiniudn.com/FinQM09e2MjvkPp-lKg5ih3nxAoB" alt="这里写图片描述"></p>
+<p>而上面这两个例子，则使用动效，让插入、删除的动画效果更加逼真，且拟合自然状态。</p>
+<p>one more，我们再来看一个切换的效果：</p>
+<p><img src="http://devstorepic.qiniudn.com/FpenmErH3pDUZt3ZmPxMR1b3IU2T" alt="这里写图片描述"></p>
+<p>又是一个非常生硬的切换，仅仅是画面的过渡。</p>
+<p>我们使用Material Design来武装这个例子：</p>
+<p><img src="http://devstorepic.qiniudn.com/Fgwlzgme2SOT79KlhKQ3Of_vcsIc" alt="这里写图片描述"></p>
+<p><img src="http://devstorepic.qiniudn.com/FruRrX7vysWdLBbbbvHCDBKZevSp" alt="这里写图片描述"></p>
+<p>Android在Material Design中提出的Activity的四种状态切换方式，正是希望使用这种方式来改变这种生硬的设计。</p>
+<h3 id="动效产品实例">动效产品实例</h3><p><img src="http://devstorepic.qiniudn.com/FvwjU8Yn4KYzOXimq_EB_LixRAPW" alt="这里写图片描述"></p>
+<h3 id="Material_Design_Guide">Material Design Guide</h3><p>请所有的设计师、程序猿，一定要每日拜读Material Design Guide，前面我们只学习了Material Design Guide中的冰山一角——动效设计，就让整个App完成了逆袭。如果参透了整个Material Design Guide，可想而知，其效果绝不亚于九阴真经、九阳神功、易筋经、葵花宝典，而其最大的好处是每人都能拿到一份copy而不用抢。</p>
+<p>很多设计指导，我们就不详细写出来了，毕竟我们是代码攻城狮，以此奠基：</p>
+<p><strong><a href="http://developer.android.com/design/index.html" target="_blank" rel="external">http://developer.android.com/design/index.html</a></strong></p>
+<p>顺便贴几个gif，展示MD设计的强大。</p>
+<p><img src="http://img.my.csdn.net/uploads/201506/09/1433829705_2637.gif" alt="这里写图片描述"></p>
+<p><img src="http://img.blog.csdn.net/20150609135927891" alt="这里写图片描述"></p>
+<p><img src="http://img.blog.csdn.net/20150609140057725" alt="这里写图片描述"></p>
+<h2 id="设计实例">设计实例</h2><h3 id="MD规范">MD规范</h3><p><strong>镇楼</strong></p>
+<p><a href="http://www.google.com/design/spec/material-design/introduction.html" target="_blank" rel="external">http://www.google.com/design/spec/material-design/introduction.html</a></p>
+<h3 id="Dribbble">Dribbble</h3><p>不解释，设计师、程序猿、爱不释手的地方。</p>
+<p>但是，<strong>警告设计师，里面不是所有特性都是很好实现的，请不要让拿个特性就让程序猿来实现！！！</strong></p>
+<p><a href="https://dribbble.com/" target="_blank" rel="external">https://dribbble.com/</a></p>
+<h3 id="UI中国">UI中国</h3><p>还可以吧，国内的一些比较不错的设计。</p>
+<p><a href="http://www.ui.cn/" target="_blank" rel="external">http://www.ui.cn/</a></p>
+<h3 id="INSTAGRAM_with_Material_Design">INSTAGRAM with Material Design</h3><iframe height="498" width="510" src="http://share.vrs.sohu.com/my/v.swf&amp;topBar=1&amp;id=72152128&amp;autoplay=false&amp;from=page" allowfullscreen></iframe>
+
+<p>上面的这段视频是设计师Emmanuel Pacamalan放出的Instagram安卓L版本的概念视频，这段视频更清晰地描述出了Material Design的方方面面。Material Design的动画非常丰富，每一个操作之间都有动画衔接，简约而又活泼。而App内各个界面之前的切换，也很好地表达出了“层级”的概念。总的来说，安卓L的App设计规范对比之前安卓4.×时代的Holo进步良多。</p>
+<h3 id="WeChat_with_Material_Design">WeChat with Material Design</h3><p><img src="http://img.blog.csdn.net/20150609133225987" alt="这里写图片描述"></p>
+<p>上面是微信with Material Design的设计图，可以明显的感觉到Android Material Design的设计风格。相比现在的微信客户端，差距不言而喻。<br>下面再来个简图：</p>
+<p><img src="http://img.blog.csdn.net/20150609133040416" alt="这里写图片描述"></p>
+<h2 id="设计参考教程">设计参考教程</h2><h3 id="跨平台_UI/UX_设计示例_——_Android_&amp;_iOS_篇">跨平台 UI/UX 设计示例 —— Android &amp; iOS 篇</h3><p><a href="http://www.phonekr.com/cross-platform-android-ios-1/" target="_blank" rel="external">http://www.phonekr.com/cross-platform-android-ios-1/</a></p>
+<p><a href="http://www.phonekr.com/cross-platform-android-ios-2/" target="_blank" rel="external">http://www.phonekr.com/cross-platform-android-ios-2/</a></p>
+<h3 id="Material_Design_研究会">Material Design 研究会</h3><p><a href="http://www.phonekr.com/" target="_blank" rel="external">http://www.phonekr.com/</a></p>
+<h3 id="Material_Design_in_Action_—_以猿题库为例">Material Design in Action — 以猿题库为例</h3><p><a href="http://www.phonekr.com/yuan-ti-ku-redesign/" target="_blank" rel="external">http://www.phonekr.com/yuan-ti-ku-redesign/</a></p>
+<h3 id="Android_Design_in_Action_—_以知乎为例">Android Design in Action — 以知乎为例</h3><p><a href="http://www.geekpark.net/topics/186387" target="_blank" rel="external">http://www.geekpark.net/topics/186387</a></p>
+<h3 id="Android_Design_in_Action_—_以微信为例">Android Design in Action — 以微信为例</h3><p><a href="http://www.geekpark.net/topics/186657" target="_blank" rel="external">http://www.geekpark.net/topics/186657</a></p>
+<h2 id="矛盾的原因">矛盾的原因</h2><blockquote>
+<p>以下内容可能过于偏激，有部分知乎的评论。<strong>请谨慎观看。</strong></p>
+</blockquote>
+<h3 id="Google工程师、理科生思维">Google工程师、理科生思维</h3><p>Google的纯粹逻辑思维设计（某些时候为了简洁而简洁，某些时候只看逻辑不看体验和认知）是工程师式的思维。从逻辑和道理上说都是对的，比如常用APP放桌面，不常用放抽屉，看似很有道理，但是小白理解不了（他们只在一个地方找APP，就是他们第一眼看到的桌面），或许在几十年之后，智能手机对每一个人类，就像遇到奶嘴就自然地会去吮吸时，Android Design的思路才是对的。找APP这个具体设计点，可以做一个“关于储物”的类比。人类初始阶段的储物，是在屋子内随处乱放的，在人类对空间和物品储存思路足够熟悉、物品足够多足够复杂后，才有储物柜、分门别类的抽屉的做法。谷歌的设计就是略过了前面阶段，直接到了后面（从科学/工程师/纯理性/逻辑的角度来说，后面的做法当然是更对更先进的，但用户就是暂时接受不了）。</p>
+<p>前面提到的国外的不同，其实就在于国外的发达国家的人们更利于尝试、更喜欢尝鲜，学习/接受速度更快。给第三世界的国家像中国市场一样足够大的市场、激烈的竞争环境、较低水平的国民教育程度和理解能力（和公司/企业无关），这些国家的互联网/移动互联网产品的设计，也一定会趋于以触摸、直观、逻辑层级浅、逻辑维度少的设计风格和标准（也就是iOS设计标准之于Android设计标准）。</p>
+<p>或许过几年/几十年之后，人类对手机交互天然就会包括“滑动”这个操作（现在人类对手机交互的无前置认知只有触摸/点击，这是从几千年的实物操作中总结来的基因和经验）。到那时，大量采用滑动操作的设计才能被无前置教育的人快速接受。</p>
+<p>而在此之前，更保守、直观、逻辑层级更浅、逻辑维度更少的iOS设计标准，始终要比逻辑正确、思维超前、追求简洁大于易理解、追求效率快大于好接受的Android设计标准，要好得多（好的标准是更受主流用户的接受、使用和喜欢）。</p>
+<h3 id="规范来的太晚">规范来的太晚</h3><p>Google直到Android L才第一次在设计语言和规范上超越了Apple。Material Design在视觉结构（Layout和Structure）、视觉层次（感谢Google意识到了Shadow的重要并充分运用）、色彩标准（Color Scheme，妈妈再也不用担心我的配色）、字体排布（Typography和全新Roboto字体）、过渡动画（Transition和Animation）上完全超越了Apple的HIG。</p>
+<p>而M上的Material Design，让设计不仅仅是一种艺术，而且是一门科学。完全规范的文档和设计资源，已经可以让开发者、设计师完全实践Material Design。</p>
+<h3 id="模仿、山寨">模仿、山寨</h3><blockquote>
+<p>曾经有个段子，说乔布斯死之前，投资了几十个中国ROM厂家，以至于每次中国ROM发布会，都把自己的ROM与iOS进行对比，不知不觉，大家都发现，所有的厂商都他X说iOS是最好的，自己的ROM怎么怎么马上就跟上它了。iOS真的应该感谢这些中国厂商给你们做的宣传。</p>
+</blockquote>
+<p>虽然对于大部分国内用户而言, 他们是不知道也很难意识到 Android 和 iOS 在设计上有什么差别的. 而国内主流的 ROM (我说的是 MIUI，流氓而且山寨的代表) 在 UI 上也模仿了非常多 iOS 特色, 在这样的大环境下, 用户很难意识到两个平台设计规范的差异。</p>
+<p>但是人是会进步的. 而国外优秀应用大部分都遵循着平台规范, 国内的新晋应用和开发者也渐渐都开始遵循规范, 当用户用过了更优秀, 符合平台规范的应用之后, 他们中的一部分会渐渐意识到规范的优越性, 体会到遵循规范的应用具有更高的一致性. 而不同的平台毕竟是不同的平台, 一个平台的应用会渐渐趋于遵循一致的视觉规范 —— 只要这个规范”具有足够的说服力”, 平台内应用间统一感会不断增强.</p>
+<p>用户不需要规范，用户只想使用好的App。用户角度看一个应用是否用着顺手就是一个习惯问题，用户看到的只是结果；而产品背后的细节需要由设计师和开发者把握好，才能给用户一个最佳的结果。<br>所以，如果是资质一般般的团队或者想走大众普适路线的团队还是遵守规范比较好，近期远期都是有利的；<br>如果是特别牛比的团队，那么你可以忽略官方规范自定义一套特别的交互规范，比如 Flipboard、Facebook Paper。但是这些公司现在也在遵循Material Design。</p>
+<p>但我目前看到的更多优秀的 APP 都是在遵守规范的基础上，表现自己的设计理念，比如：Expedia、 Timely，还有国内一些新秀App，例如知乎、网易的各大App，大家可以去看看他们的App，Material Design的设计是不是让他们的App更加受欢迎。</p>
+<h3 id="公司利益">公司利益</h3><p>从一个公司的角度来说，从一个 App 是否遵守规范就可以大致判断出这个产品团队的工作态度。那些从产品发布初期就遵守规范做出双平台产品的团队，我觉得仅这一点细节的关注上就说明他们不会太水太二，即使他们是个初创团队他们的产品还有很多不足，因为第一步就为今后产品良好快速的迭代打下了基础。而且，可以从一个团队的设计规范上来看出一个公司是业务驱动技术，还是技术驱动业务。</p>
+<blockquote>
+<p>很多时候，产品的借口都是用户已经熟悉了我们这套UI，如果换成新的设计风格，用户可能难以接受。可是，Apple刚刚提出扁平化设计的时候，网上有多少人在骂，可是后面大家不还是都去用了，以前被骂成X的扁平化竟然成了竞相模仿的对象，如何解释？其实很简单，<strong>优秀的设计，总会被时间所证明。</strong></p>
+</blockquote>
+<p>就推广而言，一个遵守规范同时又有自身产品亮点的应用，无论是 App Store 还是 Google Play 都是欢迎并推崇的。国外的Google Play是绝对不会feature一个iOS设计风格的App的，App Store也同理。<br>所以，我认为一个负责任、用心的团队应该遵守平台规范，如果可以，再加以自身的风格和理念，就是锦上添花了。</p>
+<h2 id="最后">最后</h2><p>文章很长，也写了很久，希望设计师看见这篇博客，能够真的去反思如何从程序猿的角度来设计产品，虽然这可能并没有什么卵用，但请你一定这样去做。希望程序猿看见这篇博客，可以真的去思考如何把技术运用到产品，Material Design并不是仅仅给设计师看的，程序猿同样需要。程序猿的最高境界，就是一个会设计的程序猿，不光是设计程序、架构，更是设计UI、UE。与大家共勉。</p>
+<p>最后，希望大家能把这篇文章顶起来，有不足、写的不对的地方，请指出，撕逼也可以，目的只有一个，让所有人——程序猿、设计师，都能够反思，如何做一个好的Android App。</p>
+<p>以上。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://likebamboo.com/AndroidBlog/2015/06/22/the-product-war-in-the-eyes-of-developers-android-ui-design/" data-id="cibz9kbyh00140s1iuzdu7t0d" class="article-share-link" data-share="baidu">分享到</a>
+      
+
+      
+        <a href="http://likebamboo.com/AndroidBlog/2015/06/22/the-product-war-in-the-eyes-of-developers-android-ui-design/#ds-thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/23/how-we-developed-the-guillotine-menu-animation-for-android/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          我们是如何实现一个Android铡刀菜单的
+        
+      </div>
+    </a>
+  
+  
+    <a href="http://likebamboo.com/AndroidBlog/2015/06/22/androidmemory-usage-of-mat-part-1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android内存优化之一：MAT使用入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="ds-thread" class="ds-thread" data-thread-key="2015/06/22/the-product-war-in-the-eyes-of-developers-android-ui-design/" data-title="向产品宣战——开发者眼中的Android UI Design" data-url="http://likebamboo.com/AndroidBlog/2015/06/22/the-product-war-in-the-eyes-of-developers-android-ui-design/"></div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/AndroidIDE/">AndroidIDE</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Android架构/">Android架构</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/Reactive-Extension-RX/">Reactive Extension(RX)</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/其他/">其他</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/单元测试/">单元测试</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/性能优化/">性能优化</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/">翻译</a><span class="category-list-count">80</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/Android架构/">Android架构</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/单元测试/">单元测试</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/性能优化/">性能优化</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/材料设计/">材料设计</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/自动化测试/">自动化测试</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/翻译/连载/">连载</a><span class="category-list-count">20</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/自动化测试/">自动化测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/设计模式/">设计模式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/">连载</a><span class="category-list-count">19</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/开源项目解析/">开源项目解析</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="http://likebamboo.com/AndroidBlog/categories/连载/性能优化/">性能优化</a><span class="category-list-count">3</span></li></ul></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android-Studio/">Android Studio</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AndroidStudio/">AndroidStudio</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Android架构/">Android架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AppCompat/">AppCompat</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/AsyncTask/">AsyncTask</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Builder模式/">Builder模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/CodeReview/">CodeReview</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Drawables/">Drawables</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVP/">MVP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/MVVM/">MVVM</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Proxy模式/">Proxy模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava/">RxJava</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/RxJava-RxAndroid/">RxJava/RxAndroid</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/Support-Library/">Support Library</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/SupportLibrary/">SupportLibrary</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/主题/">主题</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/任务调度/">任务调度</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/依赖注入/">依赖注入</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/内存泄露/">内存泄露</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/动画/">动画</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/单例模式/">单例模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/原型模式/">原型模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图形管道/">图形管道</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/图片缓存/">图片缓存</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/基础/">基础</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/外观模式/">外观模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/多进程/">多进程</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/字体/">字体</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/小技巧/">小技巧</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/工具/">工具</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源库介绍/">开源库介绍</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/开源项目解析/">开源项目解析</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/性能优化/">性能优化</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/拍照/">拍照</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/数据绑定/">数据绑定</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/材料设计/">材料设计</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/桥接模式/">桥接模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/模板方法模式/">模板方法模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/测试/">测试</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/特效/">特效</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/策略模式/">策略模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/网络请求/">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/翻译/">翻译</a><span class="tag-list-count">51</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/自动化/">自动化</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/视频/">视频</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/责任链模式/">责任链模式</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/连载/">连载</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="http://likebamboo.com/AndroidBlog/tags/迭代器模式/">迭代器模式</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/07/">七月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/06/">六月 2015</a><span class="archive-list-count">41</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/05/">五月 2015</a><span class="archive-list-count">63</span></li><li class="archive-list-item"><a class="archive-list-link" href="http://likebamboo.com/AndroidBlog/archives/2015/04/">四月 2015</a><span class="archive-list-count">28</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/11/welcome-snackbar-goodbye-toast/">还在用Toast？你Out啦，试试Snackbar吧！</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/10/how-to-improve-quality-and-syntax-of-your-android-code/">如何提高你的代码质量</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/09/Composition-over-Inheritance-What-it-means-for-your-Activities/">用组合代替继承能为 Activity 带来什么</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/08/automating-user-interface-testing-on-android/">Android UI 自动化测试</a>
+          </li>
+        
+          <li>
+            <a href="http://likebamboo.com/AndroidBlog/2015/07/07/developing-for-android-iii-rules-and-performance/">Android开发III=规范-性能</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 likebamboo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="http://likebamboo.com/AndroidBlog/index.html" class="mobile-nav-link">首页</a>
+  
+    <a href="http://likebamboo.com/AndroidBlog/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="http://likebamboo.com/AndroidBlog/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<!-- 多说公共js代码 start -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"likebamboo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共js代码 end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>window._bd_share_config={"common":{},"share":{"bdCustomStyle":"http://likebamboo.com/AndroidBlog/css/bdshare.css"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="http://likebamboo.com/AndroidBlog/js/script.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>
