@@ -37,8 +37,10 @@
 
     <string name="about">关于</string>
     <string name="version">版本：%1$s</string>
-    <string name="about_app">[Android博客]是一个简约、直观、漂亮并且开源的博客浏览应用，遵循Android设计风格。
-        UI借鉴国外应用<![CDATA[ <a href="https://www.etsy.com/">Etsy</a> 。]]>
+    <string name="about_app"><![CDATA[[Android博客]是一个简约、直观、漂亮并且开源的博客浏览应用，遵循Android设计风格。
+        UI借鉴国外应用 <a href="https://www.etsy.com/">Etsy</a> 。<br/>
+        <a href="http://likebamboo.com/AndroidBlog/">AndroidBlog网站</a>已经上线。
+        ]]>
     </string>
     <string name="look_detail">更多...</string>
 
