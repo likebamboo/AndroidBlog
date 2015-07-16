@@ -38,6 +38,11 @@ public class BlurDialogFragmentHelper {
 
     private int mBgColorResId;
 
+    /**
+     * 是否在touch时 dismiss
+     */
+    private boolean dismissOnTouch = true;
+
     public BlurDialogFragmentHelper(@NonNull DialogFragment fragment) {
         mFragment = fragment;
         mAnimDuration = fragment.getActivity().getResources().getInteger(android.R.integer.config_mediumAnimTime);
@@ -60,6 +65,10 @@ public class BlurDialogFragmentHelper {
 
     public void setBgColorResId(@ColorRes int bgColorResId) {
         mBgColorResId = bgColorResId;
+    }
+
+    public void setDismissOnTouch(boolean dismissOnTouch) {
+        this.dismissOnTouch = dismissOnTouch;
     }
 
     public void onCreate() {
@@ -104,7 +113,7 @@ public class BlurDialogFragmentHelper {
         bitmap.recycle();
 
         View view = mFragment.getView();
-        if (view != null) {
+        if (view != null && dismissOnTouch) {
             view.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {

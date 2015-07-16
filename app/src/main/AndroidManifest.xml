@@ -76,7 +76,7 @@
             android:name="com.likebamboo.osa.android.ui.BlogActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name="com.likebamboo.osa.android.ui.TagBlogActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

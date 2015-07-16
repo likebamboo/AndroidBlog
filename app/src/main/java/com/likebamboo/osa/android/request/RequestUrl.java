@@ -58,6 +58,16 @@ public class RequestUrl {
     public static final String TAG_BLOG_URL = BLOG_URL + "/tag/%s/";
 
     /**
+     * issues
+     */
+    public static final String ISSUES_LIST_URL = BASE_URL + "issue/";
+
+    /**
+     * feedback.save
+     */
+    public static final String FEEDBACK_SAVE_URL = BASE_URL + "feedback/save?random=%s";
+
+    /**
      * 关于我
      */
     public static final String ABOUT_ME_URL = "http://likebamboo.com/about.html";

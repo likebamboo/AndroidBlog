@@ -1,8 +1,11 @@
 package com.likebamboo.osa.android.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Created by wentaoli on 2015/5/12.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BaseRsp {
     /**
      * 返回信息

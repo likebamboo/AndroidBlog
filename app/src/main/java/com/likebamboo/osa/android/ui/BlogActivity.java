@@ -16,6 +16,7 @@ import com.likebamboo.osa.android.request.JsonRequest;
 import com.likebamboo.osa.android.request.RequestManager;
 import com.likebamboo.osa.android.request.RequestUrl;
 import com.likebamboo.osa.android.ui.fragments.BlogInfoFragment;
+import com.likebamboo.osa.android.ui.fragments.FeedbackFragment;
 import com.likebamboo.osa.android.ui.nav.ActivityNavigator;
 import com.likebamboo.osa.android.ui.view.CommonWebView;
 import com.likebamboo.osa.android.ui.view.LoadingLayout;
@@ -229,11 +230,34 @@ public class BlogActivity extends BaseActivity {
                 doUnFavorite();
             }
         });
+
         // 反馈
         mIssueTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO 反馈
+                // 反馈
+                if (isFinishing()) {
+                    return;
+                }
+                if (mBlogInfo != null) {
+                    // 显示博客详情信息
+                    FeedbackFragment fragment = FeedbackFragment.getInstance(mBlogInfo.getBlogId(), mBlogInfo.getTitle());
+                    fragment.show(getSupportFragmentManager(), "feedback");
+                    return;
+                }
+                // 加载博客信息
+                loadBlogInfo(new Response.Listener<BlogList.Blog>() {
+                    @Override
+                    public void onResponse(BlogList.Blog blog) {
+                        mLoadingLayout.showLoading(false);
+                        if (blog != null) {
+                            mBlogInfo = blog;
+                            // 显示博客详情信息
+                            FeedbackFragment fragment = FeedbackFragment.getInstance(mBlogInfo.getBlogId(), mBlogInfo.getTitle());
+                            fragment.show(getSupportFragmentManager(), "feedback");
+                        }
+                    }
+                });
             }
         });
 
