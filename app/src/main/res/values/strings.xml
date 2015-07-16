@@ -50,4 +50,14 @@
 
     <string name="sort">排序</string>
 
+    <string name="contact">联系方式:</string>
+    <string name="issue_title">问题:</string>
+    <string name="please_input_contact">请填写邮箱/手机号</string>
+    <string name="please_input_contact_correct">请填写正确的邮箱或手机号</string>
+    <string name="please_select_issues">请选择问题类型</string>
+    <string name="description">描述:</string>
+    <string name="please_write_detail">请填写问题详细信息</string>
+    <string name="submit">提交</string>
+
+    <string name="feedback_commit_success">您的反馈信息我们已经收到，感谢使用~</string>
 </resources>

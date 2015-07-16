@@ -335,12 +335,7 @@ public class TagGroup extends ViewGroup {
         if (TextUtils.isEmpty(tag)) {
             return;
         }
-        int index = 0;
-        for (; index < getChildCount(); index++) {
-            if (getTagViewAt(index).getText().equals(tag)) {
-                break;
-            }
-        }
+        int index = getTagIndex(tag);
         if (index < getChildCount()) {
             removeViewAt(index);
         }
@@ -421,7 +416,57 @@ public class TagGroup extends ViewGroup {
         addView(tagView, index, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     }
 
-    public float dp2px(float dp) {
+    /**
+     * 设置tag选中状态
+     *
+     * @param tag
+     * @param selected
+     */
+    public void setTagSelected(String tag, boolean selected) {
+        int index = getTagIndex(tag);
+        if (index >= getChildCount()) {
+            return;
+        }
+        TagView tagView = getTagViewAt(index);
+        if (tagView != null) {
+            tagView.setSelected(selected);
+        }
+    }
+
+    /**
+     * 获取tag选中状态
+     *
+     * @param tag
+     */
+    public boolean isTagSelected(String tag) {
+        int index = getTagIndex(tag);
+        if (index >= getChildCount()) {
+            return false;
+        }
+        TagView tagView = getTagViewAt(index);
+        if (tagView != null) {
+            return tagView.isSelected();
+        }
+        return false;
+    }
+
+    /**
+     * 获取tag 的index
+     *
+     * @param tag
+     * @return
+     */
+    private int getTagIndex(CharSequence tag) {
+        int index = 0;
+        for (; index < getChildCount(); index++) {
+            if (getTagViewAt(index).getText().toString().equals(tag.toString())) {
+                break;
+            }
+        }
+        return index;
+    }
+
+    private float dp2px(float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());
     }
