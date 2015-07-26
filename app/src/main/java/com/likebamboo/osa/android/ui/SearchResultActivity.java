@@ -35,11 +35,13 @@ public class SearchResultActivity extends BlogListActivity {
     public void addParams(RequestParams params) {
         // 关键字
         if (!TextUtils.isEmpty(mSearchKey)) {
+            // fix 使用一个新的局部变量key,防止下拉刷新或者加载更多的时候mSearchKey不同。
+            String key = mSearchKey;
             try {
-                mSearchKey = URLEncoder.encode(mSearchKey, "UTF-8");
+                key = URLEncoder.encode(mSearchKey, "UTF-8");
             } catch (Exception e) {
             }
-            params.add("key", mSearchKey);
+            params.add("key", key);
         }
     }
 
