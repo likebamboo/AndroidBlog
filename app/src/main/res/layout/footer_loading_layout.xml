@@ -47,5 +47,4 @@
             android:textSize="@dimen/text_large"/>
     </FrameLayout>
 
-
 </com.likebamboo.osa.android.ui.view.LoadingLayout>

@@ -77,7 +77,7 @@ public class LoadingLayout extends LinearLayout {
             return;
         }
         ButterKnife.inject(this);
-        mRetryLayout.setOnClickListener(new View.OnClickListener() {
+        mRetryLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!canRetry) {

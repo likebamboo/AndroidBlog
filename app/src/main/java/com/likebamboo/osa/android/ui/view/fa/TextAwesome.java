@@ -27,6 +27,9 @@ public class TextAwesome extends TextView {
     }
 
     public synchronized void init() {
+        if (isInEditMode()) {
+            return;
+        }
         Typeface typeface = sTypefaceCache.get(NAME);
         if (typeface == null) {
             typeface = Typeface.createFromAsset(getContext().getAssets(), "fontawesome-webfont.ttf");

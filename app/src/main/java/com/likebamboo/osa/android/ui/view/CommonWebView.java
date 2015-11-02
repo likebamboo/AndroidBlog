@@ -35,7 +35,7 @@ public class CommonWebView extends FrameLayout {
     /**
      * webView
      */
-    private ObservedWebView mWebview = null;
+    private WebView mWebview = null;
 
     /**
      * 进度条
@@ -148,7 +148,7 @@ public class CommonWebView extends FrameLayout {
     private void initView(Context context) {
         mContext = context;
         LayoutInflater.from(context).inflate(R.layout.common_webview, this, true);
-        mWebview = (ObservedWebView) findViewById(R.id.common_webview);
+        mWebview = (WebView) findViewById(R.id.common_webview);
         mProgressBar = (ProgressBar) findViewById(R.id.webview_progress_bar);
         mToolBar = (WebViewToolBar) findViewById(R.id.webview_tool_bar);
 
@@ -239,14 +239,6 @@ public class CommonWebView extends FrameLayout {
         return false;
     }
 
-    /**
-     * getwebView
-     *
-     * @return
-     */
-    public ObservedWebView getWebView() {
-        return mWebview;
-    }
 
     public interface IWebViewStatusListener {
         void onPageStarted(String url);

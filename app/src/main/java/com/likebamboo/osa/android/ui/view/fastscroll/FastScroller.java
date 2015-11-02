@@ -118,7 +118,7 @@ public class FastScroller extends LinearLayout {
             int targetPos = getValueInRange(0, itemCount - 1, (int) (proportion * (float) itemCount));
             Log.d("AppLog", "targetPos:" + targetPos);
             ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(targetPos, 0);
-            //      recyclerView.oPositionWithOffset(targetPos);
+            //      mRecyclerView.oPositionWithOffset(targetPos);
             String bubbleText = ((BubbleTextGetter) recyclerView.getAdapter()).getTextToShowInBubble(targetPos);
             bubble.setText(bubbleText);
         }

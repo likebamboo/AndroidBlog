@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * {@link com.likebamboo.osa.android.ui.fragments.SimpleListDialog} Item项
+ * {@link com.likebamboo.osa.android.ui.fragments} Item项
  *
  * @author likebamboo
  * @version 2015-06-15
@@ -74,7 +74,7 @@ public class LDialogItem implements Parcelable {
         this.value = in.readString();
     }
 
-    public static final Parcelable.Creator<LDialogItem> CREATOR = new Parcelable.Creator<LDialogItem>() {
+    public static final Creator<LDialogItem> CREATOR = new Creator<LDialogItem>() {
         public LDialogItem createFromParcel(Parcel source) {
             return new LDialogItem(source);
         }

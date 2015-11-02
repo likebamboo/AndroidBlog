@@ -1,34 +1,25 @@
 package com.likebamboo.osa.android.ui;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.ui.view.CommonWebView;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-
 /**
  * 普通WebView界面
  */
-public class WebViewActivity extends BaseActivity {
+public class WebViewActivity extends BaseContentActivity {
 
     /**
-     * 博客URL
+     * URL
      */
     public static final String EXTRA_URL = "extra_url";
 
-    /**
-     * actionbar
-     */
-    private ActionBar mActionBar;
-
-    @InjectView(R.id.webview)
-    CommonWebView mWebView = null;
+    private CommonWebView mWebView = null;
 
     /**
      * 打开web页面的URL
@@ -38,14 +29,14 @@ public class WebViewActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_webview);
-        ButterKnife.inject(this);
 
-        // 初始化actionBar
-        initActionBar();
+        setContentId(R.layout.nested_scroll_view);
 
-        // 初始化View
-        initView();
+        // 添加webview
+        mWebView = new CommonWebView(this);
+        mWebView.setToolBarVisibility(View.GONE);
+        NestedScrollView nsv = (NestedScrollView) findViewById(R.id.nested_scroll_view);
+        nsv.addView(mWebView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         // 添加监听器
         addListener();
@@ -60,11 +51,6 @@ public class WebViewActivity extends BaseActivity {
         startLoading(mUrl);
     }
 
-    /**
-     * 初始化控件
-     */
-    private void initView() {
-    }
 
     /**
      * 添加监听器
@@ -81,8 +67,8 @@ public class WebViewActivity extends BaseActivity {
 
             @Override
             public void onReceiveTitle(String title) {
-                if (mActionBar != null) {
-                    mActionBar.setTitle(title);
+                if (mToolbar != null) {
+                    mToolbar.setTitle(title);
                 }
             }
 
@@ -91,16 +77,6 @@ public class WebViewActivity extends BaseActivity {
                 return false;
             }
         });
-    }
-
-    /**
-     * 初始化actionBar布局
-     */
-    private void initActionBar() {
-        mActionBar = getSupportActionBar();
-        mActionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
-        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        mActionBar.setHomeAsUpIndicator(R.drawable.ic_up);
     }
 
     /**
@@ -127,7 +103,7 @@ public class WebViewActivity extends BaseActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, R.anim.fade_out);
+        overridePendingTransition(0, R.anim.abc_fade_out);
     }
 
     @Override

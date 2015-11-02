@@ -1,9 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Android博客</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!-- 导航 -->
+    <string name="nav_discover">发现</string>
+    <string name="nav_category">分类</string>
+    <string name="nav_author">作者</string>
+    <string name="nav_recommend">推荐</string>
+    <string name="nav_favorite">收藏</string>
+    <string name="nav_settings">设置</string>
+    <string name="nav_title_other">其他</string>
+
     <string name="loading">数据加载中...</string>
     <string name="has_not_more_data">没有啦...</string>
     <string name="can_not_find_data">没有找到想要的数据</string>
@@ -60,4 +66,10 @@
     <string name="submit">提交</string>
 
     <string name="feedback_commit_success">您的反馈信息我们已经收到，感谢使用~</string>
+
+    <string name="introduction">简介：</string>
+    <string name="other">其他：</string>
+    <string name="home_page">主页</string>
+    <string name="github">GitHub</string>
+    <string name="blog_recommend">博客推荐</string>
 </resources>

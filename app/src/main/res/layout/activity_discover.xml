@@ -1,0 +1,19 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/discover_viewpager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+
+    <include
+        android:id="@+id/discover_loading"
+        layout="@layout/space_loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"/>
+</FrameLayout>
+

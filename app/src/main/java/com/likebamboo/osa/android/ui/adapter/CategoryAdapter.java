@@ -1,22 +1,18 @@
 package com.likebamboo.osa.android.ui.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.etsy.android.grid.util.DynamicHeightImageView;
+import com.bumptech.glide.Glide;
 import com.likebamboo.osa.android.R;
-import com.likebamboo.osa.android.entity.CategoryList;
-import com.likebamboo.osa.android.interfaces.IOnItemClickListener;
-import com.likebamboo.osa.android.request.RequestManager;
+import com.likebamboo.osa.android.entity.Category;
+import com.likebamboo.osa.android.impl.DynamicHeightRequestImpl;
 import com.likebamboo.osa.android.request.RequestUrl;
-
-import java.util.ArrayList;
+import com.likebamboo.osa.android.ui.view.DynamicHeightImageView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -24,89 +20,61 @@ import butterknife.InjectView;
 /**
  * Created by wentaoli on 2015/5/12.
  */
-public class CategoryAdapter extends BaseAdapter<CategoryList.Category> {
-
-    private IOnItemClickListener mItemClickListener = null;
-
-    /**
-     * 设置回调
-     *
-     * @param l
-     */
-    public void setOnItemClickListener(IOnItemClickListener l) {
-        this.mItemClickListener = l;
-    }
+public class CategoryAdapter extends BaseRecycleAdapter<Category> {
 
     public CategoryAdapter(Context ctx) {
         super(ctx);
     }
 
-    public CategoryAdapter(Context ctx, ArrayList<CategoryList.Category> datas) {
-        super(ctx, datas);
+    @Override
+    public RecyclerView.ViewHolder onCreateViewItemHolder(ViewGroup viewGroup, int viewType) {
+        // 创建一个View
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_category, viewGroup, false);
+        // 创建一个ViewHolder
+        ViewHolder holder = new ViewHolder(view);
+        return holder;
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
-        final ViewHolder holder;
-        if (view != null) {
-            holder = (ViewHolder) view.getTag();
-        } else {
-            view = LayoutInflater.from(mContext).inflate(R.layout.item_category, parent, false);
-            holder = new ViewHolder(view);
-            view.setTag(holder);
+    public void onBindItemViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+        if (viewHolder == null || !(viewHolder instanceof ViewHolder)) {
+            return;
         }
 
-        CategoryList.Category item = getItem(position);
+        final Category item = getItem(position);
         if (item == null) {
-            return view;
+            return;
         }
 
-        // 图片
-        holder.coverIv.setImageResource(R.drawable.ic_launcher);
+        final ViewHolder holder = (ViewHolder) viewHolder;
+
         // 加载图片
-        ImageLoader imageLoader = RequestManager.getImageLoader();
-        holder.coverIv.setHeightRatio(0.8);
-        if (!TextUtils.isEmpty(item.getCover())) {
-            String url = RequestUrl.BASE_URL + item.getCover();
-            holder.coverIv.setTag(url);
-            imageLoader.get(url, new ImageLoader.ImageListener() {
-                @Override
-                public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                    if (imageContainer == null || imageContainer.getBitmap() == null) {
-                        onErrorResponse(null);
-                        return;
-                    }
-                    if (("" + holder.coverIv.getTag()).equals(imageContainer.getRequestUrl())) {
-                        holder.coverIv.setHeightRatio(imageContainer.getBitmap().getHeight() / (double) imageContainer.getBitmap().getWidth());
-                        holder.coverIv.setImageBitmap(imageContainer.getBitmap());
-                    }
-                }
+        Glide.with(mContext).load(RequestUrl.BASE_URL + item.getCover()).placeholder(R.color.grey_300).listener(new DynamicHeightRequestImpl()).into(holder.coverIv);
 
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    holder.coverIv.setImageResource(R.drawable.ic_launcher);
-                }
-            });
-        }
-
-        view.setId(position);
-        view.setOnClickListener(new View.OnClickListener() {
+        // 点击事件
+        holder.cardView.setTag(position);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int pos = view.getId();
-                if (mItemClickListener != null) {
+                if (mItemClickListener == null) {
+                    return;
+                }
+                try {
+                    int pos = Integer.parseInt(view.getTag() + "");
                     mItemClickListener.onItemClick(pos, getItem(pos));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
         // set data
         holder.titleTv.setText(item.getName());
         holder.descTv.setText(item.getDescription());
-
-        return view;
     }
 
-    public static class ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        @InjectView(R.id.item_card_view)
+        public View cardView;
         @InjectView(R.id.category_title_tv)
         public TextView titleTv;
         @InjectView(R.id.category_desc_tv)
@@ -115,8 +83,8 @@ public class CategoryAdapter extends BaseAdapter<CategoryList.Category> {
         public DynamicHeightImageView coverIv;
 
         public ViewHolder(View view) {
+            super(view);
             ButterKnife.inject(this, view);
         }
-
     }
 }

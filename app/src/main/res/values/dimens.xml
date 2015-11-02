@@ -1,45 +1,43 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
     <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>
 
+
+    <dimen name="padding_xxxlarge">48.0dip</dimen>
+    <dimen name="padding_xxlarge">32.0dip</dimen>
+    <dimen name="padding_xlarge">24.0dip</dimen>
     <dimen name="padding_large">16.0dip</dimen>
-    <dimen name="padding_large_xlarge">24.0dip</dimen>
-    <dimen name="padding_medium">8.0dip</dimen>
     <dimen name="padding_medium_large">12.0dip</dimen>
-    <dimen name="padding_small">4.0dip</dimen>
+    <dimen name="padding_medium">8.0dip</dimen>
     <dimen name="padding_small_medium">6.0dip</dimen>
+    <dimen name="padding_small">4.0dip</dimen>
     <dimen name="padding_tiny">2.0dip</dimen>
     <dimen name="padding_tinyest">1.0dip</dimen>
-    <dimen name="padding_xlarge">32.0dip</dimen>
-    <dimen name="padding_xxlarge">48.0dip</dimen>
 
+    <dimen name="margin_xxxlarge">48.0dip</dimen>
+    <dimen name="margin_xxlarge">32.0dip</dimen>
+    <dimen name="margin_xlarge">24.0dip</dimen>
     <dimen name="margin_large">16.0dip</dimen>
-    <dimen name="margin_large_xlarge">24.0dip</dimen>
-    <dimen name="margin_medium">8.0dip</dimen>
     <dimen name="margin_medium_large">12.0dip</dimen>
+    <dimen name="margin_medium">8.0dip</dimen>
+    <dimen name="margin_small_medium">6.0dip</dimen>
     <dimen name="margin_small">4.0dip</dimen>
     <dimen name="margin_tiny">2.0dip</dimen>
-    <dimen name="margin_xlarge">32.0dip</dimen>
-    <dimen name="margin_xlarge_large">36.0dip</dimen>
-    <dimen name="margin_xxlarge">48.0dip</dimen>
 
     <!--字体-->
-    <dimen name="text_large">16.0dip</dimen>
+    <dimen name="text_super_ultra_large">28.0dip</dimen>
+    <dimen name="text_xxxlarge">24.0dip</dimen>
+    <dimen name="text_xxlarge">22.0dip</dimen>
+    <dimen name="text_xlarge">20.0dip</dimen>
     <dimen name="text_larger">18.0dip</dimen>
+    <dimen name="text_large">16.0dip</dimen>
     <dimen name="text_medium">14.0dip</dimen>
     <dimen name="text_small">12.0dip</dimen>
     <dimen name="text_smaller">10.0dip</dimen>
-    <dimen name="text_xlarge">20.0dip</dimen>
     <dimen name="text_xsmall">8.0dip</dimen>
-    <dimen name="text_xxlarge">22.0dip</dimen>
-    <dimen name="text_xxxlarge">24.0dip</dimen>
-    <dimen name="text_super_ultra_large">28.0dip</dimen>
-
-    <dimen name="toolbar_height">56dp</dimen>
-    <dimen name="elevation">16dp</dimen>
 </resources>

@@ -17,7 +17,7 @@
             android:background="@android:color/transparent"
             android:progressDrawable="@drawable/webview_progress_bar"/>
 
-        <com.likebamboo.osa.android.ui.view.ObservedWebView
+        <WebView
             android:id="@+id/common_webview"
             android:layout_width="fill_parent"
             android:layout_height="0dp"

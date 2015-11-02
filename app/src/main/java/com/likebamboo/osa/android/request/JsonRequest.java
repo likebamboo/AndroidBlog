@@ -35,7 +35,7 @@ public class JsonRequest<T> extends BaseRequest<T> {
     /**
      * 是否仅仅解析返回数据中 result 字段的数据
      */
-    private boolean justResult = false;
+    private boolean justResult = true;
 
     public JsonRequest(String url, Class<T> clazz, Listener<T> listener, ErrorListener errorListener) {
         this(url, clazz, null, listener, errorListener);

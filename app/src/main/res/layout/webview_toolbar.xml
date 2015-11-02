@@ -9,7 +9,7 @@
         android:layout_width="fill_parent"
         android:layout_height="1px"
         android:layout_alignParentTop="true"
-        android:background="@color/divider"/>
+        android:background="@color/grey_400"/>
 
     <com.likebamboo.osa.android.ui.view.fa.TextAwesome
         android:id="@+id/webviewRefresh"

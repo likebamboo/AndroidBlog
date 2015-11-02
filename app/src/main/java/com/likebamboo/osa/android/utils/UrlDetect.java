@@ -36,7 +36,6 @@ public class UrlDetect {
         if (!url.startsWith("http")) {
             url = "http://" + url;
         }
-        System.out.println(url);
         if (url.startsWith(RequestUrl.BASE_URL)) {
             return true;
         }

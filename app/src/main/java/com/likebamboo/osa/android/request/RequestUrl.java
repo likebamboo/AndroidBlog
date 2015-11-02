@@ -81,4 +81,15 @@ public class RequestUrl {
      * 关于app
      */
     public static final String ABOUT_APP_URL = "https://github.com/likebamboo/AndroidBlog";
+
+    /**
+     * site,其他站点
+     */
+    public static final String SITE_URL = BASE_URL + "site";
+
+    /**
+     * 其他站点博客列表
+     */
+    public static final String SITE_BLOG_LIST_URL = BASE_URL + "spider/%s/article";
+
 }

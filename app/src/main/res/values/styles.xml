@@ -1,117 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="NewApi">
+<resources>
+
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/ActionbarStyle</item>
-        <!-- <item name="android:windowContentOverlay">@null</item>-->
-        <item name="android:actionBarTabTextStyle">@style/TabTextStyle</item>
-        <item name="android:actionMenuTextColor">@color/actionbar_text</item>
-        <item name="android:displayOptions">useLogo|showHome</item>
-        <!-- Support library compatibility -->
-        <item name="actionBarStyle">@style/ActionbarStyle</item>
-        <item name="actionBarTabTextStyle">@style/TabTextStyle</item>
-        <item name="actionMenuTextColor">@color/actionbar_text</item>
-        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+    <style name="AppTheme" parent="Base.Theme.App">
+        <!-- Customize your theme here. -->
     </style>
 
-    <style name="ActionbarStyle" parent="@style/Widget.AppCompat.ActionBar">
-        <item name="android:titleTextStyle">@style/TitleTextStyle</item>
-        <!-- ActionBar Background Color -->
-        <item name="android:background">@color/bg_action_bar</item>
-        <!-- Support library compatibility -->
-        <item name="titleTextStyle">@style/TitleTextStyle</item>
-        <item name="background">@color/bg_action_bar</item>
+    <!-- 材料设置 -->
+    <style name="Base.Theme.App" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/green_500</item>
+        <item name="colorPrimaryDark">@color/green_700</item>
+        <item name="colorAccent">@color/amber_500</item>
+        <item name="android:windowBackground">@color/window_background</item>
     </style>
 
-    <!--透明主题-->
-    <style name="AppTheme.Transparent" parent="AppTheme">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsTranslucent">true</item>
-    </style>
-
-    <!--透明主题 且 无ActionBar-->
-    <style name="AppTheme.Transparent.NoActionBar" parent="AppTheme.Transparent">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <!--面包按钮的样式-->
-    <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
-        <item name="color">@color/bg_drawer</item>
-        <item name="thickness">3dp</item>
-        <!--面包间距-->
-        <item name="gapBetweenBars">2.6dp</item>
-        <!--面包宽度-->
-        <item name="barSize">21dp</item>
-        <!--箭头中间一横的宽度-->
-        <item name="middleBarArrowSize">20dp</item>
-        <!--箭头上下斜线的宽度-->
-        <item name="topBottomBarArrowSize">14dp</item>
-    </style>
-
-    <!-- action bar title text -->
-    <style name="TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/actionbar_text</item>
-    </style>
-
-    <!-- action bar tab text -->
-    <style name="TabTextStyle" parent="@style/Widget.AppCompat.ActionBar.TabText">
-        <item name="android:textColor">@color/actionbar_text</item>
-    </style>
-
-    <!-- dialog animation style -->
-    <style name="DialogSlideAnimation">
-        <item name="android:windowEnterAnimation">@anim/slide_up_dialog</item>
-        <item name="android:windowExitAnimation">@anim/slide_down_dialog</item>
-    </style>
-
-    <!--author info textviwe-->
-    <style name="AuhtorInfoTextView">
-        <item name="android:textColor">#7f7e83</item>
-        <item name="android:minHeight">45dip</item>
-        <item name="android:gravity">center_vertical</item>
-    </style>
-
-    <!-- author info fragment textView 样式-->
-    <style name="AuhtorInfoTextView.Title" parent="AuhtorInfoTextView">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:gravity">right|center_vertical</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">1</item>
-    </style>
-
-    <style name="AuhtorInfoTextView.Info" parent="AuhtorInfoTextView">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">0dp</item>
+    <style name="Widget.CardContent" parent="android:Widget">
         <item name="android:paddingLeft">@dimen/padding_large</item>
-        <item name="android:layout_weight">4</item>
-        <item name="android:textSize">@dimen/text_large</item>
+        <item name="android:paddingRight">@dimen/padding_large</item>
+        <item name="android:paddingTop">@dimen/padding_xlarge</item>
+        <item name="android:paddingBottom">@dimen/padding_xlarge</item>
+        <item name="android:orientation">vertical</item>
     </style>
 
-    <!-- tagGroup -->
-    <style name="TagGroup">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">@dimen/padding_medium</item>
-        <item name="tagBackground">@drawable/bg_tag_selector</item>
-        <item name="tagTextColor">#80000000</item>
-        <item name="tagTextSize">@dimen/text_large</item>
-        <item name="horizontalSpacing">@dimen/padding_medium</item>
-        <item name="verticalSpacing">@dimen/padding_small_medium</item>
-        <item name="horizontalPadding">@dimen/padding_large</item>
-        <item name="verticalPadding">@dimen/padding_small</item>
-    </style>
-
-    <!--简单列表dialog样式-->
-    <style name="simple_dialog_style" parent="@android:style/Theme.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:backgroundDimEnabled">true</item> <!-- 模糊 -->
-        <item name="android:backgroundDimAmount">0.3</item> <!-- 模糊度 -->
-    </style>
 </resources>

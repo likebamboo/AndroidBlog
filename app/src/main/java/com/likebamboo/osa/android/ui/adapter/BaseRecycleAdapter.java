@@ -2,12 +2,18 @@ package com.likebamboo.osa.android.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.likebamboo.osa.android.R;
+import com.likebamboo.osa.android.interfaces.IOnItemClickListener;
 
 import java.util.ArrayList;
 
 /**
+ * Recycle Adapter 基类
+ * <p/>
  * Created by wentaoli on 2015/5/14.
  */
 public abstract class BaseRecycleAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -45,8 +51,33 @@ public abstract class BaseRecycleAdapter<T> extends RecyclerView.Adapter<Recycle
      */
     private View mFooterView = null;
 
+
+    private final TypedValue mTypedValue = new TypedValue();
+
+    /**
+     * item 默认背景
+     */
+    protected int mDefaultBackgroudId = 0;
+
     public BaseRecycleAdapter(Context mContext) {
         this.mContext = mContext;
+        try {
+            mContext.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
+            mDefaultBackgroudId = mTypedValue.resourceId;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected IOnItemClickListener<T> mItemClickListener = null;
+
+    /**
+     * 设置回调
+     *
+     * @param l
+     */
+    public void setOnItemClickListener(IOnItemClickListener<T> l) {
+        this.mItemClickListener = l;
     }
 
     @Override
@@ -181,6 +212,15 @@ public abstract class BaseRecycleAdapter<T> extends RecyclerView.Adapter<Recycle
         }
         mDatas.addAll(index, datas);
         notifyDataSetChanged();
+    }
+
+    /**
+     * 获取数据
+     *
+     * @return
+     */
+    public ArrayList<T> getDatas() {
+        return mDatas;
     }
 
     /**
