@@ -422,6 +422,15 @@ public abstract class EndlessListFragment<T extends Parcelable> extends Fragment
         return new LinearLayoutManager(getActivity());
     }
 
+    /**
+     * 滑动到顶部
+     */
+    public void smoothScrollToTop() {
+        if (mRecyclerView != null) {
+            mRecyclerView.smoothScrollToPosition(0);
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

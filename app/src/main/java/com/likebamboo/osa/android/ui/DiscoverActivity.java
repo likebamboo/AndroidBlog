@@ -36,6 +36,11 @@ public class DiscoverActivity extends BaseNavigationActivity {
      */
     private ViewPager mViewPager = null;
 
+    /**
+     * adapter
+     */
+    private DiscoverFragmentAdapter adapter = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +90,7 @@ public class DiscoverActivity extends BaseNavigationActivity {
     private void setUpViewPager(ArrayList<Site> datas) {
         tabLayout.setVisibility(View.VISIBLE);
 
-        DiscoverFragmentAdapter adapter = new DiscoverFragmentAdapter(getSupportFragmentManager());
+        adapter = new DiscoverFragmentAdapter(getSupportFragmentManager());
         for (int i = 0; i < datas.size(); i++) {
             Site site = datas.get(i);
             BlogListFragment f = new BlogListFragment();
@@ -109,6 +114,35 @@ public class DiscoverActivity extends BaseNavigationActivity {
         }
         //
         tabLayout.setupWithViewPager(mViewPager);
+
+        // tablayout 监听
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int pos = tab.getPosition();
+                if (mViewPager == null) {
+                    return;
+                }
+                mViewPager.setCurrentItem(pos);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                int pos = tab.getPosition();
+                if (adapter == null) {
+                    return;
+                }
+                // 滚动到顶部
+                if (adapter.getItem(pos) instanceof EndlessListFragment) {
+                    ((EndlessListFragment) adapter.getItem(pos)).smoothScrollToTop();
+                }
+            }
+        });
+
     }
 
     /**
