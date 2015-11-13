@@ -15,6 +15,7 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONArray;
@@ -87,6 +88,7 @@ public class JsonArrayRequest extends BaseRequest<JSONArray> {
      */
     public static <T> ArrayList<T> parseToArrayList(String jsonStr, Class<T> clazz) {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS, false);
         JavaType type = mapper.getTypeFactory().constructParametricType(ArrayList.class, clazz);
         try {
             return (ArrayList<T>) mapper.readValue(jsonStr, type);
