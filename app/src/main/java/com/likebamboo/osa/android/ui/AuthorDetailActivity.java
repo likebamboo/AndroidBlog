@@ -130,14 +130,12 @@ public class AuthorDetailActivity extends BaseActivity implements View.OnClickLi
                 // 跳转到Web页面
                 i.setClass(AuthorDetailActivity.this, WebViewActivity.class);
                 i.putExtra(WebViewActivity.EXTRA_URL, mAuthor.getBlog());
-                startActivity(i);
                 break;
 
             case R.id.author_github:// github
                 i.setClass(AuthorDetailActivity.this, WebViewActivity.class);
                 // 跳转到Web页面
                 i.putExtra(WebViewActivity.EXTRA_URL, mAuthor.getGithub());
-                startActivity(i);
                 break;
 
             case R.id.author_blog: // 他的博客

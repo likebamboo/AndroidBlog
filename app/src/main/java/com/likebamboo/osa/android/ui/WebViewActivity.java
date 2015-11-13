@@ -1,10 +1,8 @@
 package com.likebamboo.osa.android.ui;
 
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.ui.view.CommonWebView;
@@ -30,13 +28,14 @@ public class WebViewActivity extends BaseContentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentId(R.layout.nested_scroll_view);
-
         // 添加webview
         mWebView = new CommonWebView(this);
         mWebView.setToolBarVisibility(View.GONE);
-        NestedScrollView nsv = (NestedScrollView) findViewById(R.id.nested_scroll_view);
-        nsv.addView(mWebView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        // 设置布局
+        setContentLayout(mWebView);
+        // 弃用 NestedScrollView ,因为 NestedScrollView 和 WebView 共用的时候， WebView 不能横向滚动(webview里的代码无法全部显示)
+        // NestedScrollView nsv = (NestedScrollView) findViewById(R.id.nested_scroll_view);
+        // nsv.addView(mWebView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         // 添加监听器
         addListener();

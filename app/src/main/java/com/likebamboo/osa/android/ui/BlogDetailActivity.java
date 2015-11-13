@@ -3,10 +3,8 @@ package com.likebamboo.osa.android.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -49,12 +47,14 @@ public class BlogDetailActivity extends BaseContentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentId(R.layout.nested_scroll_view);
-
         // 添加webview
         mWebView = new CommonWebView(this);
-        NestedScrollView nsv = (NestedScrollView) findViewById(R.id.nested_scroll_view);
-        nsv.addView(mWebView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mWebView.setToolBarVisibility(View.GONE);
+        // 设置布局
+        setContentLayout(mWebView);
+        // 弃用 NestedScrollView ,因为 NestedScrollView 和 WebView 共用的时候， WebView 不能横向滚动(webview里的代码无法全部显示)
+        // NestedScrollView nsv = (NestedScrollView) findViewById(R.id.nested_scroll_view);
+        // nsv.addView(mWebView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         mBlogInfo = getIntent().getParcelableExtra(EXTRA_BLOG_INFO);
         if (mBlogInfo == null || TextUtils.isEmpty(mBlogInfo.getUrl())) {
