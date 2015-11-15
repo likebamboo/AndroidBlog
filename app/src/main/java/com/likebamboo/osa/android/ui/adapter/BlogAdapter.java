@@ -9,13 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.entity.Blog;
 import com.likebamboo.osa.android.impl.DynamicHeightRequestImpl;
+import com.likebamboo.osa.android.ui.view.AsyncImageView;
 import com.likebamboo.osa.android.ui.view.DynamicHeightImageView;
 import com.likebamboo.osa.android.ui.view.fa.TextAwesome;
 import com.likebamboo.osa.android.utils.DateUtil;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -61,7 +62,9 @@ public class BlogAdapter extends BaseRecycleAdapter<Blog> {
             holder.coverIv.setVisibility(View.VISIBLE);
             holder.abstractsTv.setVisibility(View.GONE);
             // 加载图片
-            Glide.with(mContext).load(item.getCover()).placeholder(R.color.grey_300).listener(new DynamicHeightRequestImpl()).into(holder.coverIv);
+            ImageLoader.getInstance().displayImage(item.getCover(), holder.coverIv,
+                    AsyncImageView.initOptions(R.color.grey_300),
+                    new DynamicHeightRequestImpl(holder.coverIv));
         }
 
         holder.tagTv.setText(R.string.fa_filter, item.getCategorys());

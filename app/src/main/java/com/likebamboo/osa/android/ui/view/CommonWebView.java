@@ -35,7 +35,7 @@ public class CommonWebView extends FrameLayout {
     /**
      * webView
      */
-    private WebView mWebview = null;
+    private ObservedWebView mWebview = null;
 
     /**
      * 进度条
@@ -139,6 +139,9 @@ public class CommonWebView extends FrameLayout {
 
     public CommonWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        if (isInEditMode()) {
+            return;
+        }
         initView(context);
     }
 
@@ -148,7 +151,7 @@ public class CommonWebView extends FrameLayout {
     private void initView(Context context) {
         mContext = context;
         LayoutInflater.from(context).inflate(R.layout.common_webview, this, true);
-        mWebview = (WebView) findViewById(R.id.common_webview);
+        mWebview = (ObservedWebView) findViewById(R.id.common_webview);
         mProgressBar = (ProgressBar) findViewById(R.id.webview_progress_bar);
         mToolBar = (WebViewToolBar) findViewById(R.id.webview_tool_bar);
 
@@ -206,6 +209,15 @@ public class CommonWebView extends FrameLayout {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             mWebview.onResume();
         }
+    }
+
+    /**
+     * 滚动监听
+     *
+     * @param l
+     */
+    public void setOnScrollChangeListener(ObservedWebView.OnScrollChangedCallback l) {
+        mWebview.setOnScrollChangedCallback(l);
     }
 
     /**

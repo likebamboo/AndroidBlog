@@ -1,32 +1,25 @@
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <ProgressBar
+        android:id="@+id/webview_progress_bar"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical">
+        android:layout_height="2dip"
+        android:background="@android:color/transparent"
+        android:progressDrawable="@drawable/webview_progress_bar"/>
 
-        <ProgressBar
-            android:id="@+id/webview_progress_bar"
-            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="2dip"
-            android:background="@android:color/transparent"
-            android:progressDrawable="@drawable/webview_progress_bar"/>
+    <com.likebamboo.osa.android.ui.view.ObservedWebView
+        android:id="@+id/common_webview"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"/>
 
-        <WebView
-            android:id="@+id/common_webview"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.0"/>
-
-        <com.likebamboo.osa.android.ui.view.WebViewToolBar
-            android:id="@+id/webview_tool_bar"
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/abc_action_bar_default_height_material"/>
-    </LinearLayout>
-
-</FrameLayout>
+    <com.likebamboo.osa.android.ui.view.WebViewToolBar
+        android:id="@+id/webview_tool_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"/>
+</LinearLayout>

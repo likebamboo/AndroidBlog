@@ -9,12 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.entity.Author;
 import com.likebamboo.osa.android.request.RequestUrl;
+import com.likebamboo.osa.android.ui.view.AsyncImageView;
 import com.likebamboo.osa.android.ui.view.fa.TextAwesome;
 import com.likebamboo.osa.android.ui.view.fastscroll.BubbleTextGetter;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -54,7 +55,9 @@ public class AuthorAdapter extends BaseRecycleAdapter<Author> implements BubbleT
         if (!TextUtils.isEmpty(item.getAvatar())) {
             String url = RequestUrl.BASE_URL + item.getAvatar();
             // 加载图片
-            Glide.with(mContext).load(url).into(holder.avatarIv);
+
+            // 加载图片
+            ImageLoader.getInstance().displayImage(url, holder.avatarIv, AsyncImageView.initOptions(R.drawable.default_avatar));
         } else {
             holder.avatarIv.setImageResource(R.color.grey_300);
         }
@@ -67,7 +70,6 @@ public class AuthorAdapter extends BaseRecycleAdapter<Author> implements BubbleT
 
         // item点击事件
         holder.rootView.setTag(position);
-        holder.rootView.setBackgroundResource(mDefaultBackgroudId);
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

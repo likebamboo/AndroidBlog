@@ -7,25 +7,29 @@ import android.widget.FrameLayout;
 
 import com.likebamboo.osa.android.R;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-
 /**
  * 普通内容界面基类
  */
 public class BaseContentActivity extends BaseActivity {
 
-    @InjectView(R.id.toolbar)
-    Toolbar mToolbar;
+    /**
+     * toolbar
+     */
+    protected Toolbar mToolbar;
 
-    @InjectView(R.id.real_content)
-    FrameLayout contentLayout;
+    /**
+     * 内容区
+     */
+    protected FrameLayout contentLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-        ButterKnife.inject(this);
+
+        // 初始化元素
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        contentLayout = (FrameLayout) findViewById(R.id.real_content);
 
         // 设置toolbar
         setSupportActionBar(mToolbar);

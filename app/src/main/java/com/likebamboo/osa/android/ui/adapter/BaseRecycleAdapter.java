@@ -2,11 +2,9 @@ package com.likebamboo.osa.android.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.interfaces.IOnItemClickListener;
 
 import java.util.ArrayList;
@@ -51,22 +49,8 @@ public abstract class BaseRecycleAdapter<T> extends RecyclerView.Adapter<Recycle
      */
     private View mFooterView = null;
 
-
-    private final TypedValue mTypedValue = new TypedValue();
-
-    /**
-     * item 默认背景
-     */
-    protected int mDefaultBackgroudId = 0;
-
     public BaseRecycleAdapter(Context mContext) {
         this.mContext = mContext;
-        try {
-            mContext.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
-            mDefaultBackgroudId = mTypedValue.resourceId;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     protected IOnItemClickListener<T> mItemClickListener = null;

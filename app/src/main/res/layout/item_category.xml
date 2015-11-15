@@ -17,7 +17,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_launcher"/>
+        android:src="@color/grey_300"/>
 
     <TextView
         android:id="@+id/category_title_tv"

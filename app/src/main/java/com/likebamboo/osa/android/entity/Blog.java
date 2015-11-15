@@ -2,14 +2,9 @@ package com.likebamboo.osa.android.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.orm.SugarRecord;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 博客基本信息
@@ -18,12 +13,12 @@ import java.util.List;
  */
 // 忽略未知属性
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Blog extends SugarRecord<Blog> implements Parcelable {
+public class Blog implements Parcelable {
 
     /**
      * id
      */
-    private long _id = 0L;
+    private long id = 0L;
 
     /**
      * 标题
@@ -83,11 +78,6 @@ public class Blog extends SugarRecord<Blog> implements Parcelable {
     private String addTime = "";
 
     /**
-     * 收藏时间。
-     */
-    private long favTime = 0L;
-
-    /**
      * 封面图
      */
     private String cover = "";
@@ -121,21 +111,8 @@ public class Blog extends SugarRecord<Blog> implements Parcelable {
         this.categorys = categorys;
     }
 
-    public long getBlogId() {
-        return _id;
-    }
-
-    public void setBlogId(long _id) {
-        this._id = _id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        if (id != null) {
-            setBlogId(id);
-        } else {
-            super.setId(id);
-        }
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getCover() {
@@ -226,73 +203,25 @@ public class Blog extends SugarRecord<Blog> implements Parcelable {
         this.addTime = addTime;
     }
 
-    public long getFavTime() {
-        return favTime;
-    }
-
-    public void setFavTime(long favTime) {
-        this.favTime = favTime;
-    }
-
     /**
-     * 通过url查找博客
+     * 转json字符串
      *
-     * @param url
+     * @return
      */
-    public static Blog findBlogByUrl(String url) {
-        if (TextUtils.isEmpty(url)) {
-            return null;
-        }
-        List<Blog> blogs = find(Blog.class, " url like ? ", url);
-        if (blogs == null || blogs.isEmpty()) {
-            return null;
-        }
-        for (Blog b : blogs) {
-            if (b != null && url.equals(b.getUrl())) {
-                return b;
-            }
+    public String toJsonString() {
+        ObjectMapper om = new ObjectMapper();
+        try {
+            return om.writeValueAsString(this);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
-    }
-
-    /**
-     * 删除标签
-     *
-     * @param url
-     */
-    public static void delete(String url) {
-        if (TextUtils.isEmpty(url)) {
-            return;
-        }
-        deleteAll(Blog.class, " url like ? ", url);
-    }
-
-    /**
-     * 分页加载数据
-     *
-     * @param pageNo   页数， 从0开始
-     * @param pageSize 分页大小
-     * @param sort     排序
-     */
-    public static ArrayList<Blog> listPage(int pageNo, int pageSize, String sort) {
-        if (TextUtils.isEmpty(sort)) {
-            sort = "id desc";
-        }
-        String limit = (pageNo) * pageSize + " , " + pageSize;
-        Iterator<Blog> its = findAsIterator(Blog.class, null, null, null, sort, limit);
-        ArrayList<Blog> result = new ArrayList<>();
-        if (its != null) {
-            while (its.hasNext()) {
-                result.add(its.next());
-            }
-        }
-        return result;
     }
 
     @Override
     public String toString() {
         return "Blog{" +
-                "_id=" + _id +
+                "id=" + id +
                 ", title='" + title + '\'' +
                 ", abstracts='" + abstracts + '\'' +
                 ", categorys='" + categorys + '\'' +
@@ -305,7 +234,6 @@ public class Blog extends SugarRecord<Blog> implements Parcelable {
                 ", fromUrl='" + fromUrl + '\'' +
                 ", oFromUrl='" + oFromUrl + '\'' +
                 ", addTime='" + addTime + '\'' +
-                ", favTime=" + favTime +
                 ", cover='" + cover + '\'' +
                 ", scans='" + scans + '\'' +
                 '}';
@@ -322,7 +250,7 @@ public class Blog extends SugarRecord<Blog> implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this._id);
+        dest.writeLong(this.id);
         dest.writeString(this.title);
         dest.writeString(this.abstracts);
         dest.writeString(this.categorys);
@@ -335,13 +263,12 @@ public class Blog extends SugarRecord<Blog> implements Parcelable {
         dest.writeString(this.fromUrl);
         dest.writeString(this.oFromUrl);
         dest.writeString(this.addTime);
-        dest.writeLong(this.favTime);
         dest.writeString(this.cover);
         dest.writeString(this.scans);
     }
 
     private Blog(Parcel in) {
-        this._id = in.readLong();
+        this.id = in.readLong();
         this.title = in.readString();
         this.abstracts = in.readString();
         this.categorys = in.readString();
@@ -354,7 +281,6 @@ public class Blog extends SugarRecord<Blog> implements Parcelable {
         this.fromUrl = in.readString();
         this.oFromUrl = in.readString();
         this.addTime = in.readString();
-        this.favTime = in.readLong();
         this.cover = in.readString();
         this.scans = in.readString();
     }

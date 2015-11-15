@@ -7,12 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.entity.Category;
 import com.likebamboo.osa.android.impl.DynamicHeightRequestImpl;
 import com.likebamboo.osa.android.request.RequestUrl;
+import com.likebamboo.osa.android.ui.view.AsyncImageView;
 import com.likebamboo.osa.android.ui.view.DynamicHeightImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -49,7 +50,9 @@ public class CategoryAdapter extends BaseRecycleAdapter<Category> {
         final ViewHolder holder = (ViewHolder) viewHolder;
 
         // 加载图片
-        Glide.with(mContext).load(RequestUrl.BASE_URL + item.getCover()).placeholder(R.color.grey_300).listener(new DynamicHeightRequestImpl()).into(holder.coverIv);
+        ImageLoader.getInstance().displayImage(RequestUrl.BASE_URL + item.getCover(), holder.coverIv,
+                AsyncImageView.initOptions(R.color.grey_300),
+                new DynamicHeightRequestImpl(holder.coverIv));
 
         // 点击事件
         holder.cardView.setTag(position);

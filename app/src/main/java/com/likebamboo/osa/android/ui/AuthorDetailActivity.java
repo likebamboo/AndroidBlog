@@ -9,14 +9,13 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.entity.Author;
 import com.likebamboo.osa.android.request.RequestUrl;
 import com.likebamboo.osa.android.ui.fragments.BlogListFragment;
+import com.likebamboo.osa.android.ui.view.AsyncImageView;
 
 import java.net.URLEncoder;
 
@@ -35,7 +34,7 @@ public class AuthorDetailActivity extends BaseActivity implements View.OnClickLi
 
 
     @InjectView(R.id.backdrop)
-    ImageView mBackdropIv;
+    AsyncImageView mBackdropIv;
 
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
@@ -92,7 +91,7 @@ public class AuthorDetailActivity extends BaseActivity implements View.OnClickLi
     private void loadShow() {
         mCollapsingToolbar.setTitle(mAuthor.getName());
 
-        Glide.with(this).load(RequestUrl.BASE_URL + mAuthor.getAvatar()).placeholder(R.color.grey_300).centerCrop().into(mBackdropIv);
+        mBackdropIv.setImageUrl(RequestUrl.BASE_URL + mAuthor.getAvatar(), R.color.green_300);
         mIntroductionTv.setAutoLinkMask(Linkify.EMAIL_ADDRESSES | Linkify.WEB_URLS);
         mIntroductionTv.setText(Html.fromHtml(mAuthor.getIntroduction().replace("\n", "<br/>")));
 

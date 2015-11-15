@@ -3,6 +3,7 @@ package com.likebamboo.osa.android.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -10,13 +11,20 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.entity.Blog;
+import com.likebamboo.osa.android.entity.Favorite;
 import com.likebamboo.osa.android.request.JsonRequest;
 import com.likebamboo.osa.android.request.RequestManager;
 import com.likebamboo.osa.android.request.RequestUrl;
 import com.likebamboo.osa.android.ui.fragments.BlogListFragment;
 import com.likebamboo.osa.android.ui.view.CommonWebView;
+import com.likebamboo.osa.android.ui.view.ObservedWebView;
 import com.likebamboo.osa.android.utils.ToastUtil;
 import com.likebamboo.osa.android.utils.UrlDetect;
+
+import java.net.URLDecoder;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 /**
  * 博客详情 webView 界面
@@ -33,26 +41,36 @@ public class BlogDetailActivity extends BaseContentActivity {
      */
     private Blog mBlogInfo = null;
 
+    @InjectView(R.id.fab)
+    FloatingActionButton mFab = null;
+
     /**
      * webView
      */
-    private CommonWebView mWebView = null;
+    @InjectView(R.id.detail_webview)
+    CommonWebView mWebView = null;
 
     /**
      * progressDialog
      */
     private ProgressDialog mProgressDialog = null;
 
+    /**
+     * 是否是收藏的数据
+     */
+    private boolean mIsFavorite = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 设置布局
+        setContentId(R.layout.activity_blog_detail);
+        ButterKnife.inject(this);
 
         // 添加webview
-        mWebView = new CommonWebView(this);
         mWebView.setToolBarVisibility(View.GONE);
-        // 设置布局
-        setContentLayout(mWebView);
-        // 弃用 NestedScrollView ,因为 NestedScrollView 和 WebView 共用的时候， WebView 不能横向滚动(webview里的代码无法全部显示)
+
+        // 弃用 NestedScrollView ,因为 NestedScrollView 和 ObservableWebView 共用的时候， ObservableWebView 不能横向滚动(webview里的代码无法全部显示)
         // NestedScrollView nsv = (NestedScrollView) findViewById(R.id.nested_scroll_view);
         // nsv.addView(mWebView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
@@ -72,24 +90,12 @@ public class BlogDetailActivity extends BaseContentActivity {
         // 开始加载页面
         startLoading(mBlogInfo.getUrl());
 
-        // 检查当前博客是否已经被收藏
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // 收藏
-                mBlogInfo = Blog.findBlogByUrl(mBlogInfo.getUrl());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mBlogInfo == null) {
-                            // mFavTv.setText(R.string.fa_heart_o, getString(R.string.favorite));
-                        } else {
-                            // mFavTv.setText(R.string.fa_heart, getString(R.string.unfavorite));
-                        }
-                    }
-                });
-            }
-        }).start();
+        if (Favorite.findByKey(mBlogInfo.getUrl()) == null) {
+            mFab.setImageResource(R.drawable.ic_favorite_off);
+        } else {
+            mFab.setImageResource(R.drawable.ic_favorite_on);
+            mIsFavorite = true;
+        }
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage(getString(R.string.loading));
@@ -107,6 +113,16 @@ public class BlogDetailActivity extends BaseContentActivity {
      * 添加监听器
      */
     private void addListener() {
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mIsFavorite) {
+                    doUnFavorite();
+                    return;
+                }
+                doFavorite();
+            }
+        });
         mWebView.setStatusListener(new CommonWebView.IWebViewStatusListener() {
             @Override
             public void onPageStarted(String url) {
@@ -160,6 +176,11 @@ public class BlogDetailActivity extends BaseContentActivity {
                 if (!TextUtils.isEmpty(formatUrl)) {
                     // 进入标签博客列表界面
                     Intent i = new Intent(BlogDetailActivity.this, BlogListActivity.class);
+                    try {
+                        i.putExtra(EXTRA_TITLE, URLDecoder.decode(formatUrl, "utf-8"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     i.putExtra(BlogListFragment.EXTRA_REQUEST_URL, String.format(RequestUrl.TAG_BLOG_URL, formatUrl));
                     startActivity(i);
                     return true;
@@ -175,6 +196,8 @@ public class BlogDetailActivity extends BaseContentActivity {
                 return false;
             }
         });
+
+        mWebView.setOnScrollChangeListener(new DirectionWebViweScrollListener());
     }
 
     /**
@@ -182,14 +205,18 @@ public class BlogDetailActivity extends BaseContentActivity {
      */
     private void doFavorite() {
         if (mBlogInfo != null) {
-            // 设置收藏时间
-            mBlogInfo.setFavTime(System.currentTimeMillis());
-            mBlogInfo.save();
+            Favorite favorite = new Favorite();
+            favorite.setAddTime(System.currentTimeMillis() + "");
+            favorite.setKey(mBlogInfo.getUrl());
+            favorite.setType(Favorite.Type.BLOG);
+            favorite.setValue(mBlogInfo.toJsonString());
+            // 收藏
+            favorite.save();
+
+            mFab.setImageResource(R.drawable.ic_favorite_on);
+            mIsFavorite = true;
             // 显示提示信息
             ToastUtil.show(getApplicationContext(), R.string.favorite_success);
-
-            // 改变收藏按钮的文字
-            // mFavTv.setText(R.string.fa_heart, getString(R.string.unfavorite));
 
             // 发送广播，提示收藏数据了
             sendBroadcastForFavorite(true, mBlogInfo);
@@ -205,13 +232,14 @@ public class BlogDetailActivity extends BaseContentActivity {
         if (mBlogInfo == null) {
             return;
         }
-        mBlogInfo.delete(mBlogInfo.getUrl());
-        // 清空id
-        mBlogInfo.setId(null);
+
+        // 取消收藏
+        Favorite.delete(mBlogInfo.getUrl());
+        mIsFavorite = false;
+        mFab.setImageResource(R.drawable.ic_favorite_off);
+
         // 显示提示信息
         ToastUtil.show(getApplicationContext(), R.string.unfavorite_success);
-        // 改变收藏按钮的文字
-        // mFavTv.setText(R.string.fa_heart_o, getString(R.string.favorite));
         sendBroadcastForFavorite(false, mBlogInfo);
     }
 
@@ -266,5 +294,34 @@ public class BlogDetailActivity extends BaseContentActivity {
     protected void onPause() {
         super.onPause();
         mWebView.onPause();
+    }
+
+
+    /**
+     * 滚动监听
+     */
+    public class DirectionWebViweScrollListener implements ObservedWebView.OnScrollChangedCallback {
+
+        private static final int DIRECTION_CHANGE_THRESHOLD = 8;
+        private int mPrevTop;
+        private boolean mUpdated;
+
+        @Override
+        public void onScroll(int l, int t) {
+            if (mFab == null) {
+                return;
+            }
+            boolean goingDown = t > mPrevTop;
+            boolean changed = Math.abs(t - mPrevTop) > DIRECTION_CHANGE_THRESHOLD;
+            if (changed && mUpdated) {
+                if (goingDown) {
+                    mFab.hide();
+                } else {
+                    mFab.show();
+                }
+            }
+            mPrevTop = t;
+            mUpdated = true;
+        }
     }
 }
