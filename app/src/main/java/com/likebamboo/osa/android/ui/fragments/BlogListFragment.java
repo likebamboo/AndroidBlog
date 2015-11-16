@@ -9,7 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.likebamboo.osa.android.R;
 import com.likebamboo.osa.android.entity.Blog;
+import com.likebamboo.osa.android.entity.Favorite;
+import com.likebamboo.osa.android.exception.OsaException;
 import com.likebamboo.osa.android.request.JsonArrayRequest;
 import com.likebamboo.osa.android.request.RequestManager;
 import com.likebamboo.osa.android.request.RequestParams;
@@ -17,6 +21,7 @@ import com.likebamboo.osa.android.request.RequestUrl;
 import com.likebamboo.osa.android.ui.BlogDetailActivity;
 import com.likebamboo.osa.android.ui.adapter.BaseRecycleAdapter;
 import com.likebamboo.osa.android.ui.adapter.BlogAdapter;
+import com.orm.StringUtil;
 
 import java.util.ArrayList;
 
@@ -53,7 +58,7 @@ public class BlogListFragment extends EndlessListFragment<Blog> {
     /**
      * 博客URL前缀
      */
-    protected  String mBlogPrefix = "";
+    protected String mBlogPrefix = "";
 
     @Override
     protected BaseRecycleAdapter initAdapter() {
@@ -83,6 +88,13 @@ public class BlogListFragment extends EndlessListFragment<Blog> {
             mRequestUrl = RequestUrl.BLOG_URL;
         }
 
+        // 如果是本地数据
+        if (mRequestUrl.equals(RequestUrl.LOCAL_DB)) {
+            loadDatasFromDatabases(params);
+            return;
+        }
+
+
         // 排序
         if (!TextUtils.isEmpty(mSort)) {
             params.add("sort", mSort);
@@ -94,6 +106,44 @@ public class BlogListFragment extends EndlessListFragment<Blog> {
         // 添加请求
         RequestManager.addRequest(new JsonArrayRequest(mRequestUrl, params, responseListener(), errorListener()),
                 getClass().getName());
+    }
+
+    /**
+     * 从数据库中读取数据
+     */
+    protected void loadDatasFromDatabases(RequestParams params) {
+        mSort = StringUtil.toSQLName("addTime") + " desc ";
+        int pageNo = 0, pageSize = PAGE_SIZE;
+        try {
+            pageNo = Integer.parseInt(params.get(PARAM_PAGE_NO));
+            pageSize = Integer.parseInt(params.get(PARAM_PAGE_SIZE));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ArrayList<Favorite> results = Favorite.listPage(Favorite.Type.BLOG, pageNo, pageSize, mSort);
+        if (results == null) {
+            doOnError(new OsaException(getString(R.string.donot_have_any_favorite)));
+            return;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayList<Blog> datas = new ArrayList<Blog>(results.size());
+        for (Favorite f : results) {
+            try {
+                datas.add(mapper.readValue(f.getValue(), Blog.class));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // 如果是刷新数据
+        if (isRefreshing) {
+            // 清空现有数据
+            reset();
+            // 停止刷新
+            stopRefresh();
+        }
+        isLoading = false;
+        mLoadingLayout.showLoading(false);
+        doOnSuccess(datas);
     }
 
     @Override
