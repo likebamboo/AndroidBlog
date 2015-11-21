@@ -12,7 +12,7 @@ import com.likebamboo.osa.android.entity.Site;
 import com.likebamboo.osa.android.request.JsonArrayRequest;
 import com.likebamboo.osa.android.request.RequestManager;
 import com.likebamboo.osa.android.request.RequestUrl;
-import com.likebamboo.osa.android.ui.adapter.DiscoverFragmentAdapter;
+import com.likebamboo.osa.android.ui.adapter.TabFragmentAdapter;
 import com.likebamboo.osa.android.ui.fragments.BlogListFragment;
 import com.likebamboo.osa.android.ui.fragments.EndlessListFragment;
 import com.likebamboo.osa.android.ui.view.LoadingLayout;
@@ -39,7 +39,7 @@ public class DiscoverActivity extends BaseNavigationActivity {
     /**
      * adapter
      */
-    private DiscoverFragmentAdapter adapter = null;
+    private TabFragmentAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +90,7 @@ public class DiscoverActivity extends BaseNavigationActivity {
     private void setUpViewPager(ArrayList<Site> datas) {
         tabLayout.setVisibility(View.VISIBLE);
 
-        adapter = new DiscoverFragmentAdapter(getSupportFragmentManager());
+        adapter = new TabFragmentAdapter(getSupportFragmentManager());
         for (int i = 0; i < datas.size(); i++) {
             Site site = datas.get(i);
             BlogListFragment f = new BlogListFragment();

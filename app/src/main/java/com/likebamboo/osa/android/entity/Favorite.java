@@ -3,6 +3,7 @@ package com.likebamboo.osa.android.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.SparseArray;
 
 import com.orm.SugarRecord;
 
@@ -14,6 +15,14 @@ import java.util.List;
  * Created by wentaoli on 2015/10/22.
  */
 public class Favorite extends SugarRecord<Favorite> implements Parcelable {
+
+    public static SparseArray<String> TYPE_NAME_VALUES = new SparseArray<String>();
+
+    static {
+        TYPE_NAME_VALUES.put(Type.BLOG, "文章");
+        TYPE_NAME_VALUES.put(Type.AUTHOR, "作者");
+        TYPE_NAME_VALUES.put(Type.TAG, "标签");
+    }
 
     public static final class Type {
         public static final int BLOG = 0x10;
@@ -159,7 +168,8 @@ public class Favorite extends SugarRecord<Favorite> implements Parcelable {
         if (TextUtils.isEmpty(sort)) {
             sort = "id desc";
         }
-        String limit = (pageNo) * pageSize + " , " + pageSize;
+        pageNo = pageNo > 0 ? pageNo : 1;
+        String limit = (pageNo - 1) * pageSize + " , " + pageSize;
         Iterator<Favorite> its = findAsIterator(Favorite.class, " type = " + type, null, null, sort, limit);
         ArrayList<Favorite> result = new ArrayList<Favorite>();
         if (its != null) {
@@ -168,6 +178,22 @@ public class Favorite extends SugarRecord<Favorite> implements Parcelable {
             }
         }
         return result;
+    }
+
+    /**
+     * 获取以保存的数据的类型
+     *
+     * @return
+     */
+    public static ArrayList<Integer> getTypes() {
+        Iterator<Favorite> its = findAsIterator(Favorite.class, null, null, " type ", null, null);
+        ArrayList<Integer> ret = new ArrayList<Integer>();
+        if (its != null) {
+            while (its.hasNext()) {
+                ret.add(its.next().getType());
+            }
+        }
+        return ret;
     }
 
 }

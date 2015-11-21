@@ -153,7 +153,7 @@ public class BaseNavigationActivity extends BaseActivity {
                                 intent.setClass(BaseNavigationActivity.this, RecommendActivity.class);
                                 break;
                             case R.id.nav_favorite: // 收藏
-                                intent.setClass(BaseNavigationActivity.this, RecommendActivity.class);
+                                intent.setClass(BaseNavigationActivity.this, FavoriteActivity.class);
                                 break;
                             case R.id.nav_settings: // 设置
                                 intent.setClass(BaseNavigationActivity.this, RecommendActivity.class);

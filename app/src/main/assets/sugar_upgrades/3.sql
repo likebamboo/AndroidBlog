@@ -1,1 +1,0 @@
-alter table TAG add NAME_TEST TEXT;

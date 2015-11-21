@@ -92,4 +92,14 @@ public class RequestUrl {
      */
     public static final String SITE_BLOG_LIST_URL = BASE_URL + "spider/%s/article";
 
+    /**
+     * 本地链接
+     */
+    public static final String LOCAL_HOST = "likebamboo://androidblog/";
+
+    /**
+     * 本地数据库
+     */
+    public static final String LOCAL_DB = LOCAL_HOST + "databases";
+
 }

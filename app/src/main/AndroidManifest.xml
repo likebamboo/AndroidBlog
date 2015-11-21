@@ -79,6 +79,12 @@
             android:name=".ui.WebViewActivity"
             android:label="@string/app_name">
         </activity>
+
+        <!-- 收藏界面-->
+        <activity
+            android:name=".ui.FavoriteActivity"
+            android:label="@string/app_name">
+        </activity>
     </application>
 
 </manifest>

@@ -28,7 +28,7 @@
     <string name="favorite_success">收藏成功</string>
     <string name="unfavorite">取消收藏</string>
     <string name="unfavorite_success">取消收藏成功</string>
-    <string name="donot_have_any_favorite">未收藏任何博客</string>
+    <string name="donot_have_any_favorite">未收藏任何数据</string>
 
     <string name="translator">译者</string>
     <string name="author">作者</string>
