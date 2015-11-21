@@ -1,7 +1,9 @@
 package com.likebamboo.osa.android.ui.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -245,6 +247,41 @@ public abstract class BaseRecycleAdapter<T> extends RecyclerView.Adapter<Recycle
         public VHFooter(View itemView) {
             super(itemView);
         }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+        if (lp == null) {
+            return;
+        }
+        // 如果是Header or Footer.
+        if ((lp instanceof StaggeredGridLayoutManager.LayoutParams)
+                && (holder instanceof VHFooter || holder instanceof VHHeader)) {
+            StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) lp;
+            p.setFullSpan(true);
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+        if (manager == null || !(manager instanceof GridLayoutManager)) {
+            return;
+        }
+        final GridLayoutManager gridManager = ((GridLayoutManager) manager);
+        gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                int type = getItemViewType(position);
+                if (type == TYPE_FOOTRE || type == TYPE_HEADER) {
+                    return gridManager.getSpanCount();
+                }
+                return 1;
+            }
+        });
     }
 
     /**
