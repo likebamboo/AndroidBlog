@@ -21,4 +21,18 @@
         <item name="android:orientation">vertical</item>
     </style>
 
+    <!--简单列表dialog样式-->
+    <style name="simple_dialog_style" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 模糊 -->
+        <item name="android:backgroundDimAmount">0.3</item>
+        <!-- 模糊度 -->
+    </style>
+
+    <!-- dialog animation style -->
+    <style name="DialogSlideAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up_dialog</item>
+        <item name="android:windowExitAnimation">@anim/slide_down_dialog</item>
+    </style>
 </resources>

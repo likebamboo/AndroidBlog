@@ -98,6 +98,8 @@ public class BlogListFragment extends EndlessListFragment<Blog> {
         // 排序
         if (!TextUtils.isEmpty(mSort)) {
             params.add("sort", mSort);
+        } else {
+            params.remove("sort");
         }
 
         // 添加其他请求参数
@@ -176,5 +178,33 @@ public class BlogListFragment extends EndlessListFragment<Blog> {
      */
     public void addParams(RequestParams params) {
 
+    }
+
+    /**
+     * 获取当前排序方式
+     *
+     * @return
+     */
+    public String getSort() {
+        return mSort;
+    }
+
+    /**
+     * 重排序 加载数据
+     *
+     * @param sort
+     */
+    public void reloadWithSort(String sort) {
+        if (mSort.equals(sort)) {
+            return;
+        }
+        // 如果正在加载数据
+        if (isLoading) {
+            // 取消加载数据
+            RequestManager.cancelAll(getClass().getName());
+        }
+        mSort = (sort == null ? "" : sort);
+        reset();
+        loadDatas();
     }
 }

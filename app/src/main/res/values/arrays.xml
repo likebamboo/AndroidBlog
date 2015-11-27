@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--排序显示值列表-->
+    <string-array name="sort_name_entry">
+        <item>发表时间</item>
+        <item>标题</item>
+        <item>浏览量</item>
+    </string-array>
+
+    <!--排序值列表-->
+    <string-array name="sort_value_entry">
+        <item></item>
+        <item>title-asc</item>
+        <item>scans-desc</item>
+    </string-array>
+</resources>

@@ -2,12 +2,17 @@ package com.likebamboo.osa.android.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.likebamboo.osa.android.R;
+import com.likebamboo.osa.android.entity.LDialogItem;
 import com.likebamboo.osa.android.entity.Site;
 import com.likebamboo.osa.android.request.JsonArrayRequest;
 import com.likebamboo.osa.android.request.RequestManager;
@@ -15,6 +20,7 @@ import com.likebamboo.osa.android.request.RequestUrl;
 import com.likebamboo.osa.android.ui.adapter.TabFragmentAdapter;
 import com.likebamboo.osa.android.ui.fragments.BlogListFragment;
 import com.likebamboo.osa.android.ui.fragments.EndlessListFragment;
+import com.likebamboo.osa.android.ui.fragments.SimpleListDialog;
 import com.likebamboo.osa.android.ui.view.LoadingLayout;
 
 import org.json.JSONArray;
@@ -40,6 +46,16 @@ public class DiscoverActivity extends BaseNavigationActivity {
      * adapter
      */
     private TabFragmentAdapter adapter = null;
+
+    /**
+     * 排序列表数值
+     */
+    private ArrayList<LDialogItem> mSortDatas = null;
+
+    /**
+     * 排序dialog
+     */
+    private SimpleListDialog<LDialogItem> mSortDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,7 +178,73 @@ public class DiscoverActivity extends BaseNavigationActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_actions, menu);
+        return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            case R.id.action_sort: // 排序
+                showSortListDialog();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * 显示排序dialog
+     */
+    private void showSortListDialog() {
+        final Fragment fragment = adapter.getItem(mViewPager.getCurrentItem());
+        if (!(fragment instanceof BlogListFragment)) {
+            return;
+        }
+
+        if (mSortDatas == null) {
+            mSortDatas = new ArrayList<>();
+            String[] names = getResources().getStringArray(R.array.sort_name_entry);
+            String[] values = getResources().getStringArray(R.array.sort_value_entry);
+            for (int i = 0; i < names.length; i++) {
+                LDialogItem item = new LDialogItem();
+                item.setName(names[i]);
+                item.setValue(values[i]);
+                if (i == 0) {
+                    item.setSelected(true);
+                }
+                mSortDatas.add(item);
+            }
+        }
+        for (LDialogItem item : mSortDatas) {
+            if ((((BlogListFragment) fragment).getSort()).equals(item.getValue())) {
+                item.setSelected(true);
+                continue;
+            }
+            item.setSelected(false);
+        }
+        if (mSortDialog == null) {
+            mSortDialog = SimpleListDialog.getInstance(getString(R.string.sort), mSortDatas);
+            mSortDialog.setOnItemClickListener(new SimpleListDialog.OnDialogItemClickListener<LDialogItem>() {
+                @Override
+                public void onItemClick(LDialogItem obj) {
+                    if (obj == null) {
+                        return;
+                    }
+                    final Fragment fragment = adapter.getItem(mViewPager.getCurrentItem());
+                    if (!(fragment instanceof BlogListFragment)) {
+                        return;
+                    }
+                    ((BlogListFragment) fragment).reloadWithSort(obj.getValue());
+                }
+            });
+        } else {
+            mSortDialog.notifyDataChanged();
+        }
+        mSortDialog.show(getSupportFragmentManager(), "SortDialog");
+    }
+
 }
